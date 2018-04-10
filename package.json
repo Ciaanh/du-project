@@ -1,0 +1,85 @@
+{
+    "name": "du-project",
+    "displayName": "DU Project",
+    "description": "Manage projects for Dual Universe scripts.",
+    "version": "0.184.1",
+    "publisher": "Ciaanh",
+    "license": "MIT",
+    "engines": {
+        "vscode": "^1.19.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onCommand:extension.previewDUFile",
+        "onCommand:extension.previewDUProject",
+        "onLanguage:duproject"
+    ],
+    "main": "./out/extension",
+    "contributes": {
+        "languages": [
+            {
+                "id": "duproject",
+                "aliases": [
+                    "DUProject",
+                    "dup"
+                ],
+                "extensions": [
+                    ".du.json"
+                ]
+            }
+        ],
+        "commands": [
+            {
+                "command": "extension.previewDUFile",
+                "title": "show preview from file.",
+                "category": "DU project"
+            },
+            {
+                "command": "extension.previewDUProject",
+                "title": "show preview from project.",
+                "category": "DU project"
+            },
+            {
+                "command": "extension.loadDefaultDUWorkspace",
+                "title": "open the default workspace from the configuration if defined.",
+                "category": "DU project"
+            }
+        ],
+        "configuration": {
+            "type": "object",
+            "title": "DU Project configuration",
+            "properties": {
+                "duproject.defaultWorkspace": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "default": null,
+                    "description": "Default path for workspace containing projects."
+                },
+                "duproject.isDebug": {
+                    "type": [
+                        "boolean"
+                    ],
+                    "default": false,
+                    "description": "Define if the project is in debug mode."
+                }
+            }
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install"
+    },
+    "extensionDependencies": [],
+    "devDependencies": {
+        "typescript": "^2.6.1",
+        "vscode": "^1.1.10",
+        "@types/node": "^7.0.43"
+    },
+    "dependencies": {}
+}

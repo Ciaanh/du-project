@@ -1,0 +1,295 @@
+<html>
+
+<body>
+
+    <style>
+        html {
+            font-family: Helmet, FreeSans, Sans-Serif;
+            font-size: 14px;
+            line-height: 1.5em;
+            background: #222;
+            color: #fff
+        }
+
+        html a {
+            color: #fff
+        }
+
+        .slots {}
+
+        .slots li {
+            list-style: none;
+            padding: 3px;
+            margin: 2px;
+            background-color: #444;
+        }
+
+        .slot {}
+
+        .name {}
+
+        .filters {}
+
+        .filter {
+            font-size: 14px;
+            color: #f9ecb3;
+            font-style: italic
+        }
+
+        .action {}
+
+        .args {}
+
+        .lua {}
+
+        .events {}
+
+        .methods {}
+    </style>
+
+
+
+    <script>
+
+
+    </script>
+
+    <h1>Overview of the project project1</h1>
+
+    <h2>loaded from 0</h2>
+
+    <a href="command:extension.handlePreviewCallback?%5B%22project1%22,%22aaa%22,%22bbb%22%5D">example of link to action</a>
+
+    <div class="project">
+        <ul class="slots">
+            <li class="slot">
+                <span class="name">library</span>
+                <ul class="filters"></ul>
+            </li>
+            <li class="slot">
+                <span class="name">system</span>
+                <ul class="filters">
+                    <li class="filter">
+                        <span class="action">actionStart(action)</span> :
+                        <span class="args">forward</span>
+                        <code class="lua">Nav:decrease(Nav.pitch)</code>
+                    </li>
+                    <li class="filter">
+                        <span class="action">actionStop(action)</span> :
+                        <span class="args">forward</span>
+                        <code class="lua">Nav:increase(Nav.pitch)</code>
+                    </li>
+                    <li class="filter">
+                        <span class="action">actionStart(action)</span> :
+                        <span class="args">backward</span>
+                        <code class="lua">Nav:increase(Nav.pitch)</code>
+                    </li>
+                    <li class="filter">
+                        <span class="action">actionStop(action)</span> :
+                        <span class="args">backward</span>
+                        <code class="lua">Nav:decrease(Nav.pitch)</code>
+                    </li>
+                    <li class="filter">
+                        <span class="action">actionStart(action)</span> :
+                        <span class="args">right</span>
+                        <code class="lua">Nav:increase(Nav.roll)</code>
+                    </li>
+                    <li class="filter">
+                        <span class="action">actionStop(action)</span> :
+                        <span class="args">right</span>
+                        <code class="lua">Nav:decrease(Nav.roll)</code>
+                    </li>
+                    <li class="filter">
+                        <span class="action">actionStart(action)</span> :
+                        <span class="args">left</span>
+                        <code class="lua">Nav:decrease(Nav.roll)</code>
+                    </li>
+                    <li class="filter">
+                        <span class="action">actionStop(action)</span> :
+                        <span class="args">left</span>
+                        <code class="lua">Nav:increase(Nav.roll)</code>
+                    </li>
+                    <li class="filter">
+                        <span class="action">actionStart(action)</span> :
+                        <span class="args">up</span>
+                        <code class="lua">Nav:increase(Nav.lift)</code>
+                    </li>
+                    <li class="filter">
+                        <span class="action">actionStop(action)</span> :
+                        <span class="args">up</span>
+                        <code class="lua">Nav:decrease(Nav.lift)</code>
+                    </li>
+                    <li class="filter">
+                        <span class="action">actionStart(action)</span> :
+                        <span class="args">down</span>
+                        <code class="lua">Nav:decrease(Nav.lift)</code>
+                    </li>
+                    <li class="filter">
+                        <span class="action">actionStop(action)</span> :
+                        <span class="args">down</span>
+                        <code class="lua">Nav:increase(Nav.lift)</code>
+                    </li>
+                    <li class="filter">
+                        <span class="action">actionStart(action)</span> :
+                        <span class="args">yawright</span>
+                        <code class="lua">Nav:decrease(Nav.yaw)</code>
+                    </li>
+                    <li class="filter">
+                        <span class="action">actionStop(action)</span> :
+                        <span class="args">yawright</span>
+                        <code class="lua">Nav:increase(Nav.yaw)</code>
+                    </li>
+                    <li class="filter">
+                        <span class="action">actionStart(action)</span> :
+                        <span class="args">yawleft</span>
+                        <code class="lua">Nav:increase(Nav.yaw)</code>
+                    </li>
+                    <li class="filter">
+                        <span class="action">actionStop(action)</span> :
+                        <span class="args">yawleft</span>
+                        <code class="lua">Nav:decrease(Nav.yaw)</code>
+                    </li>
+                    <li class="filter">
+                        <span class="action">actionStart(action)</span> :
+                        <span class="args">brake</span>
+                        <code class="lua">Nav:increase(Nav.brake)</code>
+                    </li>
+                    <li class="filter">
+                        <span class="action">actionStop(action)</span> :
+                        <span class="args">brake</span>
+                        <code class="lua">Nav:decrease(Nav.brake)</code>
+                    </li>
+                    <li class="filter">
+                        <span class="action">actionStart(action)</span> :
+                        <span class="args">stopengines</span>
+                        <code class="lua">Nav.thrustManager:resetThrottle()</code>
+                    </li>
+                    <li class="filter">
+                        <span class="action">actionLoop(action)</span> :
+                        <span class="args">speedup</span>
+                        <code class="lua">Nav.thrustManager:updateCommand(0.05)</code>
+                    </li>
+                    <li class="filter">
+                        <span class="action">actionLoop(action)</span> :
+                        <span class="args">speeddown</span>
+                        <code class="lua">Nav.thrustManager:updateCommand(-0.05)</code>
+                    </li>
+                    <li class="filter">
+                        <span class="action">update()</span> :
+                        <span class="args"></span>
+                        <code class="lua">Nav:update()</code>
+                    </li>
+                    <li class="filter">
+                        <span class="action">flush()</span> :
+                        <span class="args"></span>
+                        <code class="lua">-- compute acceleration and angularAcceleration
+        local forward =  Nav:composeForwardAcceleration(Nav.thrustManager:getAccelerationCommand())
+        
+        local angularAcceleration = Nav:composeControlledStabAngularAcceleration(Nav:getRollInput(), Nav:getPitchInput())
+                                + Nav:composeTiltingAngularAcceleration()
+                                + Nav:composeTurningAngularAcceleration(Nav:getYawInput())
+        
+        Nav:setEngineCommand("vertical,torque", Nav:composeLiftUpAcceleration(Nav:getLiftInput()), angularAcceleration)
+        Nav:setEngineCommand("horizontal", forward, nullvector)
+        Nav:setEngineCommand("brake", Nav:composeBrakingAcceleration(Nav:getBrakeInput()), nullvector)
+        </code>
+                    </li>
+                </ul>
+                <div class="type">
+                    <ul class="events"></ul>
+                    <ul class="methods"></ul>
+                </div>
+            </li>
+            <li class="slot">
+                <span class="name">unit</span>
+                <ul class="filters">
+                    <li class="filter">
+                        <span class="action">start()</span> :
+                        <span class="args"></span>
+                        <code class="lua">Nav = Navigator.new(self.system, self.gyro, self.core, self.unit, 'generic')
+        self.core.show()
+        self.gyro.show()
+        self.container_0.show()
+        self.container_1.show()
+        self.container_2.show()
+        self.container_3.show()
+        self.container_4.show()
+        self.container_5.show()
+        </code>
+                    </li>
+                    <li class="filter">
+                        <span class="action">stop()</span> :
+                        <span class="args"></span>
+                        <code class="lua">self.core.hide()
+        self.gyro.hide()
+        self.container_0.hide()
+        self.container_1.hide()
+        self.container_2.hide()
+        self.container_3.hide()
+        self.container_4.hide()
+        self.container_5.hide()
+        </code>
+                    </li>
+                </ul>
+                <div class="type"></div>
+            </li>
+            <li class="slot">
+                <span class="name">core</span>
+                <ul class="filters"></ul>
+                <div class="type"></div>
+            </li>
+            <li class="slot">
+                <span class="name">gyro</span>
+                <ul class="filters"></ul>
+                <div class="type"></div>
+            </li>
+            <li class="slot">
+                <span class="name">container_0</span>
+                <ul class="filters"></ul>
+                <div class="type"></div>
+            </li>
+            <li class="slot">
+                <span class="name">container_1</span>
+                <ul class="filters"></ul>
+                <div class="type"></div>
+            </li>
+            <li class="slot">
+                <span class="name">container_2</span>
+                <ul class="filters"></ul>
+                <div class="type"></div>
+            </li>
+            <li class="slot">
+                <span class="name">container_3</span>
+                <ul class="filters"></ul>
+                <div class="type"></div>
+            </li>
+            <li class="slot">
+                <span class="name">container_4</span>
+                <ul class="filters"></ul>
+            </li>
+            <li class="slot">
+                <span class="name">container_5</span>
+                <ul class="filters"></ul>
+                <div class="type"></div>
+            </li>
+            <li class="slot">
+                <span class="name">slot9</span>
+                <ul class="filters"></ul>
+                <div class="type"></div>
+            </li>
+            <li class="slot">
+                <span class="name">slot10</span>
+                <ul class="filters"></ul>
+                <div class="type">
+                    <ul class="events"></ul>
+                    <ul class="methods"></ul>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+
+</body>
+
+
+</html>
