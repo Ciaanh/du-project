@@ -25,8 +25,7 @@ du_project
 └───Slots
 │   │
 │   └───slot_<slotKey>_<slotName>
-|       │   handler_<key>_<filter-action>_<filter-args>.txt
-|       │   file112.txt
+|       │   handler_<key>_<filter-action>_<filter-args>.lua
 |       |
 │       └───Type
 |       |   │
