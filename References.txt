@@ -26,27 +26,5 @@ https://code.visualstudio.com/docs/extensionAPI/extension-points
 
 
 
-
-
-
-
-files types:
-configuration du projet: dux.json
-file .dup containing all mapping information, useful for handling changes (renaming, adding, delete when content is found)
-=> generates folders for the different elements name.typeofelement
-=> for each folder describing an element we have a config file giving the filters by slot and one lua file by slot/filter
-
-=> add references to CommandControl.lua 
-=> manage API by generating ref folder with type declaration for the api => prevent from changing lua parser, allow to choose any parser
-
-=> try to generate project from code export in DU
-=> try to export project as string to import in DU
-
-=> add config to:
- - disable preview auto launch
- - set max slot number
- - include api ref in project
-
-
 use https://code.visualstudio.com/docs/extensionAPI/extension-points#_contributesviews 
 to display project structure on the side bar
