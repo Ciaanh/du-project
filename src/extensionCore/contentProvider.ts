@@ -55,7 +55,7 @@ export default class ContentProvider implements vscode.TextDocumentContentProvid
                 break;
         }
         let page =
-            `<body>
+            `<body class="project-preview">
     ${this.style}
 
     ${this.script}
@@ -77,7 +77,7 @@ export default class ContentProvider implements vscode.TextDocumentContentProvid
     // default style for the HTML preview
     private readonly style =
         `<style>
-    html {
+    .project-preview {
         font-family: Helmet, FreeSans, Sans-Serif;
         font-size: 14px;
         line-height: 1.5em;
@@ -85,7 +85,7 @@ export default class ContentProvider implements vscode.TextDocumentContentProvid
         color: #fff
     }
 
-    html a {
+    .project-preview a {
         color: #fff
     }
 
