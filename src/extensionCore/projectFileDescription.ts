@@ -141,7 +141,7 @@ export default class ProjectFileDescription {
     public static defineHandlerFromObject(handler: Handler): ProjectFileDescription {
         let projectItem = new ProjectFileDescription();
 
-        projectItem.name = `handler_${handler.key}_${handler.filter.signature}_${handler.filter.args.getArgs().join("-")}`;
+        projectItem.name = `handler_${handler.key}_${handler.filter.signature}_${handler.filter.args.toValueList("-")}`;
         projectItem.itemType = ProjectItemType.Handler;
         projectItem.fileType = FileType.File;
 

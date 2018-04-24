@@ -55,4 +55,11 @@ export default class ArgContainer {
         });
         return argValueList.join(',');
     }
+
+    public toValueList(separator: string): string {
+        let argValueList = this.argList.map(arg => {
+            return arg.value;
+        });
+        return argValueList.join(separator);
+    }
 }
