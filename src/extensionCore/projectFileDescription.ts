@@ -47,16 +47,17 @@ export default class ProjectFileDescription {
                 }
                 return GenerationStatus.ElementAlreadyExists;
             case FileType.Folder:
+                let folderPath;
                 if (this.itemType == ProjectItemType.Root) {
-                    projectRoot += "\\du_" + this.name;
+                    folderPath += "\\du_" + this.name;
                 }
                 else {
-                    projectRoot += "\\" + this.name;
+                    folderPath += "\\" + this.name;
                 }
 
-                if (!fs.exists(projectRoot)) {
+                if (!fs.exists(folderPath)) {
                     let mkDir = new Promise((resolve, reject) => {
-                        fs.mkdir(projectRoot, (err) => {
+                        fs.mkdir(folderPath, (err) => {
                             if (err) {
                                 reject(GenerationStatus.UnknownError);
                             }
@@ -65,7 +66,7 @@ export default class ProjectFileDescription {
                     });
 
                     return mkDir.then(
-                        () => { return this.generateSubItems(projectRoot); },
+                        () => { return this.generateSubItems(folderPath); },
                         () => { return GenerationStatus.UnknownError })
                 }
                 else {
@@ -88,16 +89,6 @@ export default class ProjectFileDescription {
         });
         return GenerationStatus.Succeed;
     }
-
-    // public isValid(): boolean {
-    //     return true; // && subItem isValid
-    // }
-
-
-
-
-
-
 
 
 
@@ -122,33 +113,12 @@ export default class ProjectFileDescription {
         return projectItem;
     }
 
-    public static defineSlotFromObject(slot: Slot, handlers: HandlerContainer): ProjectFileDescription {
-        let projectItem = new ProjectFileDescription();
+    
 
-        // warning separator _ may be contained in the slot name, replace it
-        projectItem.name = `slot_${slot.slotKey.toString()}_${slot.name}`;
-        projectItem.itemType = ProjectItemType.Slot;
-        projectItem.fileType = FileType.Folder;
 
-        projectItem.subItems = ProjectFileDescription.createHandlers(handlers);
 
-        let typeItem = ProjectFileDescription.createType(slot.type);
-        projectItem.subItems.push(typeItem);
 
-        return projectItem;
-    }
-
-    public static defineHandlerFromObject(handler: Handler): ProjectFileDescription {
-        let projectItem = new ProjectFileDescription();
-
-        projectItem.name = `handler_${handler.key}_${handler.filter.signature}_${handler.filter.args.toValueList("-")}`;
-        projectItem.itemType = ProjectItemType.Handler;
-        projectItem.fileType = FileType.File;
-
-        projectItem.content = handler.code;
-
-        return projectItem;
-    }
+    
 
     private static createSlots(slots: Slots, handlers: Handlers): ProjectFileDescription {
         let slotContainer = new ProjectFileDescription();
@@ -169,6 +139,28 @@ export default class ProjectFileDescription {
         slotContainer.subItems = slotItems;
         return slotContainer;
     }
+
+    private static defineSlotFromObject(slot: Slot, handlers: HandlerContainer): ProjectFileDescription {
+        let projectItem = new ProjectFileDescription();
+
+        // warning separator _ may be contained in the slot name, replace it
+        projectItem.name = `slot_${slot.slotKey.toString()}_${slot.name}`;
+        projectItem.itemType = ProjectItemType.Slot;
+        projectItem.fileType = FileType.Folder;
+
+        projectItem.subItems = ProjectFileDescription.createHandlers(handlers);
+
+        let typeItem = ProjectFileDescription.createType(slot.type);
+        projectItem.subItems.push(typeItem);
+
+        return projectItem;
+    }
+
+
+
+
+
+
 
     private static createType(type: Type): ProjectFileDescription {
         let typeObject = new ProjectFileDescription();
@@ -219,6 +211,14 @@ export default class ProjectFileDescription {
         return eventContainer;
     }
 
+
+
+
+
+
+
+
+
     private static createHandlers(handlers: HandlerContainer): ProjectFileDescription[] {
         let handlerItems = new Array<ProjectFileDescription>();
         if (handlers) {
@@ -230,6 +230,17 @@ export default class ProjectFileDescription {
         return handlerItems;
     }
 
+    private static defineHandlerFromObject(handler: Handler): ProjectFileDescription {
+        let projectItem = new ProjectFileDescription();
+
+        projectItem.name = `handler_${handler.key}_${handler.filter.signature}_${handler.filter.args.toValueList("-")}`;
+        projectItem.itemType = ProjectItemType.Handler;
+        projectItem.fileType = FileType.File;
+
+        projectItem.content = handler.code;
+
+        return projectItem;
+    }
 
 
 
@@ -238,8 +249,7 @@ export default class ProjectFileDescription {
 
 
 
-
-    public static async loadProjectFromUri(uri: vscode.Uri): Promise<ProjectFileDescription> {
+    public static async loadProjectFromDisk(uri: vscode.Uri): Promise<ProjectFileDescription> {
         let projectFromUri = await ProjectFileDescription.readFileStats(uri).then(
             async (itemStats) => {
                 let project = new ProjectFileDescription();
@@ -282,51 +292,10 @@ export default class ProjectFileDescription {
         return Promise.all(projectFile);
     }
 
-    private static async loadFileFromDisk(uri: vscode.Uri): Promise<ProjectFileDescription> {
-        let documentpath = uri.path.split("/");
-        let documentName = documentpath[documentpath.length - 1];
 
-        if (documentName.indexOf(".du.json", 0) > -1) {
-            return null;
-        }
 
-        if (documentName.indexOf("handler_", 0) > -1) {
-            let project = new ProjectFileDescription;
 
-            project.itemType = ProjectItemType.Handler;
-            project.name = documentName;
-            project.fileType = FileType.File;
-
-            let content = await ProjectFileDescription.readFile(uri.fsPath);
-
-            console.log(content);
-
-            project.content = content;
-
-            return project;
-        }
-
-        return null;
-    }
-
-    private static async readFile(filename) {
-        return new Promise<string>((resolve, reject) => {
-            let readStream = fs.createReadStream(filename);
-            let chunks = [];
-
-            readStream.on('error', err => {
-                return reject(err);
-            });
-
-            readStream.on('data', chunk => {
-                chunks.push(chunk);
-            });
-
-            readStream.on('close', () => {
-                return resolve(Buffer.concat(chunks).toString());
-            });
-        });
-    }
+    
 
     private static async loadDirectoryFromDisk(uri: vscode.Uri, stats: fs.Stats): Promise<ProjectFileDescription> {
         let project = new ProjectFileDescription;
@@ -364,6 +333,45 @@ export default class ProjectFileDescription {
         return project;
     }
 
+    private static async loadFileFromDisk(uri: vscode.Uri): Promise<ProjectFileDescription> {
+        let documentpath = uri.path.split("/");
+        let documentName = documentpath[documentpath.length - 1];
+
+        if (documentName.indexOf(".du.json", 0) > -1) {
+            return null;
+        }
+
+        if (documentName.indexOf("handler_", 0) > -1) {
+            let project = new ProjectFileDescription;
+
+            project.itemType = ProjectItemType.Handler;
+            project.name = documentName;
+            project.fileType = FileType.File;
+
+            let content = await ProjectFileDescription.readFile(uri.fsPath);
+
+            console.log(content);
+
+            project.content = content;
+
+            return project;
+        }
+
+        return null;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
     public static readFileStats(file: vscode.Uri): Promise<fs.Stats> {
         return new Promise((resolve, reject) => {
             fs.stat(file.fsPath, (err, stats) => {
@@ -386,55 +394,23 @@ export default class ProjectFileDescription {
         });
     }
 
+    private static async readFile(filename: string) {
+        return new Promise<string>((resolve, reject) => {
+            let readStream = fs.createReadStream(filename);
+            let chunks = [];
 
+            readStream.on('error', err => {
+                return reject(err);
+            });
 
+            readStream.on('data', chunk => {
+                chunks.push(chunk);
+            });
 
-
-
-
-
-    // private HOME_DIR = os.homedir();
-
-
-
-    // private getRootPath(): string {
-    //     return vscode.workspace.rootPath || "/";
-    // }
-
-    // private async listDir(dir: string): Promise<vscode.QuickPickItem[]> {
-    //     const list = await this.readdir(dir);
-    //     const ret: vscode.QuickPickItem[] = [
-    //         {
-    //             description: "/",
-    //             label: "/",
-    //         },
-    //         {
-    //             description: path.resolve(dir, ".."),
-    //             label: "..",
-    //         },
-    //         {
-    //             description: this.HOME_DIR,
-    //             label: "~",
-    //         },
-    //     ];
-    //     for (const item of list) {
-    //         const f = path.resolve(dir, item);
-    //         ret.push({
-    //             description: f,
-    //             label: item,
-    //         });
-    //     }
-    //     return ret;
-    // }
-
-    // private fixFilePath(file: string): string {
-    //     if (file.slice(0, 2) === "~/" || file === "~") {
-    //         file = this.HOME_DIR + file.slice(1);
-    //     }
-    //     return file;
-    // }
-
-
-
+            readStream.on('close', () => {
+                return resolve(Buffer.concat(chunks).toString());
+            });
+        });
+    }
 
 }

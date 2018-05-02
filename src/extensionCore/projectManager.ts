@@ -53,7 +53,7 @@ export default class ProjectManager {
     }
 
     public static LoadProject(uri: vscode.Uri): Thenable<DUProject> {
-        return ProjectFileDescription.loadProjectFromUri(uri).then(projectFiles => {
+        return ProjectFileDescription.loadProjectFromDisk(uri).then(projectFiles => {
             return DUProject.LoadFromFiles(projectFiles);
         });
     }

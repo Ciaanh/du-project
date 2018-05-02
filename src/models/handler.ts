@@ -2,6 +2,7 @@
 
 import Filter from './filter'
 import ProjectFileDescription from '../extensionCore/projectFileDescription';
+import ModelHelper from '../extensionCore/modelHelper';
 
 export default class Handler {
     key: string;
@@ -50,33 +51,11 @@ export default class Handler {
         return jsonObject;
     }
 
-
-
-
-    private escapeCodeForPreview() {
-        let htmlEscapes = {
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#x27;',
-            '/': '&#x2F;'
-        };
-
-        let htmlEscaper = /[&<>"'\/]/g;
-
-        return ('' + this.code)
-            .replace(htmlEscaper, function (match) {
-                return htmlEscapes[match];
-            })
-            .replace(/\n/g, '<br/>');
-    }
-
     public toHtml(): string {
         return `<li class="filter">
     ${this.filter.toHtml()} 
     <code class="lua">
-        ${this.escapeCodeForPreview()}
+        ${ModelHelper.escapeCodeForPreview(this.code)}
     </code>
 </li>`;
     }
