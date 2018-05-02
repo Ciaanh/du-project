@@ -26,7 +26,8 @@
                     "dup"
                 ],
                 "extensions": [
-                    ".du.json"
+                    ".du.json",
+                    ".json"
                 ]
             }
         ],
