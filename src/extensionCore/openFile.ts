@@ -1,15 +1,15 @@
 'use strict';
 
 import * as vscode from "vscode";
-import { FileType } from './enums';
+import { DiskItemType } from './enums';
 import ProjectFileDescription from "./projectFileDescription";
 
 
 export class PickResult {
     public readonly item: string;
-    public readonly type: FileType;
+    public readonly type: DiskItemType;
 
-    constructor(item: string, type: FileType) {
+    constructor(item: string, type: DiskItemType) {
         this.item = item;
         this.type = type;
     }

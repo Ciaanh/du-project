@@ -2,7 +2,7 @@
 
 import Event from './event'
 import ProjectFileDescription from '../extensionCore/projectFileDescription';
-import { FileType, ProjectItemType } from '../extensionCore/enums';
+import { DiskItemType, ProjectItemType } from '../extensionCore/enums';
 
 export default class EventContainer {
     private eventList: Array<Event>;
@@ -23,7 +23,7 @@ export default class EventContainer {
         let events = new EventContainer();
 
         files.subItems.forEach(item => {
-            if (item.fileType == FileType.File
+            if (item.diskItemType == DiskItemType.File
                 && item.itemType == ProjectItemType.Event) {
                 events.addEvent(Event.LoadFromFiles(item));
             }

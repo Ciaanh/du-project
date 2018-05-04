@@ -66,4 +66,11 @@ export default class Filter {
 
         return `<span class="event">${filterString} ${argsString}</span>`;
     }
+
+    public toFileContent(): string {
+        return `` +
+            `--slotKey:${this.slotKey}\n` +
+            `--signature:${this.signature}\n` +
+            this.args.toFileContent();
+    }
 }

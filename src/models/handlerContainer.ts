@@ -2,7 +2,7 @@
 
 import Handler from './handler'
 import ProjectFileDescription from '../extensionCore/projectFileDescription';
-import { ProjectItemType, FileType } from '../extensionCore/enums';
+import { ProjectItemType, DiskItemType } from '../extensionCore/enums';
 
 export default class HandlerContainer {
     private handlerList: Array<Handler>;
@@ -15,12 +15,12 @@ export default class HandlerContainer {
         let handlers = new HandlerContainer();
 
         slotContainer.subItems.forEach(slot => {
-            if (slot.fileType == FileType.Folder && slot.itemType == ProjectItemType.Slot) {
+            if (slot.diskItemType == DiskItemType.Folder && slot.itemType == ProjectItemType.Slot) {
                 const slotInfos = slot.name.split("_");
                 const slotKey = Number.parseInt(slotInfos[1]);
 
                 slot.subItems.forEach(subItem => {
-                    if (subItem.fileType == FileType.File && subItem.itemType == ProjectItemType.Handler) {
+                    if (subItem.diskItemType == DiskItemType.File && subItem.itemType == ProjectItemType.Handler) {
                         let newHandler = Handler.LoadFromFiles(subItem, slotKey);
                         if (newHandler) handlers.addHandlerToList(newHandler);
                     }

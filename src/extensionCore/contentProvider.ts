@@ -3,7 +3,7 @@
 import * as vscode from 'vscode';
 import DUProject from './duproject';
 import ProjectManager from './projectManager';
-import { FileType } from './enums';
+import { DiskItemType } from './enums';
 import Configuration from './configuration';
 
 export default class ContentProvider implements vscode.TextDocumentContentProvider {
@@ -14,7 +14,7 @@ export default class ContentProvider implements vscode.TextDocumentContentProvid
     public provideTextDocumentContent(uri: vscode.Uri): string | Thenable<string> {
         let [target, type] = decodeProjectTarget(uri);
 
-        if (type === FileType.File) {
+        if (type === DiskItemType.File) {
             if (target) {
                 let targetUri = vscode.Uri.parse(target);
                 let tDUProject = ProjectManager.LoadJsonURI(targetUri);
@@ -25,7 +25,7 @@ export default class ContentProvider implements vscode.TextDocumentContentProvid
             // else raise error
 
         }
-        else if (type === FileType.Folder) {
+        else if (type === DiskItemType.Folder) {
             if (target) {
                 let targetUri = vscode.Uri.parse(target);
                 let tDUProject = ProjectManager.LoadProject(targetUri);
@@ -37,17 +37,17 @@ export default class ContentProvider implements vscode.TextDocumentContentProvid
         }
     }
 
-    private createPage(project: DUProject, target: string, source: FileType) {
+    private createPage(project: DUProject, target: string, source: DiskItemType) {
         let projectSource: string;
         let generateProjectUri = encodeURI('command:extension.generateProjectOrFile?' + JSON.stringify([project.projectName, target, source]));
         let generateProjectText: string;
 
         switch (source) {
-            case FileType.File:
+            case DiskItemType.File:
                 projectSource = "<h2>Loaded from a .du.json file.</h2>";
                 generateProjectText = "Generate project from this file";
                 break;
-            case FileType.Folder:
+            case DiskItemType.Folder:
                 projectSource = "<h2>Loaded from a project folder.</h2>";
                 generateProjectText = "Generate a json file for the game from this project";
                 break;
@@ -150,16 +150,16 @@ export default class ContentProvider implements vscode.TextDocumentContentProvid
 
 // encode an URI inside an handled preview URI
 export function encodeProjectUri(uri: vscode.Uri): vscode.Uri {
-    const query = JSON.stringify([uri.toString(), FileType.File]);
+    const query = JSON.stringify([uri.toString(), DiskItemType.File]);
     return vscode.Uri.parse(`${ContentProvider.scheme}:Target?${query}`);
 }
 
 export function encodeProjectFolder(uri: vscode.Uri): vscode.Uri {
-    const query = JSON.stringify([uri.toString(), FileType.Folder]);
+    const query = JSON.stringify([uri.toString(), DiskItemType.Folder]);
     return vscode.Uri.parse(`${ContentProvider.scheme}:Target?${query}`);
 }
 
-export function decodeProjectTarget(uri: vscode.Uri): [string, FileType] {
-    let [target, type] = <[string, FileType]>JSON.parse(uri.query);
+export function decodeProjectTarget(uri: vscode.Uri): [string, DiskItemType] {
+    let [target, type] = <[string, DiskItemType]>JSON.parse(uri.query);
     return [target, type];
 }

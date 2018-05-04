@@ -2,7 +2,7 @@
 
 import Arg from './arg'
 import ProjectFileDescription from '../extensionCore/projectFileDescription';
-import { FileType, ProjectItemType } from '../extensionCore/enums';
+import { DiskItemType, ProjectItemType } from '../extensionCore/enums';
 
 export default class ArgContainer {
     private argList: Array<Arg>;
@@ -61,5 +61,9 @@ export default class ArgContainer {
             return arg.value;
         });
         return argValueList.join(separator);
+    }
+
+    public toFileContent(): string {
+        return `--args:${this.toValueList("-")}\n`;
     }
 }

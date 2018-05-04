@@ -3,7 +3,7 @@
 import MethodContainer from "./methodContainer";
 import EventContainer from "./eventContainer";
 import ProjectFileDescription from "../extensionCore/projectFileDescription";
-import { ProjectItemType, FileType } from "../extensionCore/enums";
+import { ProjectItemType, DiskItemType } from "../extensionCore/enums";
 
 export default class Type {
     methods: MethodContainer;
@@ -13,7 +13,7 @@ export default class Type {
         let type = new Type();
 
         files.subItems.forEach(item => {
-            if (item.fileType == FileType.Folder
+            if (item.diskItemType == DiskItemType.Folder
                 && item.itemType == ProjectItemType.MethodContainer
                 && !type.methods) {
                 type.methods = MethodContainer.LoadFromFiles(item);
@@ -22,7 +22,7 @@ export default class Type {
                 // error type already defined
             }
 
-            if (item.fileType == FileType.Folder
+            if (item.diskItemType == DiskItemType.Folder
                 && item.itemType == ProjectItemType.EventContainer
                 && !type.events) {
                 type.events = EventContainer.LoadFromFiles(item);

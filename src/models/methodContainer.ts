@@ -2,7 +2,7 @@
 
 import Method from './method'
 import ProjectFileDescription from '../extensionCore/projectFileDescription';
-import { FileType, ProjectItemType } from '../extensionCore/enums';
+import { DiskItemType, ProjectItemType } from '../extensionCore/enums';
 
 export default class MethodContainer {
     private methodList: Array<Method>;
@@ -23,7 +23,7 @@ export default class MethodContainer {
         let methods = new MethodContainer();
 
         files.subItems.forEach(item => {
-            if (item.fileType == FileType.File
+            if (item.diskItemType == DiskItemType.File
                 && item.itemType == ProjectItemType.Method) {
                 methods.addMethod(Method.LoadFromFiles(item));
             }

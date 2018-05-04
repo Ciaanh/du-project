@@ -59,5 +59,9 @@ export default class Handler {
     </code>
 </li>`;
     }
+
+    public toFileContent(): string {
+        return this.filter.toFileContent() + this.code;
+    }
 }
 

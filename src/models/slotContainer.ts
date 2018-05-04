@@ -4,7 +4,7 @@ import * as vscode from 'vscode';
 import Slot from './slot'
 import Handlers from './handlerContainer';
 import ProjectFileDescription from '../extensionCore/projectFileDescription';
-import { FileType, ProjectItemType } from '../extensionCore/enums';
+import { DiskItemType, ProjectItemType } from '../extensionCore/enums';
 
 export default class SlotContainer {
     private slot_3: Slot;
@@ -24,7 +24,7 @@ export default class SlotContainer {
     public static LoadFromFiles(files: ProjectFileDescription): SlotContainer {
         let slots = new SlotContainer();
         files.subItems.forEach(slotDescription => {
-            if (slotDescription.fileType == FileType.Folder && slotDescription.itemType == ProjectItemType.Slot) {
+            if (slotDescription.diskItemType == DiskItemType.Folder && slotDescription.itemType == ProjectItemType.Slot) {
                 const slotInfos = slotDescription.name.split("_");
                 const slotIndex = Number.parseInt(slotInfos[1]);
                 const slotName = slotInfos[2];

@@ -4,7 +4,7 @@ import Type from "./type";
 import Handler from "./handler";
 import HandlerContainer from "./handlerContainer";
 import ProjectFileDescription from "../extensionCore/projectFileDescription";
-import { FileType, ProjectItemType } from "../extensionCore/enums";
+import { DiskItemType, ProjectItemType } from "../extensionCore/enums";
 
 export default class Slot {
     name: string;
@@ -18,7 +18,7 @@ export default class Slot {
         slot.name = slotName;
 
         files.subItems.forEach(item => {
-            if (item.fileType == FileType.Folder
+            if (item.diskItemType == DiskItemType.Folder
                 && item.itemType == ProjectItemType.Type
                 && !slot.type) {
                 slot.type = Type.LoadFromFiles(item);

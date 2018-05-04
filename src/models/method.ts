@@ -7,9 +7,10 @@ import ProjectFileDescription from "../extensionCore/projectFileDescription";
 export default class Method {
     signature: string;
     code: string;
-    
+
     public static LoadFromFiles(files: ProjectFileDescription): Method {
         let method = new Method();
+        throw new Error("Method not implemented.");
         return method;
     }
 
@@ -27,7 +28,7 @@ export default class Method {
         return method;
     }
 
-    public toJsonObject(): any { 
+    public toJsonObject(): any {
         let jsonObject = {
             "code": this.code,
             "signature": this.signature,
@@ -38,5 +39,9 @@ export default class Method {
     public toHtml(): string {
 
         return `WIP ${ModelHelper.escapeCodeForPreview(this.code)}`;
+    }
+
+    public toFileContent(): string {
+        return `--signature:${this.signature}\n` + this.code;
     }
 }

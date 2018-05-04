@@ -4,7 +4,7 @@ import { window, commands, Disposable, ExtensionContext, StatusBarAlignment, Sta
 import ProjectManager from './extensionCore/projectManager';
 import ContentProvider, { encodeProjectUri, encodeProjectFolder } from './extensionCore/contentProvider';
 import ProjectPicker from './extensionCore/openFile';
-import { FileType } from './extensionCore/enums';
+import { DiskItemType } from './extensionCore/enums';
 import ProjectFileDescription from './extensionCore/projectFileDescription';
 import Configuration from './extensionCore/configuration';
 
@@ -88,10 +88,10 @@ export function activate(context: ExtensionContext) {
     });
 
     // internal command extension.generateProjectOrFile called from preview to generate project or json
-    let disposableGenerate = commands.registerCommand('extension.generateProjectOrFile', (projectName: string, target: string, source: FileType) => {
+    let disposableGenerate = commands.registerCommand('extension.generateProjectOrFile', (projectName: string, target: string, source: DiskItemType) => {
         console.log('launched generate command');
 
-        if (source === FileType.File) {
+        if (source === DiskItemType.File) {
             if (target) {
                 let targetUri = Uri.parse(target);
                 let tDUProject = ProjectManager.LoadJsonURI(targetUri);
@@ -101,7 +101,7 @@ export function activate(context: ExtensionContext) {
                 });
             }
         }
-        else if (source === FileType.Folder) {
+        else if (source === DiskItemType.Folder) {
             if (target) {
                 let targetUri = Uri.parse(target);
                 let tDUProject = ProjectManager.LoadProject(targetUri);

@@ -2,7 +2,7 @@
 
 import * as vscode from 'vscode';
 import * as fs from "fs";
-import { FileType, ProjectItemType, GenerationStatus } from './enums'
+import { DiskItemType, ProjectItemType, GenerationStatus, FileType } from './enums'
 import DUProject from './duproject';
 import Slots from '../models/slotContainer';
 import Handlers from '../models/handlerContainer';
@@ -15,26 +15,27 @@ import Type from '../models/type';
 
 
 export default class ProjectFileDescription {
-
-    public fileType: FileType;
+    public diskItemType: DiskItemType;
     public itemType: ProjectItemType;
     public name: string;
 
     // only if fileType == file
     public content: string;
+    public fileType: FileType;
+
 
     public subItems: ProjectFileDescription[];
 
     constructor() {
         this.itemType = ProjectItemType.Empty;
-        this.fileType = FileType.Undefined;
+        this.diskItemType = DiskItemType.Undefined;
         this.subItems = new Array<ProjectFileDescription>();
     }
 
     public generate(root: string): GenerationStatus | Thenable<GenerationStatus> {
         let projectRoot = root;
-        switch (this.fileType) {
-            case FileType.File:
+        switch (this.diskItemType) {
+            case DiskItemType.File:
                 let filePath = projectRoot + "\\" + this.name + ".lua";
                 if (!fs.exists(filePath)) {
                     let writeStream = fs.createWriteStream(filePath);
@@ -46,7 +47,7 @@ export default class ProjectFileDescription {
                     return GenerationStatus.Succeed
                 }
                 return GenerationStatus.ElementAlreadyExists;
-            case FileType.Folder:
+            case DiskItemType.Folder:
                 let folderPath;
                 if (this.itemType == ProjectItemType.Root) {
                     folderPath += "\\du_" + this.name;
@@ -104,7 +105,7 @@ export default class ProjectFileDescription {
 
         projectItem.name = project.projectName;
         projectItem.itemType = ProjectItemType.Root;
-        projectItem.fileType = FileType.Folder;
+        projectItem.diskItemType = DiskItemType.Folder;
         projectItem.subItems = new Array<ProjectFileDescription>();
         projectItem.subItems.push(ProjectFileDescription.createSlots(project.slots, project.handlers));
         projectItem.subItems.push(ProjectFileDescription.createMethods(project.methods.getMethods()));
@@ -113,18 +114,20 @@ export default class ProjectFileDescription {
         return projectItem;
     }
 
-    
 
 
 
 
-    
+
+
+
+
 
     private static createSlots(slots: Slots, handlers: Handlers): ProjectFileDescription {
         let slotContainer = new ProjectFileDescription();
         slotContainer.itemType = ProjectItemType.Slot;
         slotContainer.name = "Slots";
-        slotContainer.fileType = FileType.Folder;
+        slotContainer.diskItemType = DiskItemType.Folder;
 
         let slotItems = new Array<ProjectFileDescription>();
         if (slots) {
@@ -132,8 +135,6 @@ export default class ProjectFileDescription {
                 let slotHandlers = handlers.getHandlersBySlotKey(slot.slotKey);
                 let item = ProjectFileDescription.defineSlotFromObject(slot, slotHandlers);
                 slotItems.push(item);
-
-
             });
         }
         slotContainer.subItems = slotItems;
@@ -146,7 +147,7 @@ export default class ProjectFileDescription {
         // warning separator _ may be contained in the slot name, replace it
         projectItem.name = `slot_${slot.slotKey.toString()}_${slot.name}`;
         projectItem.itemType = ProjectItemType.Slot;
-        projectItem.fileType = FileType.Folder;
+        projectItem.diskItemType = DiskItemType.Folder;
 
         projectItem.subItems = ProjectFileDescription.createHandlers(handlers);
 
@@ -162,11 +163,14 @@ export default class ProjectFileDescription {
 
 
 
+
+
+
     private static createType(type: Type): ProjectFileDescription {
         let typeObject = new ProjectFileDescription();
         typeObject.itemType = ProjectItemType.Type;
         typeObject.name = "Type";
-        typeObject.fileType = FileType.Folder;
+        typeObject.diskItemType = DiskItemType.Folder;
 
         let subItems = new Array<ProjectFileDescription>();
         if (type) {
@@ -177,28 +181,59 @@ export default class ProjectFileDescription {
         return typeObject;
     }
 
+
+
+
+
+
+
+
+
+
+
     private static createMethods(methods: Method[]): ProjectFileDescription {
         let methodContainer = new ProjectFileDescription();
-        methodContainer.itemType = ProjectItemType.Method;
+        methodContainer.itemType = ProjectItemType.MethodContainer;
         methodContainer.name = "Methods";
-        methodContainer.fileType = FileType.Folder;
+        methodContainer.diskItemType = DiskItemType.Folder;
 
         let methodItems = new Array<ProjectFileDescription>();
         if (methods) {
-            methods.forEach(handler => {
-                // do something
-                throw new Error("Method not implemented.");
+            methods.forEach((method, index) => {
+                let item = ProjectFileDescription.defineMethodFromObject(method, index);
+                methodItems.push(item);
             });
         }
         methodContainer.subItems = methodItems;
         return methodContainer;
     }
 
+    private static defineMethodFromObject(method: Method, index: Number): ProjectFileDescription {
+        let projectItem = new ProjectFileDescription();
+
+        projectItem.name = `method_${index}`;
+        projectItem.itemType = ProjectItemType.Method;
+        projectItem.diskItemType = DiskItemType.File;
+        projectItem.fileType = FileType.Lua;
+
+        projectItem.content = method.toFileContent();
+
+        return projectItem;
+    }
+
+
+
+
+
+
+
+
+
     private static createEvents(events: Event[]): ProjectFileDescription {
         let eventContainer = new ProjectFileDescription();
-        eventContainer.itemType = ProjectItemType.Event;
+        eventContainer.itemType = ProjectItemType.EventContainer;
         eventContainer.name = "Events";
-        eventContainer.fileType = FileType.Folder;
+        eventContainer.diskItemType = DiskItemType.Folder;
 
         let eventItems = new Array<ProjectFileDescription>();
         if (events) {
@@ -210,6 +245,20 @@ export default class ProjectFileDescription {
         eventContainer.subItems = eventItems;
         return eventContainer;
     }
+
+    private static defineEventFromObject(event: Event): ProjectFileDescription {
+        let projectItem = new ProjectFileDescription();
+
+        projectItem.name = `event`;
+        projectItem.itemType = ProjectItemType.Event;
+        projectItem.diskItemType = DiskItemType.File;
+        projectItem.fileType = FileType.List;
+
+        projectItem.content = event.toFileContent();
+
+        return projectItem;
+    }
+
 
 
 
@@ -233,14 +282,17 @@ export default class ProjectFileDescription {
     private static defineHandlerFromObject(handler: Handler): ProjectFileDescription {
         let projectItem = new ProjectFileDescription();
 
-        projectItem.name = `handler_${handler.key}_${handler.filter.signature}_${handler.filter.args.toValueList("-")}`;
+        projectItem.name = `handler_${handler.key}`;
         projectItem.itemType = ProjectItemType.Handler;
-        projectItem.fileType = FileType.File;
+        projectItem.diskItemType = DiskItemType.File;
+        projectItem.fileType = FileType.Lua;
 
-        projectItem.content = handler.code;
+        projectItem.content = handler.toFileContent();
 
         return projectItem;
     }
+
+
 
 
 
@@ -260,7 +312,7 @@ export default class ProjectFileDescription {
 
                     project.name = projectName;
                     project.itemType = ProjectItemType.Root;
-                    project.fileType = FileType.Folder;
+                    project.diskItemType = DiskItemType.Folder;
 
                     let subItems = await ProjectFileDescription.loadSubitemsFromDisk(uri);
                     project.subItems.push(...subItems);
@@ -295,7 +347,11 @@ export default class ProjectFileDescription {
 
 
 
-    
+
+
+
+
+
 
     private static async loadDirectoryFromDisk(uri: vscode.Uri, stats: fs.Stats): Promise<ProjectFileDescription> {
         let project = new ProjectFileDescription;
@@ -325,7 +381,7 @@ export default class ProjectFileDescription {
         }
 
         project.name = directoryName;
-        project.fileType = FileType.Folder;
+        project.diskItemType = DiskItemType.Folder;
 
         let subItems = await ProjectFileDescription.loadSubitemsFromDisk(uri);
         project.subItems.push(...subItems);
@@ -346,7 +402,7 @@ export default class ProjectFileDescription {
 
             project.itemType = ProjectItemType.Handler;
             project.name = documentName;
-            project.fileType = FileType.File;
+            project.diskItemType = DiskItemType.File;
 
             let content = await ProjectFileDescription.readFile(uri.fsPath);
 

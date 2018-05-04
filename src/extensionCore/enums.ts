@@ -1,12 +1,17 @@
 'use strict';
 
-export enum FileType{
+export enum DiskItemType {
     File,
     Folder,
     Undefined
 }
 
-export enum ProjectItemType{
+export enum FileType {
+    Lua,
+    List
+}
+
+export enum ProjectItemType {
     Root,
     Slot,
     Handler,
@@ -19,7 +24,7 @@ export enum ProjectItemType{
     Empty
 }
 
-export enum GenerationStatus{
+export enum GenerationStatus {
     Succeed,
     ProjectAlreadyExists,
     ElementAlreadyExists,
