@@ -2,7 +2,7 @@
     "name": "du-project",
     "displayName": "DU Project",
     "description": "Manage projects for Dual Universe scripts.",
-    "version": "0.184.1",
+    "version": "0.185.1",
     "publisher": "Ciaanh",
     "license": "MIT",
     "engines": {
@@ -26,7 +26,6 @@
                     "dup"
                 ],
                 "extensions": [
-                    ".du.json",
                     ".json"
                 ]
             }

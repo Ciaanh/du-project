@@ -144,6 +144,6 @@ export default class SlotContainer {
             slotsString += slotString;
         });
 
-        return `<ul class="slots">${slotsString}</ul>`;;
+        return `<h3>Slots</h3><ul class="slots">${slotsString}</ul><br/>`;
     }
 }

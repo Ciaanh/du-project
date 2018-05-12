@@ -1,6 +1,6 @@
 'use strict';
 
-export default class ModelHelper{
+export default class ModelHelper {
 
     public static escapeCodeForPreview(code) {
         let htmlEscapes = {

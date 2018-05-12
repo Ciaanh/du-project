@@ -37,8 +37,16 @@ export default class Method {
     }
 
     public toHtml(): string {
+        let methodString =
+            `<li class="method">
+    <span class="signature">${this.signature}</span> 
+    <code class="lua">
+        ${ModelHelper.escapeCodeForPreview(this.code)}
+    </code>
+</li>`;
 
-        return `WIP ${ModelHelper.escapeCodeForPreview(this.code)}`;
+
+        return methodString;
     }
 
     public toFileContent(): string {

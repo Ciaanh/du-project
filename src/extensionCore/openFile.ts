@@ -43,12 +43,12 @@ export default class ProjectPicker {
     }
 
     private listDirectoryFiles(): Thenable<vscode.QuickPickItem[]> {
-        let results = vscode.workspace.findFiles('**/*.du.json');
+        let results = vscode.workspace.findFiles('**/*.json');
 
         return results.then((items) => {
             return items.map<vscode.QuickPickItem>((value) => {
                 let valuePath = value.path.split("/");
-                let projectJsonName = valuePath[valuePath.length - 1].replace(".du.json", "");
+                let projectJsonName = valuePath[valuePath.length - 1].replace(".json", "");
 
                 return {
                     description: value.toString(),
@@ -85,7 +85,7 @@ export default class ProjectPicker {
         const elements = await ProjectFileDescription.readDirectory(folderUri)
 
         const refinedElements = await Promise.all(elements.map(async element => {
-            let elementUri = vscode.Uri.parse(folderUri.fsPath + "\\" + element);
+            let elementUri = vscode.Uri.file(folderUri.fsPath + "\\" + element);
 
             const stats = await ProjectFileDescription.readFileStats(elementUri);
             if (stats.isDirectory()) {

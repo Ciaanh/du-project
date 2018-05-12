@@ -12,6 +12,8 @@ import Event from '../models/event';
 import Slot from '../models/slot';
 import Handler from '../models/handler';
 import Type from '../models/type';
+import EventContainer from '../models/eventContainer';
+import ModelHelper from './modelHelper';
 
 
 export default class ProjectFileDescription {
@@ -36,7 +38,14 @@ export default class ProjectFileDescription {
         let projectRoot = root;
         switch (this.diskItemType) {
             case DiskItemType.File:
-                let filePath = projectRoot + "\\" + this.name + ".lua";
+
+                let filePath = projectRoot + "\\" + this.name
+
+                if (this.fileType == FileType.List) { filePath += ".list"; }
+                else if (this.fileType == FileType.Lua) { filePath += ".lua"; }
+
+                //console.log('-- generating file: ' + filePath);
+
                 if (!fs.exists(filePath)) {
                     let writeStream = fs.createWriteStream(filePath);
                     writeStream.write(this.content, () => {
@@ -48,13 +57,15 @@ export default class ProjectFileDescription {
                 }
                 return GenerationStatus.ElementAlreadyExists;
             case DiskItemType.Folder:
-                let folderPath;
+                let folderPath = projectRoot;
                 if (this.itemType == ProjectItemType.Root) {
                     folderPath += "\\du_" + this.name;
                 }
                 else {
                     folderPath += "\\" + this.name;
                 }
+
+                //console.log(' generating folder: ' + folderPath);
 
                 if (!fs.exists(folderPath)) {
                     let mkDir = new Promise((resolve, reject) => {
@@ -109,7 +120,7 @@ export default class ProjectFileDescription {
         projectItem.subItems = new Array<ProjectFileDescription>();
         projectItem.subItems.push(ProjectFileDescription.createSlots(project.slots, project.handlers));
         projectItem.subItems.push(ProjectFileDescription.createMethods(project.methods.getMethods()));
-        projectItem.subItems.push(ProjectFileDescription.createEvents(project.events.getEvents()));
+        projectItem.subItems.push(ProjectFileDescription.createEvents(project.events));
 
         return projectItem;
     }
@@ -175,7 +186,7 @@ export default class ProjectFileDescription {
         let subItems = new Array<ProjectFileDescription>();
         if (type) {
             subItems.push(ProjectFileDescription.createMethods(type.methods.getMethods()));
-            subItems.push(ProjectFileDescription.createEvents(type.events.getEvents()));
+            subItems.push(ProjectFileDescription.createEvents(type.events));
         }
         typeObject.subItems = subItems;
         return typeObject;
@@ -229,7 +240,7 @@ export default class ProjectFileDescription {
 
 
 
-    private static createEvents(events: Event[]): ProjectFileDescription {
+    private static createEvents(events: EventContainer): ProjectFileDescription {
         let eventContainer = new ProjectFileDescription();
         eventContainer.itemType = ProjectItemType.EventContainer;
         eventContainer.name = "Events";
@@ -237,24 +248,22 @@ export default class ProjectFileDescription {
 
         let eventItems = new Array<ProjectFileDescription>();
         if (events) {
-            events.forEach(handler => {
-                // do something
-                throw new Error("Method not implemented.");
-            });
+            let item = ProjectFileDescription.defineEventListFromObject(events.toFileContent());
+            eventItems.push(item);
         }
         eventContainer.subItems = eventItems;
         return eventContainer;
     }
 
-    private static defineEventFromObject(event: Event): ProjectFileDescription {
+    private static defineEventListFromObject(content: string): ProjectFileDescription {
         let projectItem = new ProjectFileDescription();
 
-        projectItem.name = `event`;
+        projectItem.name = `eventList`;
         projectItem.itemType = ProjectItemType.Event;
         projectItem.diskItemType = DiskItemType.File;
         projectItem.fileType = FileType.List;
 
-        projectItem.content = event.toFileContent();
+        projectItem.content = content;
 
         return projectItem;
     }
@@ -393,13 +402,14 @@ export default class ProjectFileDescription {
         let documentpath = uri.path.split("/");
         let documentName = documentpath[documentpath.length - 1];
 
-        if (documentName.indexOf(".du.json", 0) > -1) {
+        if (documentName.indexOf(".json", 0) > -1) {
             return null;
         }
 
         if (documentName.indexOf("handler_", 0) > -1) {
             let project = new ProjectFileDescription;
 
+            project.fileType = FileType.Lua;
             project.itemType = ProjectItemType.Handler;
             project.name = documentName;
             project.diskItemType = DiskItemType.File;
@@ -408,6 +418,36 @@ export default class ProjectFileDescription {
 
             console.log(content);
 
+            project.content = content;
+
+            return project;
+        }
+
+        if (documentName.indexOf("method_", 0) > -1) {
+            let project = new ProjectFileDescription;
+
+            project.fileType = FileType.Lua;
+            project.itemType = ProjectItemType.Method;
+            project.name = documentName;
+            project.diskItemType = DiskItemType.File;
+
+            let content = await ProjectFileDescription.readFile(uri.fsPath);
+            console.log(content);
+            project.content = content;
+
+            return project;
+        }
+
+        if (documentName.indexOf("eventList", 0) > -1) {
+            let project = new ProjectFileDescription;
+
+            project.fileType = FileType.List;
+            project.itemType = ProjectItemType.Event;
+            project.name = documentName;
+            project.diskItemType = DiskItemType.File;
+
+            let content = await ProjectFileDescription.readFile(uri.fsPath);
+            console.log(content);
             project.content = content;
 
             return project;

@@ -3,7 +3,7 @@
 import ProjectFileDescription from "../extensionCore/projectFileDescription";
 
 export default class Event {
-    events: Array<string>;
+    signature: string;
 
     public static LoadFromFiles(files: ProjectFileDescription): Event {
         let event = new Event();
@@ -11,8 +11,9 @@ export default class Event {
         return event;
     }
 
-    public static LoadFromJson(eventFromJson: any): Event {
+    public static LoadFromJson(eventFromJson: string): Event {
         let event = new Event();
+        event.signature = eventFromJson;
         return event;
     }
 
@@ -21,14 +22,15 @@ export default class Event {
     }
 
     public toHtml(): string {
-        return "";
-    }
+        let eventString =
+            `<li class="event">
+<span class="signature">${this.signature}</span> 
+</li>`;
 
-    private toValueList(separator: string): string {
-        return this.events.join(separator);
+        return eventString;
     }
 
     public toFileContent(): string {
-        return this.toValueList("\n");
+        return this.signature;
     }
 }

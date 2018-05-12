@@ -76,6 +76,6 @@ export default class HandlerContainer {
         this.handlerList.forEach(handler => {
             handlersString += handler.toHtml();
         });
-        return `<ul class="filters">${handlersString}</ul>`;
+        return `<h3>Handlers</h3><ul class="filters">${handlersString}</ul>`;
     }
 }

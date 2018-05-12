@@ -54,6 +54,14 @@ export default class EventContainer {
         this.eventList.forEach(event => {
             eventsString += event.toHtml();
         });
-        return eventsString;
+        
+        return `<h3>Events</h3><ul class="events">${eventsString}</ul><br/>`;
     }
+
+    public toFileContent(): string {
+        return this.eventList.map((value) => {
+            return value.toFileContent();
+        }).join("\n");
+    }
+
 }

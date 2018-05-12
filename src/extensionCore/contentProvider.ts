@@ -44,7 +44,7 @@ export default class ContentProvider implements vscode.TextDocumentContentProvid
 
         switch (source) {
             case DiskItemType.File:
-                projectSource = "<h2>Loaded from a .du.json file.</h2>";
+                projectSource = "<h2>Loaded from a .json file.</h2>";
                 generateProjectText = "Generate project from this file";
                 break;
             case DiskItemType.Folder:
@@ -118,6 +118,10 @@ export default class ContentProvider implements vscode.TextDocumentContentProvid
         font-style: italic
     }
 
+    .signature{
+
+    }
+    
     .action{
 
     }
@@ -134,7 +138,29 @@ export default class ContentProvider implements vscode.TextDocumentContentProvid
 
     }
 
+    .events li {
+        list-style: none;
+        padding: 3px;
+        margin: 2px;
+        background-color: #444;
+    }
+
+    .event{
+
+    }
+
     .methods{
+
+    }
+
+    .methods li {
+        list-style: none;
+        padding: 3px;
+        margin: 2px;
+        background-color: #444;
+    }
+
+    .method{
 
     }
 </style>`;

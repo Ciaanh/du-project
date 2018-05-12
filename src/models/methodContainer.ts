@@ -54,6 +54,7 @@ export default class MethodContainer {
         this.methodList.forEach(method => {
             methodsString += method.toHtml();
         });
-        return methodsString;
+
+        return `<h3>Methods</h3><ul class="methods">${methodsString}</ul><br/>`;
     }
 }

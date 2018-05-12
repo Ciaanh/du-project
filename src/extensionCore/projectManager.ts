@@ -20,7 +20,7 @@ export default class ProjectManager {
     public static GenerateJson(jsonObject: any, projectName: string, targetUri: vscode.Uri): boolean {
         let jsonString = JSON.stringify(jsonObject);
 
-        const jsonFilename = projectName + '.du.json';
+        const jsonFilename = projectName + '.json';
 
         let filePath = targetUri.fsPath + "\\" + jsonFilename;
         if (!fs.exists(filePath)) {
@@ -74,7 +74,7 @@ export default class ProjectManager {
             let documentContent = textDocument.getText();
 
             let documentpath = textDocument.uri.path.split("/");
-            let projectJsonName = documentpath[documentpath.length - 1].replace(".du.json", "");
+            let projectJsonName = documentpath[documentpath.length - 1].replace(".json", "");
 
             let project = DUProject.LoadFromJson(projectJsonName, documentContent);
 

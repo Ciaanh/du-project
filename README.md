@@ -9,7 +9,7 @@ There is a trello available to notify Bugs and Ideas: https://trello.com/b/Dnl4f
 This extension is to be used to make it easier to manage code projects for Dual Universe outside of the game.
 Using the built-in command we can display an HTML preview of Json files exported from the game, create projects folders and then recompile the project to Json in order to import it back into the game.
 
-The files containing the code from the game should be named \<_`projectName`_\>**_`.du.json`_**
+The files containing the code from the game should be named \<_`projectName`_\>**_`.json`_**
 
 The folders containing the generated project with each .lua files are named **_`du_`_**\<`projectName`\>
 
@@ -53,9 +53,13 @@ The **method** and **event** object are not defined yet, if the Json you try to 
 
 ### 0.184.1 alpha version
 
+Bug fixes and file naming improvement.
+
+### 0.184.1 alpha version
+
 Initial release of the DU Project extension, include :
 
-* Preview of Json exported from the game as HTML, files must be name with **_.du.json_** extension, use command **_previewDUFile_** 
+* Preview of Json exported from the game as HTML, files must be name with **_.json_** extension, use command **_previewDUFile_** 
 
 * Generate project from the preview of a file, will create a folder named **du_projectName** which contains all the lua as separate files named depending on the slot and filter (link in the preview page for the file)
 
@@ -64,6 +68,7 @@ Initial release of the DU Project extension, include :
 * Compile the project folder as a Json file in order to import it in game (link in the preview page for the folder)
 
 * Public release on Github and publication on VS Code marketplace
+
 
 
 **Enjoy!**
