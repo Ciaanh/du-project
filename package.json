@@ -6,7 +6,7 @@
     "publisher": "Ciaanh",
     "license": "MIT",
     "engines": {
-        "vscode": "^1.19.0"
+        "vscode": "^1.31.0"
     },
     "categories": [
         "Other"
