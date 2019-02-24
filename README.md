@@ -51,11 +51,11 @@ The **method** and **event** object are not defined yet, if the Json you try to 
 
 ## Release Notes
 
-### 0.184.1 alpha version
+### 0.1903.1 alpha version
 
 Bug fixes and file naming improvement.
 
-### 0.184.1 alpha version
+### 0.1804.1 alpha version
 
 Initial release of the DU Project extension, include :
 
