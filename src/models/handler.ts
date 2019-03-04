@@ -13,9 +13,9 @@ export default class Handler {
         let handler = new Handler();
 
         const handlerInfos = handlerFileInfo.name.replace('.lua', '').split("_");
-        const handlerKey = handlerInfos[1];
-        const filterSignature = handlerInfos[2];
-        const filterArgs = handlerInfos[3];
+        const handlerKey = handlerInfos[2];
+        const filterSignature = handlerInfos[3];
+        const filterArgs = handlerInfos[4];
 
         handler.code = handlerFileInfo.content.replace(/\r/g, '\n');
         handler.key = handlerKey;
@@ -62,6 +62,10 @@ export default class Handler {
 
     public toFileContent(): string {
         return this.filter.toFileContent() + this.code;
+    }
+
+    public getSignature(): string {
+        return this.filter.signature;
     }
 }
 

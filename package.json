@@ -82,7 +82,7 @@
     "extensionDependencies": [],
     "devDependencies": {
         "typescript": "^2.6.1",
-        "vscode": "^1.1.10",
+        "vscode": "^1.1.30",
         "@types/node": "^7.0.43"
     },
     "dependencies": {}
