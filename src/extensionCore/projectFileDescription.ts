@@ -46,15 +46,17 @@ export default class ProjectFileDescription {
 
                 //console.log('-- generating file: ' + filePath);
 
-                if (!fs.exists(filePath)) {
-                    let writeStream = fs.createWriteStream(filePath);
-                    writeStream.write(this.content, () => {
-                        writeStream.end(() => {
-                            writeStream.close();
+                fs.exists(filePath, (exists) => {
+                    if (!exists) {
+                        let writeStream = fs.createWriteStream(filePath);
+                        writeStream.write(this.content, () => {
+                            writeStream.end(() => {
+                                writeStream.close();
+                            });
                         });
-                    });
-                    return GenerationStatus.Succeed
-                }
+                        return GenerationStatus.Succeed
+                    }
+                })
                 return GenerationStatus.ElementAlreadyExists;
             case DiskItemType.Folder:
                 let folderPath = projectRoot;
@@ -67,26 +69,29 @@ export default class ProjectFileDescription {
 
                 //console.log(' generating folder: ' + folderPath);
 
-                if (!fs.exists(folderPath)) {
-                    let mkDir = new Promise((resolve, reject) => {
-                        fs.mkdir(folderPath, (err) => {
-                            if (err) {
-                                reject(GenerationStatus.UnknownError);
-                            }
-                            resolve(GenerationStatus.Succeed);
-                        })
-                    });
+                fs.exists(folderPath, (exists) => {
+                    if (!exists) {
+                        let mkDir = new Promise((resolve, reject) => {
+                            fs.mkdir(folderPath, (err) => {
+                                if (err) {
+                                    reject(GenerationStatus.UnknownError);
+                                }
+                                resolve(GenerationStatus.Succeed);
+                            })
+                        });
 
-                    return mkDir.then(
-                        () => { return this.generateSubItems(folderPath); },
-                        () => { return GenerationStatus.UnknownError })
-                }
-                else {
-                    if (this.itemType == ProjectItemType.Root) {
-                        return GenerationStatus.ProjectAlreadyExists;
+                        return mkDir.then(
+                            () => { return this.generateSubItems(folderPath); },
+                            () => { return GenerationStatus.UnknownError })
                     }
-                    return GenerationStatus.ElementAlreadyExists;
-                }
+                    else {
+                        if (this.itemType == ProjectItemType.Root) {
+                            return GenerationStatus.ProjectAlreadyExists;
+                        }
+                        return GenerationStatus.ElementAlreadyExists;
+                    }
+                })
+
             default:
                 return GenerationStatus.UnknownError;
         }

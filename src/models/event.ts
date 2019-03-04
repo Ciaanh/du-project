@@ -8,7 +8,7 @@ export default class Event {
     public static LoadFromFiles(files: ProjectFileDescription): Event {
         let event = new Event();
         throw new Error("Method not implemented.");
-        return event;
+        //return event;
     }
 
     public static LoadFromJson(eventFromJson: string): Event {

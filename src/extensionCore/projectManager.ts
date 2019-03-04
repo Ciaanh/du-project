@@ -23,15 +23,17 @@ export default class ProjectManager {
         const jsonFilename = projectName + '.json';
 
         let filePath = targetUri.fsPath + "\\" + jsonFilename;
-        if (!fs.exists(filePath)) {
-            let writeStream = fs.createWriteStream(filePath);
-            writeStream.write(jsonString, () => {
-                writeStream.end(() => {
-                    writeStream.close();
+        fs.exists(filePath, (exists) => {
+            if (!exists) {
+                let writeStream = fs.createWriteStream(filePath);
+                writeStream.write(jsonString, () => {
+                    writeStream.end(() => {
+                        writeStream.close();
+                    });
                 });
-            });
-            return true;
-        }
+                return true;
+            }
+        });
 
         return false;
     }

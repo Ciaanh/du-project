@@ -11,7 +11,7 @@ export default class Method {
     public static LoadFromFiles(files: ProjectFileDescription): Method {
         let method = new Method();
         throw new Error("Method not implemented.");
-        return method;
+        //return method;
     }
 
     public static LoadFromJson(methodFromJson: any): Method {
