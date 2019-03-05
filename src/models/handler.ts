@@ -15,7 +15,7 @@ export default class Handler {
         const handlerInfos = handlerFileInfo.name.replace('.lua', '').split("_");
         const handlerKey = handlerInfos[1];
 
-        const content = Handler.GetHandlerContent(handlerFileInfo.content);
+        const content = Handler.GetContent(handlerFileInfo.content);
 
         let filterSignature;
         if (content.hasOwnProperty('signature')) {
@@ -44,7 +44,7 @@ export default class Handler {
         return handler;
     }
 
-    private static GetHandlerContent(handlerContent: string): any {
+    private static GetContent(handlerContent: string): any {
         let code = handlerContent.replace(/\r/g, '\n');
         let content = {};
 

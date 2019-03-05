@@ -8,10 +8,41 @@ export default class Method {
     signature: string;
     code: string;
 
-    public static LoadFromFiles(files: ProjectFileDescription): Method {
+    public static LoadFromFiles(methodFile: ProjectFileDescription): Method {
         let method = new Method();
-        //throw new Error("Method not implemented.");
+        
+        const content = Method.GetContent(methodFile.content);
+
+        if (content.hasOwnProperty('signature')) {
+            method.signature = content["signature"];
+        }
+
+        if (content.hasOwnProperty('code')) {
+            method.code = content["code"];
+        }
+
         return method;
+    }
+
+    private static GetContent(handlerContent: string): any {
+        let code = handlerContent.replace(/\r/g, '\n');
+        let content = {};
+
+        let contentLines = code.split('\n');
+
+        contentLines.forEach(line => {
+            if (line.startsWith("--@")) {
+                code = code.replace(line + "\n", "");
+
+                let lineParam = line.substring(3, line.indexOf(":"));
+                let lineContent = line.substring(line.indexOf(":") + 1);
+
+                content[lineParam] = lineContent;
+            }
+        });
+
+        content["code"] = code;
+        return content;
     }
 
     public static LoadFromJson(methodFromJson: any): Method {
