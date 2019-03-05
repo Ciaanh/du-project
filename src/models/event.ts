@@ -5,10 +5,19 @@ import ProjectFileDescription from "../extensionCore/projectFileDescription";
 export default class Event {
     signature: string;
 
-    public static LoadFromFiles(files: ProjectFileDescription): Event {
-        let event = new Event();
-        throw new Error("Method not implemented.");
-        //return event;
+    public static LoadFromFiles(events: ProjectFileDescription): Event[] {
+        let eventsFromFiles = new Array<Event>();
+
+        let content = events.content.replace(/\r/g, '\n');
+        let eventsContent = content.split('\n');
+
+        eventsContent.forEach(item => {
+            let event = new Event();
+            event.signature = item;
+            eventsFromFiles.push(event);
+        });
+
+        return eventsFromFiles;
     }
 
     public static LoadFromJson(eventFromJson: string): Event {
@@ -18,7 +27,7 @@ export default class Event {
     }
 
     public toJsonObject(): any {
-        throw new Error("Method not implemented.");
+        return this.signature;
     }
 
     public toHtml(): string {

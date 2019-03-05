@@ -10,8 +10,8 @@ export default class Method {
 
     public static LoadFromFiles(files: ProjectFileDescription): Method {
         let method = new Method();
-        throw new Error("Method not implemented.");
-        //return method;
+        //throw new Error("Method not implemented.");
+        return method;
     }
 
     public static LoadFromJson(methodFromJson: any): Method {
@@ -50,6 +50,6 @@ export default class Method {
     }
 
     public toFileContent(): string {
-        return `--signature:${this.signature}\n` + this.code;
+        return `--@signature:${this.signature}\n` + this.code;
     }
 }

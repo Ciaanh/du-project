@@ -16,12 +16,10 @@ export default class HandlerContainer {
 
         slotContainer.subItems.forEach(slot => {
             if (slot.diskItemType == DiskItemType.Folder && slot.itemType == ProjectItemType.Slot) {
-                const slotInfos = slot.name.split("_");
-                const slotKey = Number.parseInt(slotInfos[1]);
 
                 slot.subItems.forEach(subItem => {
                     if (subItem.diskItemType == DiskItemType.File && subItem.itemType == ProjectItemType.Handler) {
-                        let newHandler = Handler.LoadFromFiles(subItem, slotKey);
+                        let newHandler = Handler.LoadFromFiles(subItem);
                         if (newHandler) handlers.addHandlerToList(newHandler);
                     }
                 });

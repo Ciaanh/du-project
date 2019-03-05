@@ -296,10 +296,7 @@ export default class ProjectFileDescription {
     private static defineHandlerFromObject(handler: Handler): ProjectFileDescription {
         let projectItem = new ProjectFileDescription();
 
-        const handlerSignature=handler.getSignature();
-
-
-        projectItem.name = `${handlerSignature}_handler_${handler.key}`;
+        projectItem.name = `handler_${handler.key}`;
         projectItem.itemType = ProjectItemType.Handler;
         projectItem.diskItemType = DiskItemType.File;
         projectItem.fileType = FileType.Lua;

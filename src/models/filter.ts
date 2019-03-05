@@ -69,8 +69,8 @@ export default class Filter {
 
     public toFileContent(): string {
         return `` +
-            `--slotKey:${this.slotKey}\n` +
-            `--signature:${this.signature}\n` +
+            `--@slotKey:${this.slotKey}\n` +
+            `--@signature:${this.signature}\n` +
             this.args.toFileContent();
     }
 }
