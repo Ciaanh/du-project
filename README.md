@@ -51,6 +51,10 @@ The **method** and **event** object are not defined yet, if the Json you try to 
 
 ## Release Notes
 
+### 0.1903.2 alpha version
+
+Fix load project and improve project files using header in lua files instead of filenames.
+
 ### 0.1903.1 alpha version
 
 Bug fixes and file naming improvement.
