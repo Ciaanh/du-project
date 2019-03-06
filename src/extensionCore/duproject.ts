@@ -1,12 +1,15 @@
 'use strict';
 
-import * as vscode from 'vscode';
 import HandlerContainer from '../models/handlerContainer';
 import SlotContainer from '../models/slotContainer';
 import EventContainer from '../models/eventContainer';
 import MethodContainer from '../models/methodContainer';
 import ProjectFileDescription from './projectFileDescription';
 import { ProjectItemType } from './enums';
+import SlotContainerManager from '../managers/slotContainerManager';
+import MethodContainerManager from '../managers/methodContainerManager';
+import EventContainerManager from '../managers/eventContainerManager';
+import HandlerContainerManager from '../managers/handlerContainerManager';
 
 export default class DUProject {
     projectName: string;
@@ -25,14 +28,14 @@ export default class DUProject {
             files.subItems.forEach(item => {
                 switch (item.itemType) {
                     case ProjectItemType.SlotContainer:
-                        project.slots = SlotContainer.LoadFromFiles(item);
-                        project.handlers = HandlerContainer.LoadFromFiles(item);
+                        project.slots = SlotContainerManager.LoadFromFiles(item);
+                        project.handlers = HandlerContainerManager.LoadFromFiles(item);
                         break;
                     case ProjectItemType.EventContainer:
-                        project.events = EventContainer.LoadFromFiles(item);
+                        project.events = EventContainerManager.LoadFromFiles(item);
                         break;
                     case ProjectItemType.MethodContainer:
-                        project.methods = MethodContainer.LoadFromFiles(item);
+                        project.methods = MethodContainerManager.LoadFromFiles(item);
                         break;
                     default:
                         break;
@@ -50,19 +53,19 @@ export default class DUProject {
         let projectAsJson = JSON.parse(projectAsString);
 
         if (projectAsJson.hasOwnProperty('slots')) {
-            project.slots = SlotContainer.LoadFromJson(projectAsJson['slots']);
+            project.slots = SlotContainerManager.LoadFromJson(projectAsJson['slots']);
         }
 
         if (projectAsJson.hasOwnProperty('handlers')) {
-            project.handlers = HandlerContainer.LoadFromJson(projectAsJson['handlers']);
+            project.handlers = HandlerContainerManager.LoadFromJson(projectAsJson['handlers']);
         }
 
         if (projectAsJson.hasOwnProperty('methods')) {
-            project.methods = MethodContainer.LoadFromJson(projectAsJson['methods']);
+            project.methods = MethodContainerManager.LoadFromJson(projectAsJson['methods']);
         }
 
         if (projectAsJson.hasOwnProperty('events')) {
-            project.events = EventContainer.LoadFromJson(projectAsJson['events']);
+            project.events = EventContainerManager.LoadFromJson(projectAsJson['events']);
         }
 
         return project;
@@ -70,18 +73,18 @@ export default class DUProject {
 
     public toJsonObject(): any {
         let jsonObject = {
-            "slots": this.slots.toJsonObject(),
-            "handlers": this.handlers.toJsonObject(),
-            "methods": this.methods.toJsonObject(),
-            "events": this.events.toJsonObject()
+            "slots": SlotContainerManager.toJsonObject(this.slots),
+            "handlers": HandlerContainerManager.toJsonObject(this.handlers),
+            "methods": MethodContainerManager.toJsonObject(this.methods),
+            "events": EventContainerManager.toJsonObject(this.events)
         };
         return jsonObject;
     }
 
     public toHtml(): string {
-        let slotsString = `${this.slots.toHtml(this.handlers)}`;
-        let methodsString = `${this.methods.toHtml()}`;
-        let eventsString = `${this.events.toHtml()}`;
+        let slotsString = `${SlotContainerManager.toHtml(this.slots, this.handlers)}`;
+        let methodsString = `${MethodContainerManager.toHtml(this.methods)}`;
+        let eventsString = `${EventContainerManager.toHtml(this.events)}`;
 
         return `${slotsString} ${methodsString} ${eventsString}`;
     }

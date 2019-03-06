@@ -5,6 +5,7 @@ import { DiskItemType, ProjectItemType } from "../extensionCore/enums";
 import Slot from "../models/slot";
 import HandlerContainer from "../models/handlerContainer";
 import HandlerContainerManager from "./handlerContainerManager";
+import TypeManager from "./typeManager";
 
 export default class SlotManager {
 
@@ -47,7 +48,7 @@ export default class SlotManager {
     public static toJsonObject(slot: Slot): any {
         let jsonObject = {
             "name": slot.name,
-            "type": slot.type.toJsonObject()
+            "type": TypeManager.toJsonObject(slot.type)
         };
         return jsonObject;
     }
@@ -57,7 +58,7 @@ export default class SlotManager {
             `<li class="slot">
     <span class="name">${this.name}</span> 
     ${HandlerContainerManager.toHtml(handlers)}
-    ${slot.type.toHtml()}
+    ${TypeManager.toHtml(slot.type)}
 
 </li>`;
 

@@ -14,6 +14,10 @@ import Handler from '../models/handler';
 import Type from '../models/type';
 import EventContainer from '../models/eventContainer';
 import ModelHelper from './modelHelper';
+import HandlerManager from '../managers/handlerManager';
+import EventManager from '../managers/eventManager';
+import EventContainerManager from '../managers/eventContainerManager';
+import MethodManager from '../managers/methodManager';
 
 
 export default class ProjectFileDescription {
@@ -232,7 +236,7 @@ export default class ProjectFileDescription {
         projectItem.diskItemType = DiskItemType.File;
         projectItem.fileType = FileType.Lua;
 
-        projectItem.content = method.toFileContent();
+        projectItem.content = MethodManager.toFileContent(method);
 
         return projectItem;
     }
@@ -253,7 +257,7 @@ export default class ProjectFileDescription {
 
         let eventItems = new Array<ProjectFileDescription>();
         if (events) {
-            let item = ProjectFileDescription.defineEventListFromObject(events.toFileContent());
+            let item = ProjectFileDescription.defineEventListFromObject(EventContainerManager.toFileContent(events));
             eventItems.push(item);
         }
         eventContainer.subItems = eventItems;
@@ -301,7 +305,7 @@ export default class ProjectFileDescription {
         projectItem.diskItemType = DiskItemType.File;
         projectItem.fileType = FileType.Lua;
 
-        projectItem.content = handler.toFileContent();
+        projectItem.content = HandlerManager.toFileContent(handler);
 
         return projectItem;
     }
