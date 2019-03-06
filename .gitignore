@@ -1,6 +1,10 @@
 out
 node_modules
-.vscode-test/
 .vsix
 *.vsix
+lua project test/du_*
+
+.vscode/**
+.vscode-test/**
+vsc-extension-quickstart.md
 lua project test/du_*
