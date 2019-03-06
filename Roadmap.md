@@ -2,7 +2,9 @@
 
 ## What needs to be done for public release
 
-* Include feedbacks from testers
+* Migrate to webview
+
+* Syntax highlight in preview
 
 * Finish load default workspace from config
 
