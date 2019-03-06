@@ -124,7 +124,7 @@ export default class ProjectFileDescription {
         projectItem.diskItemType = DiskItemType.Folder;
         projectItem.subItems = new Array<ProjectFileDescription>();
         projectItem.subItems.push(ProjectFileDescription.createSlots(project.slots, project.handlers));
-        projectItem.subItems.push(ProjectFileDescription.createMethods(project.methods.getMethods()));
+        projectItem.subItems.push(ProjectFileDescription.createMethods(project.methods.get()));
         projectItem.subItems.push(ProjectFileDescription.createEvents(project.events));
 
         return projectItem;
@@ -148,7 +148,7 @@ export default class ProjectFileDescription {
         let slotItems = new Array<ProjectFileDescription>();
         if (slots) {
             slots.getAllSlots().forEach(slot => {
-                let slotHandlers = handlers.getHandlersBySlotKey(slot.slotKey);
+                let slotHandlers = handlers.getBySlotKey(slot.slotKey);
                 let item = ProjectFileDescription.defineSlotFromObject(slot, slotHandlers);
                 slotItems.push(item);
             });
@@ -190,7 +190,7 @@ export default class ProjectFileDescription {
 
         let subItems = new Array<ProjectFileDescription>();
         if (type) {
-            subItems.push(ProjectFileDescription.createMethods(type.methods.getMethods()));
+            subItems.push(ProjectFileDescription.createMethods(type.methods.get()));
             subItems.push(ProjectFileDescription.createEvents(type.events));
         }
         typeObject.subItems = subItems;
@@ -285,7 +285,7 @@ export default class ProjectFileDescription {
     private static createHandlers(handlers: HandlerContainer): ProjectFileDescription[] {
         let handlerItems = new Array<ProjectFileDescription>();
         if (handlers) {
-            handlers.getHandlerList().forEach(handler => {
+            handlers.get().forEach(handler => {
                 let item = ProjectFileDescription.defineHandlerFromObject(handler);
                 handlerItems.push(item);
             });
