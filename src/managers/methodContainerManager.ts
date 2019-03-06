@@ -4,6 +4,7 @@ import ProjectFileDescription from '../extensionCore/projectFileDescription';
 import { DiskItemType, ProjectItemType } from '../extensionCore/enums';
 import MethodContainer from '../models/methodContainer';
 import MethodManager from './methodManager';
+import Method from '../models/method';
 
 export default class MethodContainerManager {
 
@@ -43,5 +44,22 @@ export default class MethodContainerManager {
         });
 
         return `<h3>Methods</h3><ul class="methods">${methodsString}</ul><br/>`;
+    }
+
+    public static createMethods(methods: Method[]): ProjectFileDescription {
+        let methodContainer = new ProjectFileDescription();
+        methodContainer.itemType = ProjectItemType.MethodContainer;
+        methodContainer.name = "Methods";
+        methodContainer.diskItemType = DiskItemType.Folder;
+
+        let methodItems = new Array<ProjectFileDescription>();
+        if (methods) {
+            methods.forEach((method, index) => {
+                let item = MethodManager.defineMethodFromObject(method, index);
+                methodItems.push(item);
+            });
+        }
+        methodContainer.subItems = methodItems;
+        return methodContainer;
     }
 }

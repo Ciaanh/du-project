@@ -2,6 +2,7 @@
 
 import ProjectFileDescription from "../extensionCore/projectFileDescription";
 import Event from "../models/event";
+import { ProjectItemType, DiskItemType, FileType } from "../extensionCore/enums";
 
 export default class EventManager {
 
@@ -41,5 +42,18 @@ export default class EventManager {
 
     public static toFileContent(event: Event): string {
         return event.signature;
+    }
+
+    public static defineEventListFromObject(content: string): ProjectFileDescription {
+        let projectItem = new ProjectFileDescription();
+
+        projectItem.name = `eventList`;
+        projectItem.itemType = ProjectItemType.Event;
+        projectItem.diskItemType = DiskItemType.File;
+        projectItem.fileType = FileType.List;
+
+        projectItem.content = content;
+
+        return projectItem;
     }
 }

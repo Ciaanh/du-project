@@ -3,6 +3,7 @@
 import ModelHelper from '../extensionCore/modelHelper';
 import ProjectFileDescription from "../extensionCore/projectFileDescription";
 import Method from '../models/method';
+import { ProjectItemType, DiskItemType, FileType } from '../extensionCore/enums';
 
 
 export default class MethodManager {
@@ -81,4 +82,18 @@ export default class MethodManager {
     public static toFileContent(method: Method): string {
         return `--@signature:${method.signature}\n` + method.code;
     }
+
+    public static defineMethodFromObject(method: Method, index: Number): ProjectFileDescription {
+        let projectItem = new ProjectFileDescription();
+
+        projectItem.name = `method_${index}`;
+        projectItem.itemType = ProjectItemType.Method;
+        projectItem.diskItemType = DiskItemType.File;
+        projectItem.fileType = FileType.Lua;
+
+        projectItem.content = MethodManager.toFileContent(method);
+
+        return projectItem;
+    }
+
 }

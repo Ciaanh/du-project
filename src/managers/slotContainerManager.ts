@@ -34,7 +34,10 @@ export default class SlotContainerManager {
     }
 
     public static toJsonObject(slotContainer: SlotContainer): any {
-        let slots = slotContainer.getAllSlots();
+        let slots = slotContainer.getAllSlotsAsObject();
+
+        let tmp1 = slots[-3];
+        let tmp2 = slots["-3"];
 
         let jsonObject = {
             "-3": SlotManager.toJsonObject(slots[-3]),
@@ -57,7 +60,7 @@ export default class SlotContainerManager {
     public static toHtml(slotContainer: SlotContainer, handlers: HandlerContainer) {
         let slotsString = "";
 
-        slotContainer.getAllSlots().forEach(slot => {
+        slotContainer.getAllSlotsAsArray().forEach(slot => {
             let slotHandlers = handlers.getBySlotKey(slot.slotKey);
             let slotString = SlotManager.toHtml(slot, slotHandlers);
             slotsString += slotString;
@@ -81,4 +84,22 @@ export default class SlotContainerManager {
         8,
         9
     ];
+
+    public static createSlots(slots: SlotContainer, handlers: HandlerContainer): ProjectFileDescription {
+        let slotContainer = new ProjectFileDescription();
+        slotContainer.itemType = ProjectItemType.Slot;
+        slotContainer.name = "Slots";
+        slotContainer.diskItemType = DiskItemType.Folder;
+
+        let slotItems = new Array<ProjectFileDescription>();
+        if (slots) {
+            slots.getAllSlotsAsArray().forEach(slot => {
+                let slotHandlers = handlers.getBySlotKey(slot.slotKey);
+                let item = SlotManager.defineSlotFromObject(slot, slotHandlers);
+                slotItems.push(item);
+            });
+        }
+        slotContainer.subItems = slotItems;
+        return slotContainer;
+    }
 }

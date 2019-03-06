@@ -52,4 +52,18 @@ export default class EventContainerManager {
         }).join("\n");
     }
 
+    public static createEvents(events: EventContainer): ProjectFileDescription {
+        let eventContainer = new ProjectFileDescription();
+        eventContainer.itemType = ProjectItemType.EventContainer;
+        eventContainer.name = "Events";
+        eventContainer.diskItemType = DiskItemType.Folder;
+
+        let eventItems = new Array<ProjectFileDescription>();
+        if (events) {
+            let item = EventManager.defineEventListFromObject(EventContainerManager.toFileContent(events));
+            eventItems.push(item);
+        }
+        eventContainer.subItems = eventItems;
+        return eventContainer;
+    }
 }

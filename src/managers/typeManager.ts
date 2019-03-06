@@ -65,4 +65,19 @@ export default class TypeManager {
 
         return slotString;
     }
+
+    public static createType(type: Type): ProjectFileDescription {
+        let typeObject = new ProjectFileDescription();
+        typeObject.itemType = ProjectItemType.Type;
+        typeObject.name = "Type";
+        typeObject.diskItemType = DiskItemType.Folder;
+
+        let subItems = new Array<ProjectFileDescription>();
+        if (type) {
+            subItems.push(MethodContainerManager.createMethods(type.methods.get()));
+            subItems.push(EventContainerManager.createEvents(type.events));
+        }
+        typeObject.subItems = subItems;
+        return typeObject;
+    }
 }

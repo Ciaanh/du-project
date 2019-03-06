@@ -49,4 +49,15 @@ export default class HandlerContainerManager {
         });
         return `<h3>Handlers</h3><ul class="filters">${handlersString}</ul>`;
     }
+
+    public static createHandlers(handlers: HandlerContainer): ProjectFileDescription[] {
+        let handlerItems = new Array<ProjectFileDescription>();
+        if (handlers) {
+            handlers.get().forEach(handler => {
+                let item = HandlerManager.defineHandlerFromObject(handler);
+                handlerItems.push(item);
+            });
+        }
+        return handlerItems;
+    }
 }

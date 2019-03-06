@@ -56,12 +56,28 @@ export default class SlotManager {
     public static toHtml(slot: Slot, handlers: HandlerContainer): string {
         let slotString =
             `<li class="slot">
-    <span class="name">${this.name}</span> 
+    <span class="name">${slot.name}</span> 
     ${HandlerContainerManager.toHtml(handlers)}
     ${TypeManager.toHtml(slot.type)}
 
 </li>`;
 
         return slotString;
+    }
+
+    public static defineSlotFromObject(slot: Slot, handlers: HandlerContainer): ProjectFileDescription {
+        let projectItem = new ProjectFileDescription();
+
+        // warning separator _ may be contained in the slot name, replace it
+        projectItem.name = `slot_${slot.slotKey.toString()}_${slot.name}`;
+        projectItem.itemType = ProjectItemType.Slot;
+        projectItem.diskItemType = DiskItemType.Folder;
+
+        projectItem.subItems = HandlerContainerManager.createHandlers(handlers);
+
+        let typeItem = TypeManager.createType(slot.type);
+        projectItem.subItems.push(typeItem);
+
+        return projectItem;
     }
 }

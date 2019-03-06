@@ -4,21 +4,9 @@ import * as vscode from 'vscode';
 import * as fs from "fs";
 import { DiskItemType, ProjectItemType, GenerationStatus, FileType } from './enums'
 import DUProject from './duproject';
-import Slots from '../models/slotContainer';
-import Handlers from '../models/handlerContainer';
-import HandlerContainer from '../models/handlerContainer';
-import Method from '../models/method';
-import Event from '../models/event';
-import Slot from '../models/slot';
-import Handler from '../models/handler';
-import Type from '../models/type';
-import EventContainer from '../models/eventContainer';
-import ModelHelper from './modelHelper';
-import HandlerManager from '../managers/handlerManager';
-import EventManager from '../managers/eventManager';
+import SlotContainerManager from '../managers/slotContainerManager';
+import MethodContainerManager from '../managers/methodContainerManager';
 import EventContainerManager from '../managers/eventContainerManager';
-import MethodManager from '../managers/methodManager';
-
 
 export default class ProjectFileDescription {
     public diskItemType: DiskItemType;
@@ -112,14 +100,6 @@ export default class ProjectFileDescription {
     }
 
 
-
-
-
-
-
-
-
-
     public static defineFromProject(project: DUProject): ProjectFileDescription {
         let projectItem = new ProjectFileDescription();
 
@@ -127,196 +107,12 @@ export default class ProjectFileDescription {
         projectItem.itemType = ProjectItemType.Root;
         projectItem.diskItemType = DiskItemType.Folder;
         projectItem.subItems = new Array<ProjectFileDescription>();
-        projectItem.subItems.push(ProjectFileDescription.createSlots(project.slots, project.handlers));
-        projectItem.subItems.push(ProjectFileDescription.createMethods(project.methods.get()));
-        projectItem.subItems.push(ProjectFileDescription.createEvents(project.events));
+        projectItem.subItems.push(SlotContainerManager.createSlots(project.slots, project.handlers));
+        projectItem.subItems.push(MethodContainerManager.createMethods(project.methods.get()));
+        projectItem.subItems.push(EventContainerManager.createEvents(project.events));
 
         return projectItem;
     }
-
-
-
-
-
-
-
-
-
-
-    private static createSlots(slots: Slots, handlers: Handlers): ProjectFileDescription {
-        let slotContainer = new ProjectFileDescription();
-        slotContainer.itemType = ProjectItemType.Slot;
-        slotContainer.name = "Slots";
-        slotContainer.diskItemType = DiskItemType.Folder;
-
-        let slotItems = new Array<ProjectFileDescription>();
-        if (slots) {
-            slots.getAllSlots().forEach(slot => {
-                let slotHandlers = handlers.getBySlotKey(slot.slotKey);
-                let item = ProjectFileDescription.defineSlotFromObject(slot, slotHandlers);
-                slotItems.push(item);
-            });
-        }
-        slotContainer.subItems = slotItems;
-        return slotContainer;
-    }
-
-    private static defineSlotFromObject(slot: Slot, handlers: HandlerContainer): ProjectFileDescription {
-        let projectItem = new ProjectFileDescription();
-
-        // warning separator _ may be contained in the slot name, replace it
-        projectItem.name = `slot_${slot.slotKey.toString()}_${slot.name}`;
-        projectItem.itemType = ProjectItemType.Slot;
-        projectItem.diskItemType = DiskItemType.Folder;
-
-        projectItem.subItems = ProjectFileDescription.createHandlers(handlers);
-
-        let typeItem = ProjectFileDescription.createType(slot.type);
-        projectItem.subItems.push(typeItem);
-
-        return projectItem;
-    }
-
-
-
-
-
-
-
-
-
-
-    private static createType(type: Type): ProjectFileDescription {
-        let typeObject = new ProjectFileDescription();
-        typeObject.itemType = ProjectItemType.Type;
-        typeObject.name = "Type";
-        typeObject.diskItemType = DiskItemType.Folder;
-
-        let subItems = new Array<ProjectFileDescription>();
-        if (type) {
-            subItems.push(ProjectFileDescription.createMethods(type.methods.get()));
-            subItems.push(ProjectFileDescription.createEvents(type.events));
-        }
-        typeObject.subItems = subItems;
-        return typeObject;
-    }
-
-
-
-
-
-
-
-
-
-
-
-    private static createMethods(methods: Method[]): ProjectFileDescription {
-        let methodContainer = new ProjectFileDescription();
-        methodContainer.itemType = ProjectItemType.MethodContainer;
-        methodContainer.name = "Methods";
-        methodContainer.diskItemType = DiskItemType.Folder;
-
-        let methodItems = new Array<ProjectFileDescription>();
-        if (methods) {
-            methods.forEach((method, index) => {
-                let item = ProjectFileDescription.defineMethodFromObject(method, index);
-                methodItems.push(item);
-            });
-        }
-        methodContainer.subItems = methodItems;
-        return methodContainer;
-    }
-
-    private static defineMethodFromObject(method: Method, index: Number): ProjectFileDescription {
-        let projectItem = new ProjectFileDescription();
-
-        projectItem.name = `method_${index}`;
-        projectItem.itemType = ProjectItemType.Method;
-        projectItem.diskItemType = DiskItemType.File;
-        projectItem.fileType = FileType.Lua;
-
-        projectItem.content = MethodManager.toFileContent(method);
-
-        return projectItem;
-    }
-
-
-
-
-
-
-
-
-
-    private static createEvents(events: EventContainer): ProjectFileDescription {
-        let eventContainer = new ProjectFileDescription();
-        eventContainer.itemType = ProjectItemType.EventContainer;
-        eventContainer.name = "Events";
-        eventContainer.diskItemType = DiskItemType.Folder;
-
-        let eventItems = new Array<ProjectFileDescription>();
-        if (events) {
-            let item = ProjectFileDescription.defineEventListFromObject(EventContainerManager.toFileContent(events));
-            eventItems.push(item);
-        }
-        eventContainer.subItems = eventItems;
-        return eventContainer;
-    }
-
-    private static defineEventListFromObject(content: string): ProjectFileDescription {
-        let projectItem = new ProjectFileDescription();
-
-        projectItem.name = `eventList`;
-        projectItem.itemType = ProjectItemType.Event;
-        projectItem.diskItemType = DiskItemType.File;
-        projectItem.fileType = FileType.List;
-
-        projectItem.content = content;
-
-        return projectItem;
-    }
-
-
-
-
-
-
-
-
-
-
-    private static createHandlers(handlers: HandlerContainer): ProjectFileDescription[] {
-        let handlerItems = new Array<ProjectFileDescription>();
-        if (handlers) {
-            handlers.get().forEach(handler => {
-                let item = ProjectFileDescription.defineHandlerFromObject(handler);
-                handlerItems.push(item);
-            });
-        }
-        return handlerItems;
-    }
-
-    private static defineHandlerFromObject(handler: Handler): ProjectFileDescription {
-        let projectItem = new ProjectFileDescription();
-
-        projectItem.name = `handler_${handler.key}`;
-        projectItem.itemType = ProjectItemType.Handler;
-        projectItem.diskItemType = DiskItemType.File;
-        projectItem.fileType = FileType.Lua;
-
-        projectItem.content = HandlerManager.toFileContent(handler);
-
-        return projectItem;
-    }
-
-
-
-
-
-
-
-
 
 
     public static async loadProjectFromDisk(uri: vscode.Uri): Promise<ProjectFileDescription> {

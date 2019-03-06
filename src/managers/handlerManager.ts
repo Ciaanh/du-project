@@ -4,6 +4,7 @@ import ProjectFileDescription from '../extensionCore/projectFileDescription';
 import ModelHelper from '../extensionCore/modelHelper';
 import Handler from '../models/handler';
 import FilterManager from './filterManager';
+import { ProjectItemType, DiskItemType, FileType } from '../extensionCore/enums';
 
 export default class HandlerManager {
 
@@ -102,6 +103,19 @@ export default class HandlerManager {
 
     public static toFileContent(handler: Handler): string {
         return FilterManager.toFileContent(handler.filter) + handler.code;
+    }
+
+    public static defineHandlerFromObject(handler: Handler): ProjectFileDescription {
+        let projectItem = new ProjectFileDescription();
+
+        projectItem.name = `handler_${handler.key}`;
+        projectItem.itemType = ProjectItemType.Handler;
+        projectItem.diskItemType = DiskItemType.File;
+        projectItem.fileType = FileType.Lua;
+
+        projectItem.content = HandlerManager.toFileContent(handler);
+
+        return projectItem;
     }
 }
 

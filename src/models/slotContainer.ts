@@ -18,12 +18,20 @@ export default class SlotContainer {
     private slot8: Slot;
     private slot9: Slot;
 
-    public getAllSlots(): Array<Slot> {
+    public getAllSlotsAsArray(): Array<Slot> {
         let slotArray = new Array<Slot>();
         SlotContainerManager.slotIndexes.forEach(index => {
             slotArray.push(this.get(index));
         });
         return slotArray;
+    }
+
+    public getAllSlotsAsObject(): any {
+        let slotObject = {};
+        SlotContainerManager.slotIndexes.forEach(index => {
+            slotObject[index.toString()] = this.get(index);
+        });
+        return slotObject;
     }
 
     // add get/set for slot index

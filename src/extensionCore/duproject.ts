@@ -72,11 +72,16 @@ export default class DUProject {
     }
 
     public toJsonObject(): any {
+        let slotsJson = SlotContainerManager.toJsonObject(this.slots);
+        let handlersJson = HandlerContainerManager.toJsonObject(this.handlers);
+        let methodsJson = MethodContainerManager.toJsonObject(this.methods);
+        let eventsJson = EventContainerManager.toJsonObject(this.events);
+
         let jsonObject = {
-            "slots": SlotContainerManager.toJsonObject(this.slots),
-            "handlers": HandlerContainerManager.toJsonObject(this.handlers),
-            "methods": MethodContainerManager.toJsonObject(this.methods),
-            "events": EventContainerManager.toJsonObject(this.events)
+            "slots": slotsJson,
+            "handlers": handlersJson,
+            "methods": methodsJson,
+            "events": eventsJson
         };
         return jsonObject;
     }
