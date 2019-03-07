@@ -51,7 +51,11 @@ The **method** and **event** object are not defined yet, if the Json you try to 
 
 ## Release Notes
 
-### 0.1903.2 alpha version
+### 0.1903.4 alpha version
+
+Replace ContentProvider with Webview API
+
+### 0.1903.3 alpha version
 
 Refactor code: separate models and managers.
 

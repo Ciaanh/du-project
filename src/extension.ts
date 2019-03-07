@@ -2,7 +2,7 @@
 
 import { window, commands, Disposable, ExtensionContext, StatusBarAlignment, StatusBarItem, TextDocument, Uri, workspace, TextDocumentChangeEvent, TextEditorSelectionChangeEvent } from 'vscode';
 import ProjectManager from './extensionCore/projectManager';
-import ContentProvider, { encodeProjectUri, encodeProjectFolder } from './extensionCore/contentProvider';
+import ContentProvider, { encodeProjectUri, encodeProjectFolder } from './extensionCore/Preview/contentProvider';
 import ProjectPicker from './extensionCore/openFile';
 import { DiskItemType } from './extensionCore/enums';
 import ProjectFileDescription from './extensionCore/projectFileDescription';
@@ -97,7 +97,7 @@ export function activate(context: ExtensionContext) {
                 let tDUProject = ProjectManager.LoadJsonURI(targetUri);
                 return tDUProject.then((project) => {
                     let projectFiles = ProjectFileDescription.defineFromProject(project);
-                    projectFiles.generate(workspace.rootPath);
+                    projectFiles.generate(workspace.workspaceFolders[0].uri.fsPath);
                 });
             }
         }

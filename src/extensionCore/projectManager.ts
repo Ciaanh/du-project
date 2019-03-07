@@ -10,8 +10,8 @@ export default class ProjectManager {
 
     public static GenerateProject(project: DUProject): boolean {
         let projectFiles = ProjectFileDescription.defineFromProject(project);
-        if (/*projectFiles.isValid() &&*/ !this.Exists(projectFiles)) {
-            projectFiles.generate(vscode.workspace.rootPath);
+        if (!this.Exists(projectFiles)) {
+            projectFiles.generate(vscode.workspace.workspaceFolders[0].uri.fsPath);
             return true;
         }
         return false;

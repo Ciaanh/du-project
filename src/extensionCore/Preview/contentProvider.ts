@@ -1,10 +1,10 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import DUProject from './duproject';
-import ProjectManager from './projectManager';
-import { DiskItemType } from './enums';
-import Configuration from './configuration';
+import DUProject from '../duproject';
+import ProjectManager from '../projectManager';
+import { DiskItemType } from '../enums';
+import Configuration from '../configuration';
 
 export default class ContentProvider implements vscode.TextDocumentContentProvider {
     public static readonly scheme = 'duproject';

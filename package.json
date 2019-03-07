@@ -2,7 +2,7 @@
     "name": "du-project",
     "displayName": "DU Project",
     "description": "Manage projects for Dual Universe scripts.",
-    "version": "0.1903.3",
+    "version": "0.1903.4",
     "publisher": "Ciaanh",
     "license": "MIT",
     "engines": {
@@ -14,7 +14,8 @@
     "activationEvents": [
         "onCommand:extension.previewDUFile",
         "onCommand:extension.previewDUProject",
-        "onLanguage:duproject"
+        "onLanguage:duproject",
+        "onWebviewPanel:duProjectOverview"
     ],
     "main": "./out/extension",
     "contributes": {
