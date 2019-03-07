@@ -32,4 +32,6 @@ export default class Configuration {
         }
         return null;
     }
+
+    public static ExtensionPath: string;
 }

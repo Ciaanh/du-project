@@ -4,9 +4,35 @@ import { Uri, window, commands } from "vscode";
 import { DiskItemType } from "../Tools/enums";
 import ProjectPicker from "../Tools/openFile";
 import { encodeProjectUri, encodeProjectFolder } from "../Preview/contentProvider";
+import ProjectOverview from "../Preview/ProjectOverview";
 
 
 export default class OverviewProjectOrJson {
+
+    private static displayView(targetUri: Uri, type: DiskItemType) {
+
+
+        ProjectOverview.createOrShow(targetUri, type);
+
+
+        if (type === DiskItemType.File) {
+            let uriToPreview = encodeProjectUri(targetUri);
+
+            return commands.executeCommand("workbench.action.closeEditorsInOtherGroups").then(() =>
+                commands.executeCommand('vscode.previewHtml', uriToPreview, 1, 'DU Project Preview')
+                    .then((success) => { }, (reason) => { window.showErrorMessage(reason); })
+            );
+        }
+        else if (type === DiskItemType.Folder) {
+            let uriToPreview = encodeProjectFolder(targetUri);
+
+            return commands.executeCommand("workbench.action.closeEditorsInOtherGroups").then(() =>
+                commands.executeCommand('vscode.previewHtml', uriToPreview, 1, 'DU Project Preview')
+                    .then((success) => { }, (reason) => { window.showErrorMessage(reason); })
+            );
+
+        }
+    }
 
     public static executeCommand(targetUri: Uri, type: DiskItemType, projectPicker: ProjectPicker) {
         if (type === DiskItemType.File) {
@@ -23,16 +49,18 @@ export default class OverviewProjectOrJson {
                 // from active text if duproject or from open file popin
                 let editor = window.activeTextEditor;
 
-                // display open pop in to get the name of the folder to preview        
+                // display open pop in to get the name of the file to preview        
                 if (!editor) {
                     projectPicker.pickFile((pickedResultUri) => {
                         commands.executeCommand('extension.previewDUFile', pickedResultUri);
                     });
                     return;
                 }
+                // an editor window is open
                 else if (editor) {
                     // in case we want window next to active document // editor.viewColumn + 1
                     let doc = editor.document;
+                    // check if file in editor window is valid as duproject
                     if (doc && doc.languageId === "duproject") {
                         fileUriToPreview = doc.uri;
                     } else {
@@ -43,16 +71,8 @@ export default class OverviewProjectOrJson {
                     }
                 }
             }
-            // else raise error window.showErrorMessage(reason);
 
-            let uriToPreview = encodeProjectUri(fileUriToPreview);
-
-            return commands.executeCommand("workbench.action.closeEditorsInOtherGroups").then(() =>
-                commands.executeCommand('vscode.previewHtml', uriToPreview, 1, 'DU Project Preview')
-                    .then((success) => { }, (reason) => { window.showErrorMessage(reason); })
-            );
-
-
+            return OverviewProjectOrJson.displayView(fileUriToPreview, type);
 
         }
         else if (type === DiskItemType.Folder) {
@@ -71,16 +91,7 @@ export default class OverviewProjectOrJson {
                 return;
             }
 
-            let uriToPreview = encodeProjectFolder(directoryUriToPreview);
-
-            return commands.executeCommand("workbench.action.closeEditorsInOtherGroups").then(() =>
-                commands.executeCommand('vscode.previewHtml', uriToPreview, 1, 'DU Project Preview')
-                    .then((success) => { }, (reason) => { window.showErrorMessage(reason); })
-            );
-
-
+            return OverviewProjectOrJson.displayView(directoryUriToPreview, type);
         }
-
-
     }
 }

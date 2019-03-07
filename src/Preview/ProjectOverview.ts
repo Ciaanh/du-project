@@ -2,20 +2,25 @@
 
 import * as vscode from 'vscode';
 import * as path from 'path';
+import Configuration from '../Tools/configuration';
+import { DiskItemType } from '../Tools/enums';
 
-class ProjectOverview {
+export default class ProjectOverview {
     /**
      * Track the currently panel. Only allow a single panel to exist at a time.
      */
     public static currentPanel: ProjectOverview | undefined;
 
-    public static readonly viewType = 'catCoding';
+    public static readonly viewType = 'duProjectOverview';
 
     private readonly _panel: vscode.WebviewPanel;
     private readonly _extensionPath: string;
     private _disposables: vscode.Disposable[] = [];
 
-    public static createOrShow(extensionPath: string) {
+    public static createOrShow(targetUri: vscode.Uri, type: DiskItemType) {
+
+        let extensionPath: string = Configuration.ExtensionPath;
+
         const column = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : undefined;
 
         // // If we already have a panel, show it.
@@ -35,31 +40,30 @@ class ProjectOverview {
             ]
         });
 
-        ProjectOverview.currentPanel = new ProjectOverview(panel, extensionPath);
+        ProjectOverview.currentPanel = new ProjectOverview(targetUri, type, panel, extensionPath);
     }
 
-    public static revive(panel: vscode.WebviewPanel, extensionPath: string) {
-        ProjectOverview.currentPanel = new ProjectOverview(panel, extensionPath);
-    }
-
-    private constructor(
-        panel: vscode.WebviewPanel,
-        extensionPath: string
-    ) {
+    private constructor(targetUri: vscode.Uri, type: DiskItemType, panel: vscode.WebviewPanel, extensionPath: string) {
         this._panel = panel;
         this._extensionPath = extensionPath;
 
+        let title = "Webview title";
+
         // Set the webview's initial html content 
-        this._update();
+        this._panel.title = title;
+        this._panel.webview.html = this._getHtmlForWebview();
 
         // Listen for when the panel is disposed
         // This happens when the user closes the panel or when the panel is closed programatically
-        this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
+        this._panel.onDidDispose(() => {
+            this.dispose()
+        }, null, this._disposables);
 
         // Update the content based on view changes
         this._panel.onDidChangeViewState(e => {
             if (this._panel.visible) {
-                this._update()
+                this._panel.title = title;
+                this._panel.webview.html = this._getHtmlForWebview();
             }
         }, null, this._disposables);
 
@@ -93,32 +97,9 @@ class ProjectOverview {
         }
     }
 
-    private _update() {
+    private _getHtmlForWebview() {
 
-        const z = 1 + 2;
-        // Vary the webview's content based on where it is located in the editor.
-        switch (this._panel.viewColumn) {
-            case vscode.ViewColumn.Two:
-                this._updateForCat('Compiling Cat');
-                return;
-
-            case vscode.ViewColumn.Three:
-                this._updateForCat('Testing Cat');
-                return;
-
-            case vscode.ViewColumn.One:
-            default:
-                this._updateForCat('Coding Cat');
-                return;
-        }
-    }
-
-    private _updateForCat(catName: keyof typeof cats) {
-        this._panel.title = catName;
-        this._panel.webview.html = this._getHtmlForWebview(cats[catName]);
-    }
-
-    private _getHtmlForWebview(catGif: string) {
+        const catGif = 'https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif';
 
         // Local path to main script run in the webview
         const scriptPathOnDisk = vscode.Uri.file(path.join(this._extensionPath, 'media', 'main.js'));
@@ -161,9 +142,3 @@ function getNonce() {
     }
     return text;
 }
-
-const cats = {
-    'Coding Cat': 'https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif',
-    'Compiling Cat': 'https://media.giphy.com/media/mlvseq9yvZhba/giphy.gif',
-    'Testing Cat': 'https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif'
-};

@@ -7,8 +7,11 @@ import { DiskItemType } from './Tools/enums';
 import LoadWorkspace from './Commands/LoadWorkspace';
 import GenerateProjectOrJson from './Commands/GenerateProjectOrFile';
 import OverviewProjectOrJson from './Commands/OverviewProjectOrJson';
+import Configuration from './Tools/configuration';
 
 export function activate(context: ExtensionContext) {
+
+    Configuration.ExtensionPath = context.extensionPath;
 
     // register the open 
     const projectPicker = new ProjectPicker(context);
