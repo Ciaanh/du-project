@@ -1,8 +1,8 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import DUProject from '../extensionCore/duproject';
-import ProjectManager from '../extensionCore/projectManager';
+import Project from '../models/project';
+import ProjectManager from '../managers/projectManager';
 import { DiskItemType } from '../extensionCore/enums';
 import Configuration from '../extensionCore/configuration';
 
@@ -38,7 +38,7 @@ export default class ContentProvider implements vscode.TextDocumentContentProvid
         }
     }
 
-    private createPage(project: DUProject, target: string, source: DiskItemType) {
+    private createPage(project: Project, target: string, source: DiskItemType) {
         let projectSource: string;
         let generateProjectUri = encodeURI('command:extension.generateProjectOrFile?' + JSON.stringify([project.projectName, target, source]));
         let generateProjectText: string;
@@ -65,7 +65,7 @@ export default class ContentProvider implements vscode.TextDocumentContentProvid
 
     <a href="${generateProjectUri}">${generateProjectText}</a>
 
-    <div class="project">${project.toHtml()}</div>
+    <div class="project">${ProjectManager.toHtml(project)}</div>
 
 </body>`;
 

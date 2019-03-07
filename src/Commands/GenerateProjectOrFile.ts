@@ -2,7 +2,7 @@
 
 import { Uri, workspace } from "vscode";
 import { DiskItemType } from "../extensionCore/enums";
-import ProjectManager from "../extensionCore/projectManager";
+import ProjectManager from "../managers/projectManager";
 import ProjectFileDescription from "../extensionCore/projectFileDescription";
 
 export default class GenerateProjectOrJson {
@@ -25,7 +25,7 @@ export default class GenerateProjectOrJson {
                 let targetUri = Uri.parse(target);
                 let tDUProject = ProjectManager.LoadProject(targetUri);
                 return tDUProject.then((project) => {
-                    let jsonObject = project.toJsonObject();
+                    let jsonObject = ProjectManager.toJsonObject(project);
                     ProjectManager.GenerateJson(jsonObject, projectName, targetUri);
                 });
             }

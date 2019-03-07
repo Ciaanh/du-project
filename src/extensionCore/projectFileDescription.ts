@@ -3,7 +3,7 @@
 import * as vscode from 'vscode';
 import * as fs from "fs";
 import { DiskItemType, ProjectItemType, GenerationStatus, FileType } from './enums'
-import DUProject from './duproject';
+import Project from '../models/project';
 import SlotContainerManager from '../managers/slotContainerManager';
 import MethodContainerManager from '../managers/methodContainerManager';
 import EventContainerManager from '../managers/eventContainerManager';
@@ -100,7 +100,7 @@ export default class ProjectFileDescription {
     }
 
 
-    public static defineFromProject(project: DUProject): ProjectFileDescription {
+    public static defineFromProject(project: Project): ProjectFileDescription {
         let projectItem = new ProjectFileDescription();
 
         projectItem.name = project.projectName;
@@ -157,15 +157,6 @@ export default class ProjectFileDescription {
         }).filter((value) => { return value != null; });
         return Promise.all(projectFile);
     }
-
-
-
-
-
-
-
-
-
 
     private static async loadDirectoryFromDisk(uri: vscode.Uri, stats: fs.Stats): Promise<ProjectFileDescription> {
         let project = new ProjectFileDescription;
