@@ -1,8 +1,8 @@
 'use strict';
 
 import { Uri, window, commands } from "vscode";
-import { DiskItemType } from "../extensionCore/enums";
-import ProjectPicker from "../extensionCore/openFile";
+import { DiskItemType } from "../Tools/enums";
+import ProjectPicker from "../Tools/openFile";
 import { encodeProjectUri, encodeProjectFolder } from "../Preview/contentProvider";
 
 

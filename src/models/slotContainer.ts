@@ -1,7 +1,7 @@
 'use strict';
 
 import Slot from './slot'
-import SlotContainerManager from '../managers/slotContainerManager';
+import SlotContainerManager from '../Core/slotContainerManager';
 
 export default class SlotContainer {
     private slot_3: Slot;

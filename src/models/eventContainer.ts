@@ -1,8 +1,6 @@
 'use strict';
 
 import Event from './event'
-import ProjectFileDescription from '../extensionCore/projectFileDescription';
-import { DiskItemType, ProjectItemType } from '../extensionCore/enums';
 
 export default class EventContainer {
     private eventList: Array<Event>;

@@ -1,9 +1,9 @@
 'use strict';
 
-import ProjectFileDescription from "../extensionCore/projectFileDescription";
+import ProjectFileDescription from "../Core/projectFileDescription";
 import EventContainer from "../models/eventContainer";
 import EventManager from "./eventManager";
-import { DiskItemType, ProjectItemType } from "../extensionCore/enums";
+import { DiskItemType, ProjectItemType } from "../Tools/enums";
 
 
 export default class EventContainerManager {

@@ -1,6 +1,6 @@
 'use strict';
 
-import Configuration from "../extensionCore/configuration";
+import Configuration from "../Tools/configuration";
 
 export default class LoadWorkspace {
 

@@ -1,9 +1,9 @@
 'use strict';
 
 import { Uri, workspace } from "vscode";
-import { DiskItemType } from "../extensionCore/enums";
-import ProjectManager from "../managers/projectManager";
-import ProjectFileDescription from "../extensionCore/projectFileDescription";
+import { DiskItemType } from "../Tools/enums";
+import ProjectManager from "../Core/projectManager";
+import ProjectFileDescription from "../Core/projectFileDescription";
 
 export default class GenerateProjectOrJson {
 

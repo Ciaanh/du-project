@@ -2,11 +2,11 @@
 
 import * as vscode from 'vscode';
 import * as fs from "fs";
-import { DiskItemType, ProjectItemType, GenerationStatus, FileType } from './enums'
+import { DiskItemType, ProjectItemType, GenerationStatus, FileType } from '../Tools/enums'
 import Project from '../models/project';
-import SlotContainerManager from '../managers/slotContainerManager';
-import MethodContainerManager from '../managers/methodContainerManager';
-import EventContainerManager from '../managers/eventContainerManager';
+import SlotContainerManager from './slotContainerManager';
+import MethodContainerManager from './methodContainerManager';
+import EventContainerManager from './eventContainerManager';
 
 export default class ProjectFileDescription {
     public diskItemType: DiskItemType;

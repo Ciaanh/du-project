@@ -2,7 +2,7 @@
 
 import * as vscode from "vscode";
 import { DiskItemType } from './enums';
-import ProjectFileDescription from "./projectFileDescription";
+import ProjectFileDescription from "../Core/projectFileDescription";
 
 
 export class PickResult {

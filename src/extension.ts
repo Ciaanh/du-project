@@ -2,8 +2,8 @@
 
 import { commands, ExtensionContext, Uri, workspace } from 'vscode';
 import ContentProvider from './Preview/contentProvider';
-import ProjectPicker from './extensionCore/openFile';
-import { DiskItemType } from './extensionCore/enums';
+import ProjectPicker from './Tools/openFile';
+import { DiskItemType } from './Tools/enums';
 import LoadWorkspace from './Commands/LoadWorkspace';
 import GenerateProjectOrJson from './Commands/GenerateProjectOrFile';
 import OverviewProjectOrJson from './Commands/OverviewProjectOrJson';

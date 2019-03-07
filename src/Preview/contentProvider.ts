@@ -2,9 +2,9 @@
 
 import * as vscode from 'vscode';
 import Project from '../models/project';
-import ProjectManager from '../managers/projectManager';
-import { DiskItemType } from '../extensionCore/enums';
-import Configuration from '../extensionCore/configuration';
+import ProjectManager from '../Core/projectManager';
+import { DiskItemType } from '../Tools/enums';
+import Configuration from '../Tools/configuration';
 
 
 export default class ContentProvider implements vscode.TextDocumentContentProvider {
