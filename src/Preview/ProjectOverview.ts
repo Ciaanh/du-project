@@ -4,6 +4,9 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import Configuration from '../Tools/configuration';
 import { DiskItemType } from '../Tools/enums';
+import ProjectHtml from './projectHtml';
+import ProjectManager from '../Core/projectManager';
+import Project from '../models/project';
 
 export default class ProjectOverview {
     /**
@@ -30,7 +33,7 @@ export default class ProjectOverview {
         // }
 
         // Otherwise, create a new panel.
-        const panel = vscode.window.createWebviewPanel(ProjectOverview.viewType, "Cat Coding", column || vscode.ViewColumn.One, {
+        const panel = vscode.window.createWebviewPanel(ProjectOverview.viewType, "DU Project Overview", column || vscode.ViewColumn.One, {
             // Enable javascript in the webview
             enableScripts: true,
 
@@ -40,18 +43,29 @@ export default class ProjectOverview {
             ]
         });
 
-        ProjectOverview.currentPanel = new ProjectOverview(targetUri, type, panel, extensionPath);
+        let tDUProject: Thenable<Project>;
+
+        if (type === DiskItemType.File) {
+            tDUProject = ProjectManager.LoadJsonURI(targetUri);
+        }
+        else if (type === DiskItemType.Folder) {
+            tDUProject = ProjectManager.LoadProject(targetUri);
+        }
+
+        tDUProject.then((project) => {
+            ProjectOverview.currentPanel = new ProjectOverview(project, type, panel, extensionPath);
+        });
+
     }
 
-    private constructor(targetUri: vscode.Uri, type: DiskItemType, panel: vscode.WebviewPanel, extensionPath: string) {
+    private constructor(duProject: Project, type: DiskItemType, panel: vscode.WebviewPanel, extensionPath: string) {
         this._panel = panel;
         this._extensionPath = extensionPath;
 
-        let title = "Webview title";
-
         // Set the webview's initial html content 
-        this._panel.title = title;
-        this._panel.webview.html = this._getHtmlForWebview();
+        this._panel.title = duProject.projectName;
+        // this._panel.webview.html = this._getHtmlForWebview();
+        this._panel.webview.html = ProjectHtml.Generate(duProject, type);
 
         // Listen for when the panel is disposed
         // This happens when the user closes the panel or when the panel is closed programatically
@@ -62,8 +76,9 @@ export default class ProjectOverview {
         // Update the content based on view changes
         this._panel.onDidChangeViewState(e => {
             if (this._panel.visible) {
-                this._panel.title = title;
-                this._panel.webview.html = this._getHtmlForWebview();
+                this._panel.title = duProject.projectName;
+                // this._panel.webview.html = this._getHtmlForWebview();
+                this._panel.webview.html = ProjectHtml.Generate(duProject, type);
             }
         }, null, this._disposables);
 
