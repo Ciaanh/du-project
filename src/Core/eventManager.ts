@@ -49,7 +49,7 @@ export default class EventManager {
 
         projectItem.name = `eventList`;
         projectItem.itemType = ProjectItemType.Event;
-        projectItem.diskItemType = DiskItemType.File;
+        projectItem.diskItemType = DiskItemType.Json;
         projectItem.fileType = FileType.List;
 
         projectItem.content = content;

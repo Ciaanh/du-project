@@ -12,7 +12,7 @@ export default class EventContainerManager {
         let eventContainer = new EventContainer();
 
         files.subItems.forEach(item => {
-            if (item.diskItemType == DiskItemType.File
+            if (item.diskItemType == DiskItemType.Json
                 && item.itemType == ProjectItemType.Event) {
                 eventContainer.addRange(EventManager.LoadFromFiles(item));
             }

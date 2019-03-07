@@ -5,7 +5,7 @@ import Project from '../models/project';
 import ProjectManager from '../Core/projectManager';
 import { DiskItemType } from '../Tools/enums';
 import Configuration from '../Tools/configuration';
-import ProjectHtml from './projectHtml';
+import old_ProjectHtml from './old_ProjectHtml';
 
 
 export default class ContentProvider implements vscode.TextDocumentContentProvider {
@@ -16,12 +16,12 @@ export default class ContentProvider implements vscode.TextDocumentContentProvid
     public provideTextDocumentContent(uri: vscode.Uri): string | Thenable<string> {
         let [target, type] = decodeProjectTarget(uri);
 
-        if (type === DiskItemType.File) {
+        if (type === DiskItemType.Json) {
             if (target) {
                 let targetUri = vscode.Uri.parse(target);
                 let tDUProject = ProjectManager.LoadJsonURI(targetUri);
                 return tDUProject.then((project) => {
-                    return ProjectHtml.old_Generate(project, target, type);
+                    return old_ProjectHtml.Generate(project, target, type);
                 });
             }
             // else raise error
@@ -32,7 +32,7 @@ export default class ContentProvider implements vscode.TextDocumentContentProvid
                 let targetUri = vscode.Uri.parse(target);
                 let tDUProject = ProjectManager.LoadProject(targetUri);
                 return tDUProject.then((project) => {
-                    return ProjectHtml.old_Generate(project, target, type);
+                    return old_ProjectHtml.Generate(project, target, type);
                 });
             }
             // else raise error
@@ -45,7 +45,7 @@ export default class ContentProvider implements vscode.TextDocumentContentProvid
 
 // encode an URI inside an handled preview URI
 export function encodeProjectUri(uri: vscode.Uri): vscode.Uri {
-    const query = JSON.stringify([uri.toString(), DiskItemType.File]);
+    const query = JSON.stringify([uri.toString(), DiskItemType.Json]);
     return vscode.Uri.parse(`${ContentProvider.scheme}:Target?${query}`);
 }
 

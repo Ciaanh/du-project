@@ -14,7 +14,7 @@ export default class HandlerContainerManager {
             if (slot.diskItemType == DiskItemType.Folder && slot.itemType == ProjectItemType.Slot) {
 
                 slot.subItems.forEach(subItem => {
-                    if (subItem.diskItemType == DiskItemType.File && subItem.itemType == ProjectItemType.Handler) {
+                    if (subItem.diskItemType == DiskItemType.Json && subItem.itemType == ProjectItemType.Handler) {
                         let newHandler = HandlerManager.LoadFromFiles(subItem);
                         if (newHandler) handlers.add(newHandler);
                     }

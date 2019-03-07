@@ -12,7 +12,7 @@ export default class MethodContainerManager {
         let methods = new MethodContainer();
 
         files.subItems.forEach(item => {
-            if (item.diskItemType == DiskItemType.File
+            if (item.diskItemType == DiskItemType.Json
                 && item.itemType == ProjectItemType.Method) {
                 methods.add(MethodManager.LoadFromFiles(item));
             }

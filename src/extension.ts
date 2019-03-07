@@ -23,7 +23,7 @@ export function activate(context: ExtensionContext) {
 
     // "onCommand:extension.previewDUFile"
     let disposablePreviewFile = commands.registerCommand('extension.previewDUFile', (fileUri: Uri) => {
-        return OverviewProjectOrJson.executeCommand(fileUri, DiskItemType.File, projectPicker);
+        return OverviewProjectOrJson.executeCommand(fileUri, DiskItemType.Json, projectPicker);
     });
 
     // "onCommand:extension.previewDUProject"

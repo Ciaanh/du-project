@@ -3,7 +3,7 @@
 import * as vscode from 'vscode';
 import * as fs from "fs";
 import Project from '../models/project';
-import { ProjectItemType } from '../Tools/enums';
+import { ProjectItemType, DiskItemType } from '../Tools/enums';
 import SlotContainerManager from '../Core/slotContainerManager';
 import MethodContainerManager from '../Core/methodContainerManager';
 import EventContainerManager from '../Core/eventContainerManager';
@@ -60,7 +60,7 @@ export default class ProjectManager {
 
     public static LoadProject(uri: vscode.Uri): Thenable<Project> {
         return ProjectFileDescription.loadProjectFromDisk(uri).then(projectFiles => {
-            return ProjectManager.LoadFromFiles(projectFiles);
+            return ProjectManager.LoadFromFiles(projectFiles, uri);
         });
     }
 
@@ -82,18 +82,17 @@ export default class ProjectManager {
             let documentpath = textDocument.uri.path.split("/");
             let projectJsonName = documentpath[documentpath.length - 1].replace(".json", "");
 
-            let project = ProjectManager.LoadFromJson(projectJsonName, documentContent);
+            let project = ProjectManager.LoadFromJson(projectJsonName, documentContent, textDocument.uri);
 
             return project;
         }
         // else raise error
     }
 
-    public static LoadFromFiles(files: ProjectFileDescription): Project {
-        let project = new Project();
-        if (files.itemType == ProjectItemType.Root) {
-            project.projectName = files.name;
+    public static LoadFromFiles(files: ProjectFileDescription, uri: vscode.Uri): Project {
+        let project = new Project(files.name, DiskItemType.Folder, uri);
 
+        if (files.itemType == ProjectItemType.Root) {
             files.subItems.forEach(item => {
                 switch (item.itemType) {
                     case ProjectItemType.SlotContainer:
@@ -115,10 +114,9 @@ export default class ProjectManager {
         return null;
     }
 
-    public static LoadFromJson(projectName: string, projectAsString: string): Project {
-        let project = new Project();
+    public static LoadFromJson(projectName: string, projectAsString: string, uri: vscode.Uri): Project {
+        let project = new Project(projectName, DiskItemType.Json, uri);
 
-        project.projectName = projectName;
         let projectAsJson = JSON.parse(projectAsString);
 
         if (projectAsJson.hasOwnProperty('slots')) {

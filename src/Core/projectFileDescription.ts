@@ -29,7 +29,7 @@ export default class ProjectFileDescription {
     public generate(root: string): GenerationStatus | Thenable<GenerationStatus> {
         let projectRoot = root;
         switch (this.diskItemType) {
-            case DiskItemType.File:
+            case DiskItemType.Json:
 
                 let filePath = projectRoot + "\\" + this.name
 
@@ -208,7 +208,7 @@ export default class ProjectFileDescription {
             project.fileType = FileType.Lua;
             project.itemType = ProjectItemType.Handler;
             project.name = documentName;
-            project.diskItemType = DiskItemType.File;
+            project.diskItemType = DiskItemType.Json;
 
             let content = await ProjectFileDescription.readFile(uri.fsPath);
 
@@ -225,7 +225,7 @@ export default class ProjectFileDescription {
             project.fileType = FileType.Lua;
             project.itemType = ProjectItemType.Method;
             project.name = documentName;
-            project.diskItemType = DiskItemType.File;
+            project.diskItemType = DiskItemType.Json;
 
             let content = await ProjectFileDescription.readFile(uri.fsPath);
             console.log(content);
@@ -240,7 +240,7 @@ export default class ProjectFileDescription {
             project.fileType = FileType.List;
             project.itemType = ProjectItemType.Event;
             project.name = documentName;
-            project.diskItemType = DiskItemType.File;
+            project.diskItemType = DiskItemType.Json;
 
             let content = await ProjectFileDescription.readFile(uri.fsPath);
             console.log(content);

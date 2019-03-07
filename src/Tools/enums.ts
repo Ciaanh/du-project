@@ -1,7 +1,7 @@
 'use strict';
 
 export enum DiskItemType {
-    File,
+    Json,
     Folder,
     Undefined
 }

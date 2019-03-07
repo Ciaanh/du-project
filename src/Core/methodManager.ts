@@ -88,7 +88,7 @@ export default class MethodManager {
 
         projectItem.name = `method_${index}`;
         projectItem.itemType = ProjectItemType.Method;
-        projectItem.diskItemType = DiskItemType.File;
+        projectItem.diskItemType = DiskItemType.Json;
         projectItem.fileType = FileType.Lua;
 
         projectItem.content = MethodManager.toFileContent(method);

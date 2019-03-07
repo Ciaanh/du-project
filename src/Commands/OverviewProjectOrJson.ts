@@ -5,17 +5,28 @@ import { DiskItemType } from "../Tools/enums";
 import ProjectPicker from "../Tools/openFile";
 import { encodeProjectUri, encodeProjectFolder } from "../Preview/contentProvider";
 import ProjectOverview from "../Preview/ProjectOverview";
+import ProjectManager from "../Core/projectManager";
+import Project from "../models/project";
 
 
 export default class OverviewProjectOrJson {
 
     private static displayView(targetUri: Uri, type: DiskItemType) {
 
+        let tDUProject: Thenable<Project>;
 
-        ProjectOverview.createOrShow(targetUri, type);
+        if (type === DiskItemType.Json) {
+            tDUProject = ProjectManager.LoadJsonURI(targetUri);
+        }
+        else if (type === DiskItemType.Folder) {
+            tDUProject = ProjectManager.LoadProject(targetUri);
+        }
 
+        tDUProject.then((project) => {
+            ProjectOverview.createOrShow(project);
+        });
 
-        if (type === DiskItemType.File) {
+        if (type === DiskItemType.Json) {
             let uriToPreview = encodeProjectUri(targetUri);
 
             return commands.executeCommand("workbench.action.closeEditorsInOtherGroups").then(() =>
@@ -35,7 +46,7 @@ export default class OverviewProjectOrJson {
     }
 
     public static executeCommand(targetUri: Uri, type: DiskItemType, projectPicker: ProjectPicker) {
-        if (type === DiskItemType.File) {
+        if (type === DiskItemType.Json) {
 
             if (targetUri) console.log('launched preview command for file : ' + targetUri.toString());
             else console.log('launched preview command for file');

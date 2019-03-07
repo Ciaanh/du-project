@@ -10,7 +10,7 @@ export default class GenerateProjectOrJson {
     public static executeCommand(projectName: string, target: string, source: DiskItemType) {
         console.log('launched generate command');
 
-        if (source === DiskItemType.File) {
+        if (source === DiskItemType.Json) {
             if (target) {
                 let targetUri = Uri.parse(target);
                 let tDUProject = ProjectManager.LoadJsonURI(targetUri);

@@ -110,7 +110,7 @@ export default class HandlerManager {
 
         projectItem.name = `handler_${handler.key}`;
         projectItem.itemType = ProjectItemType.Handler;
-        projectItem.diskItemType = DiskItemType.File;
+        projectItem.diskItemType = DiskItemType.Json;
         projectItem.fileType = FileType.Lua;
 
         projectItem.content = HandlerManager.toFileContent(handler);
