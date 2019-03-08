@@ -45,6 +45,7 @@ export default class ProjectOverview {
 
             // And restrict the webview to only loading content from our extension's `media` directory.
             localResourceRoots: [
+                vscode.Uri.file(path.join(extensionPath, 'projectOverviewMedia')),
                 vscode.Uri.file(path.join(extensionPath, 'outView'))
             ]
         });
@@ -114,6 +115,15 @@ export default class ProjectOverview {
         const styleUri = stylePathOnDisk.with({ scheme: 'vscode-resource' });
 
         return ProjectHtml.Generate(duProject, scriptUri, styleUri);
+    }
+
+    private _getHtmlForWebviewReact(duProject: Project) {
+
+        // Local path to main script run in the webview
+        const scriptPathOnDisk = vscode.Uri.file(path.join(this._extensionPath, 'outView', 'overview.js'));
+        const scriptUri = scriptPathOnDisk.with({ scheme: 'vscode-resource' });
+
+        return ProjectHtml.GenerateReact(duProject, scriptUri);
     }
 }
 
