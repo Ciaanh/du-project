@@ -1,4 +1,5 @@
 out
+outView
 node_modules
 .vsix
 *.vsix
