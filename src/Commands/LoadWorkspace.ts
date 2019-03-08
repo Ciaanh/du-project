@@ -1,6 +1,6 @@
 'use strict';
 
-import Configuration from "../Tools/configuration";
+import Configuration from "../utils/configuration";
 
 export default class LoadWorkspace {
 

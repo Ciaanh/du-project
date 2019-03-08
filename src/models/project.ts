@@ -4,7 +4,7 @@ import HandlerContainer from './handlerContainer';
 import SlotContainer from './slotContainer';
 import EventContainer from './eventContainer';
 import MethodContainer from './methodContainer';
-import { DiskItemType } from '../Tools/enums';
+import { DiskItemType } from '../utils/enums';
 import { Uri } from 'vscode';
 
 export default class Project {

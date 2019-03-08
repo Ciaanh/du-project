@@ -1,7 +1,7 @@
 'use strict';
 
-import ProjectFileDescription from "../Core/projectFileDescription";
-import { ProjectItemType, DiskItemType } from "../Tools/enums";
+import ProjectFileDescription from "../models/projectFileDescription";
+import { ProjectItemType, DiskItemType } from "../utils/enums";
 import Type from "../models/type";
 import MethodContainerManager from "./methodContainerManager";
 import EventContainerManager from "./eventContainerManager";

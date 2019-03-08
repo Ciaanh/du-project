@@ -1,7 +1,7 @@
 'use strict';
 
-import ProjectFileDescription from "../Core/projectFileDescription";
-import { DiskItemType, ProjectItemType } from "../Tools/enums";
+import ProjectFileDescription from "../models/projectFileDescription";
+import { DiskItemType, ProjectItemType } from "../utils/enums";
 import Slot from "../models/slot";
 import HandlerContainer from "../models/handlerContainer";
 import HandlerContainerManager from "./handlerContainerManager";

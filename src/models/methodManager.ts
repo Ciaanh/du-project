@@ -1,9 +1,9 @@
 'use strict';
 
-import ModelHelper from '../Tools/modelHelper';
-import ProjectFileDescription from "../Core/projectFileDescription";
+import ModelHelper from '../utils/modelHelper';
+import ProjectFileDescription from "../models/projectFileDescription";
 import Method from '../models/method';
-import { ProjectItemType, DiskItemType, FileType } from '../Tools/enums';
+import { ProjectItemType, DiskItemType, FileType } from '../utils/enums';
 
 
 export default class MethodManager {

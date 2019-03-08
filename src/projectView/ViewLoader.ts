@@ -2,15 +2,13 @@
 
 import * as vscode from 'vscode';
 import * as path from 'path';
-import Configuration from '../Tools/configuration';
-import { DiskItemType } from '../Tools/enums';
-import ProjectHtml from './projectHtml';
-import ProjectManager from '../Core/projectManager';
+import Configuration from '../utils/configuration';
+import { DiskItemType } from '../utils/enums';
 import Project from '../models/project';
 
-export default class ProjectOverview {
+export default class ViewLoader {
 
-    private static currentPanels: ProjectOverview[] = [];
+    private static currentPanels: ViewLoader[] = [];
     // public static getCurrentPanel(panelName:string){
     //     if(ProjectOverview.currentPanels===undefined){
 
@@ -31,26 +29,25 @@ export default class ProjectOverview {
         const column = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : undefined;
 
         // If we already have a panel, show it.
-        if (ProjectOverview.currentPanels[projectName]) {
-            ProjectOverview.currentPanels[projectName]._panel.reveal(column);
+        if (ViewLoader.currentPanels[projectName]) {
+            ViewLoader.currentPanels[projectName]._panel.reveal(column);
             return;
         }
 
         let extensionPath: string = Configuration.ExtensionPath;
 
         // Otherwise, create a new panel.
-        const panel = vscode.window.createWebviewPanel(ProjectOverview.viewType, `Overview :${projectName}`, column || vscode.ViewColumn.One, {
+        const panel = vscode.window.createWebviewPanel(ViewLoader.viewType, `Overview :${projectName}`, column || vscode.ViewColumn.One, {
             // Enable javascript in the webview
             enableScripts: true,
 
             // And restrict the webview to only loading content from our extension's `media` directory.
             localResourceRoots: [
-                vscode.Uri.file(path.join(extensionPath, 'projectOverviewMedia')),
-                vscode.Uri.file(path.join(extensionPath, 'outView'))
+                vscode.Uri.file(path.join(extensionPath, 'projectView'))
             ]
         });
 
-        ProjectOverview.currentPanels[projectName] = new ProjectOverview(project, panel, extensionPath);
+        ViewLoader.currentPanels[projectName] = new ViewLoader(project, panel, extensionPath);
     }
 
     private constructor(duProject: Project, panel: vscode.WebviewPanel, extensionPath: string) {
@@ -60,7 +57,7 @@ export default class ProjectOverview {
 
         // Set the webview's initial html content 
         // this._panel.webview.html = this._getHtmlForWebview(duProject);
-        this._panel.webview.html = this._getHtmlForWebviewReact(duProject);
+        this._panel.webview.html = this.Generate(duProject);
 
 
         // Listen for when the panel is disposed
@@ -94,7 +91,7 @@ export default class ProjectOverview {
 
     public dispose() {
 
-        ProjectOverview.currentPanels[this._panelName] = undefined;
+        ViewLoader.currentPanels[this._panelName] = undefined;
 
         // Clean up our resources
         this._panel.dispose();
@@ -107,25 +104,60 @@ export default class ProjectOverview {
         }
     }
 
-    private _getHtmlForWebview(duProject: Project) {
 
-        // Local path to main script run in the webview
-        const scriptPathOnDisk = vscode.Uri.file(path.join(this._extensionPath, 'projectOverviewMedia', 'main.js'));
-        const scriptUri = scriptPathOnDisk.with({ scheme: 'vscode-resource' });
-
-        const stylePathOnDisk = vscode.Uri.file(path.join(this._extensionPath, 'projectOverviewMedia', 'style.css'));
-        const styleUri = stylePathOnDisk.with({ scheme: 'vscode-resource' });
-
-        return ProjectHtml.Generate(duProject, scriptUri, styleUri);
+    private getNonce() {
+        let text = "";
+        const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        for (let i = 0; i < 32; i++) {
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+        return text;
     }
 
-    private _getHtmlForWebviewReact(duProject: Project) {
+    private Generate(duProject: Project) {
 
         // Local path to main script run in the webview
-        const scriptPathOnDisk = vscode.Uri.file(path.join(this._extensionPath, 'outView', 'overview.js'));
+        const scriptPathOnDisk = vscode.Uri.file(path.join(this._extensionPath, 'projectView', 'overview.js'));
         const scriptUri = scriptPathOnDisk.with({ scheme: 'vscode-resource' });
 
-        return ProjectHtml.GenerateReact(duProject, scriptUri);
+        const nonce = this.getNonce();
+
+
+        let projectSource: string;
+        let generateProjectText: string;
+
+        switch (duProject.sourceType) {
+            case DiskItemType.Json:
+                projectSource = "<h2>Loaded from a .json file.</h2>";
+                generateProjectText = "Generate project from this file";
+                break;
+            case DiskItemType.Folder:
+                projectSource = "<h2>Loaded from a project folder.</h2>";
+                generateProjectText = "Generate a json file for the game from this project";
+                break;
+            default:
+                break;
+        }
+
+        
+
+
+        let page =
+            `<!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+                <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src https:; script-src vscode-resource: 'unsafe-eval' 'unsafe-inline';style-src 'unsafe-inline'">
+            </head>
+            <body>
+                <div id="root"></div>
+                <script>window.acquireVsCodeApi=acquireVsCodeApi;</script>
+                <script nonce="${nonce}" src="${scriptUri}"></script>
+            </body>
+            </html>`;
+
+        return page;
     }
 }
 

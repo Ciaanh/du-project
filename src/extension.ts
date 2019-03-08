@@ -1,12 +1,12 @@
 'use strict';
 
 import { commands, ExtensionContext, Uri, workspace } from 'vscode';
-import ProjectPicker from './Tools/openFile';
-import { DiskItemType } from './Tools/enums';
-import LoadWorkspace from './Commands/LoadWorkspace';
-import GenerateProjectOrJson from './Commands/GenerateProjectOrFile';
-import OverviewProjectOrJson from './Commands/OverviewProjectOrJson';
-import Configuration from './Tools/configuration';
+import ProjectPicker from './utils/openFile';
+import { DiskItemType } from './utils/enums';
+import LoadWorkspace from './commands/LoadWorkspace';
+import GenerateProjectOrJson from './commands/GenerateProjectOrFile';
+import OverviewProjectOrJson from './commands/OverviewProjectOrJson';
+import Configuration from './utils/configuration';
 
 export function activate(context: ExtensionContext) {
 

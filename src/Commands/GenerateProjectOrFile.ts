@@ -1,15 +1,13 @@
 'use strict';
 
 import { Uri, workspace } from "vscode";
-import { DiskItemType } from "../Tools/enums";
-import ProjectManager from "../Core/projectManager";
-import ProjectFileDescription from "../Core/projectFileDescription";
+import { DiskItemType } from "../utils/enums";
+import ProjectManager from "../models/projectManager";
+import ProjectFileDescription from "../models/projectFileDescription";
 
 export default class GenerateProjectOrJson {
 
     public static executeCommand(projectName: string, target: string, source: DiskItemType) {
-        console.log('launched generate command');
-
         if (source === DiskItemType.Json) {
             if (target) {
                 let targetUri = Uri.parse(target);

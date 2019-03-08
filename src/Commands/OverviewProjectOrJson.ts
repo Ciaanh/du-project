@@ -1,10 +1,10 @@
 'use strict';
 
 import { Uri, window, commands } from "vscode";
-import { DiskItemType } from "../Tools/enums";
-import ProjectPicker from "../Tools/openFile";
-import ProjectOverview from "../Preview/ProjectOverview";
-import ProjectManager from "../Core/projectManager";
+import { DiskItemType } from "../utils/enums";
+import ProjectPicker from "../utils/openFile";
+import ViewLoader from "../projectView/ViewLoader";
+import ProjectManager from "../models/projectManager";
 import Project from "../models/project";
 
 
@@ -21,16 +21,12 @@ export default class OverviewProjectOrJson {
         }
 
         tDUProject.then((project) => {
-            ProjectOverview.createOrShow(project);
+            ViewLoader.createOrShow(project);
         });
     }
 
     public static executeCommand(targetUri: Uri, type: DiskItemType, projectPicker: ProjectPicker) {
         if (type === DiskItemType.Json) {
-
-            if (targetUri) console.log('launched preview command for file : ' + targetUri.toString());
-            else console.log('launched preview command for file');
-
             let fileUriToPreview;
 
             if (targetUri && targetUri.path != "") {
@@ -67,10 +63,6 @@ export default class OverviewProjectOrJson {
 
         }
         else if (type === DiskItemType.Folder) {
-
-            if (targetUri) console.log('launched preview command for project directory : ' + targetUri.toString());
-            else console.log('launched preview command for directory');
-
             let directoryUriToPreview;
 
             if (targetUri && targetUri.path != "") {

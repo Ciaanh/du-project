@@ -3,12 +3,12 @@
 import * as vscode from 'vscode';
 import * as fs from "fs";
 import Project from '../models/project';
-import { ProjectItemType, DiskItemType } from '../Tools/enums';
-import SlotContainerManager from '../Core/slotContainerManager';
-import MethodContainerManager from '../Core/methodContainerManager';
-import EventContainerManager from '../Core/eventContainerManager';
-import HandlerContainerManager from '../Core/handlerContainerManager';
-import ProjectFileDescription from '../Core/projectFileDescription';
+import { ProjectItemType, DiskItemType } from '../utils/enums';
+import SlotContainerManager from '../models/slotContainerManager';
+import MethodContainerManager from '../models/methodContainerManager';
+import EventContainerManager from '../models/eventContainerManager';
+import HandlerContainerManager from '../models/handlerContainerManager';
+import ProjectFileDescription from '../models/projectFileDescription';
 
 export default class ProjectManager {
 

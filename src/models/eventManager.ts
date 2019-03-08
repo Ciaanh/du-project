@@ -1,8 +1,8 @@
 'use strict';
 
-import ProjectFileDescription from "../Core/projectFileDescription";
+import ProjectFileDescription from "../models/projectFileDescription";
 import Event from "../models/event";
-import { ProjectItemType, DiskItemType, FileType } from "../Tools/enums";
+import { ProjectItemType, DiskItemType, FileType } from "../utils/enums";
 
 export default class EventManager {
 

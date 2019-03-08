@@ -2,7 +2,7 @@
 
 import * as vscode from 'vscode';
 import * as fs from "fs";
-import { DiskItemType, ProjectItemType, GenerationStatus, FileType } from '../Tools/enums'
+import { DiskItemType, ProjectItemType, GenerationStatus, FileType } from '../utils/enums'
 import Project from '../models/project';
 import SlotContainerManager from './slotContainerManager';
 import MethodContainerManager from './methodContainerManager';
@@ -36,8 +36,6 @@ export default class ProjectFileDescription {
                 if (this.fileType == FileType.List) { filePath += ".list"; }
                 else if (this.fileType == FileType.Lua) { filePath += ".lua"; }
 
-                //console.log('-- generating file: ' + filePath);
-
                 fs.exists(filePath, (exists) => {
                     if (!exists) {
                         let writeStream = fs.createWriteStream(filePath);
@@ -58,8 +56,6 @@ export default class ProjectFileDescription {
                 else {
                     folderPath += "\\" + this.name;
                 }
-
-                //console.log(' generating folder: ' + folderPath);
 
                 fs.exists(folderPath, (exists) => {
                     if (!exists) {
@@ -211,9 +207,6 @@ export default class ProjectFileDescription {
             project.diskItemType = DiskItemType.Json;
 
             let content = await ProjectFileDescription.readFile(uri.fsPath);
-
-            console.log(content);
-
             project.content = content;
 
             return project;
@@ -228,7 +221,6 @@ export default class ProjectFileDescription {
             project.diskItemType = DiskItemType.Json;
 
             let content = await ProjectFileDescription.readFile(uri.fsPath);
-            console.log(content);
             project.content = content;
 
             return project;
@@ -243,7 +235,6 @@ export default class ProjectFileDescription {
             project.diskItemType = DiskItemType.Json;
 
             let content = await ProjectFileDescription.readFile(uri.fsPath);
-            console.log(content);
             project.content = content;
 
             return project;

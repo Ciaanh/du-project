@@ -1,10 +1,10 @@
 'use strict';
 
-import ProjectFileDescription from '../Core/projectFileDescription';
-import ModelHelper from '../Tools/modelHelper';
+import ProjectFileDescription from '../models/projectFileDescription';
+import ModelHelper from '../utils/modelHelper';
 import Handler from '../models/handler';
 import FilterManager from './filterManager';
-import { ProjectItemType, DiskItemType, FileType } from '../Tools/enums';
+import { ProjectItemType, DiskItemType, FileType } from '../utils/enums';
 
 export default class HandlerManager {
 
