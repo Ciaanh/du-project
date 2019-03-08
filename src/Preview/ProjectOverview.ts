@@ -9,13 +9,17 @@ import ProjectManager from '../Core/projectManager';
 import Project from '../models/project';
 
 export default class ProjectOverview {
-    /**
-     * Track the currently panel. Only allow a single panel to exist at a time.
-     */
-    public static currentPanel: ProjectOverview[];
+
+    private static currentPanels: ProjectOverview[] = [];
+    // public static getCurrentPanel(panelName:string){
+    //     if(ProjectOverview.currentPanels===undefined){
+
+    //     }
+    //     return ProjectOverview.currentPanels[panelName];
+    // }
 
     public static readonly viewType = 'duProjectOverview';
-
+    private readonly _panelName: string;
     private readonly _panel: vscode.WebviewPanel;
     private readonly _extensionPath: string;
     private _disposables: vscode.Disposable[] = [];
@@ -27,15 +31,15 @@ export default class ProjectOverview {
         const column = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : undefined;
 
         // If we already have a panel, show it.
-        if (ProjectOverview.currentPanel[projectName]) {
-            ProjectOverview.currentPanel[projectName]._panel.reveal(column);
+        if (ProjectOverview.currentPanels[projectName]) {
+            ProjectOverview.currentPanels[projectName]._panel.reveal(column);
             return;
         }
 
         let extensionPath: string = Configuration.ExtensionPath;
 
         // Otherwise, create a new panel.
-        const panel = vscode.window.createWebviewPanel(ProjectOverview.viewType, `Overview ${projectName}`, column || vscode.ViewColumn.One, {
+        const panel = vscode.window.createWebviewPanel(ProjectOverview.viewType, `Overview :${projectName}`, column || vscode.ViewColumn.One, {
             // Enable javascript in the webview
             enableScripts: true,
 
@@ -45,10 +49,11 @@ export default class ProjectOverview {
             ]
         });
 
-        ProjectOverview.currentPanel[projectName] = new ProjectOverview(project, panel, extensionPath);
+        ProjectOverview.currentPanels[projectName] = new ProjectOverview(project, panel, extensionPath);
     }
 
     private constructor(duProject: Project, panel: vscode.WebviewPanel, extensionPath: string) {
+        this._panelName = duProject.projectName;
         this._panel = panel;
         this._extensionPath = extensionPath;
 
@@ -85,7 +90,8 @@ export default class ProjectOverview {
     }
 
     public dispose() {
-        ProjectOverview.currentPanel = undefined;
+
+        ProjectOverview.currentPanels[this._panelName] = undefined;
 
         // Clean up our resources
         this._panel.dispose();
@@ -105,7 +111,7 @@ export default class ProjectOverview {
         const scriptUri = scriptPathOnDisk.with({ scheme: 'vscode-resource' });
 
         const stylePathOnDisk = vscode.Uri.file(path.join(this._extensionPath, 'projectOverviewMedia', 'style.css'));
-        const styleUri = scriptPathOnDisk.with({ scheme: 'vscode-resource' });
+        const styleUri = stylePathOnDisk.with({ scheme: 'vscode-resource' });
 
         return ProjectHtml.Generate(duProject, scriptUri, styleUri);
     }
