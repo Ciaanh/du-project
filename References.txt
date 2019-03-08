@@ -28,3 +28,7 @@ https://code.visualstudio.com/docs/extensionAPI/extension-points
 
 use https://code.visualstudio.com/docs/extensionAPI/extension-points#_contributesviews 
 to display project structure on the side bar
+
+
+
+https://github.com/dschaefer/aliens-vscode.git

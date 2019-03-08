@@ -6,18 +6,22 @@
     "publisher": "Ciaanh",
     "license": "MIT",
     "engines": {
-        "vscode": "^1.31.0"
+        "vscode": "^1.26.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Ciaanh/du-project.git"
     },
     "categories": [
         "Other"
     ],
+    "main": "./out/extension",
     "activationEvents": [
         "onCommand:extension.previewDUFile",
         "onCommand:extension.previewDUProject",
         "onLanguage:duproject",
         "onWebviewPanel:duProjectOverview"
-    ],
-    "main": "./out/extension",
+    ],    
     "contributes": {
         "languages": [
             {
@@ -72,19 +76,41 @@
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
-        "compile": "tsc -p ./",
-        "watch": "tsc -watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install"
+
+        "compile": "npm-run-all compile:*",
+        "compile:extension": "tsc -p ./",
+        "compile:views": "webpack --mode development",
+        "watch": "npm-run-all -p watch:*",
+        "watch:extension": "tsc -watch -p ./",
+        "watch:views": "webpack --watch --mode development",
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        
+        "package": "vsce package"
+
     },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/Ciaanh/du-project.git"
-    },
+   
     "extensionDependencies": [],
     "devDependencies": {
-        "typescript": "^2.6.1",
+        "@types/node": "^10.5.2",
+        "@types/react": "^16.4.6",
+        "@types/react-dom": "^16.0.6",
+        "typescript": "^2.9.2",
         "vscode": "^1.1.30",
-        "@types/node": "^7.0.43"
+        "css-loader": "^1.0.0",
+        "less": "^3.7.0",
+        "less-loader": "^4.1.0",
+        "npm-run-all": "^4.1.3",
+        "style-loader": "^0.21.0",
+        "styled-components": "^3.3.3",
+        "ts-import-plugin": "^1.5.4",
+        "ts-loader": "^4.4.2",
+        "vsce": "^1.47.0",
+        "webpack": "^4.15.1",
+        "webpack-cli": "^3.0.8"
     },
-    "dependencies": {}
+    "dependencies": {
+        "react": "^16.8.4",
+        "react-dom": "^16.8.4",
+        "vscode": "^1.1.30"
+    }
 }

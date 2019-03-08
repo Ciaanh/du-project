@@ -45,7 +45,7 @@ export default class ProjectOverview {
 
             // And restrict the webview to only loading content from our extension's `media` directory.
             localResourceRoots: [
-                vscode.Uri.file(path.join(extensionPath, 'projectOverviewMedia'))
+                vscode.Uri.file(path.join(extensionPath, 'outView'))
             ]
         });
 
@@ -69,7 +69,7 @@ export default class ProjectOverview {
         // Update the content based on view changes
         this._panel.onDidChangeViewState(e => {
             if (this._panel.visible) {
-                this._panel.webview.html = this._getHtmlForWebview(duProject);
+                //this._panel.webview.html = this._getHtmlForWebview(duProject);
             }
         }, null, this._disposables);
 

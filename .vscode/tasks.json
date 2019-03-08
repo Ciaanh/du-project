@@ -4,7 +4,6 @@
         {
             "type": "npm",
             "script": "watch",
-            "identifier": "npm>watch",
             "problemMatcher": "$tsc-watch",
             "isBackground": true,
             "presentation": {
