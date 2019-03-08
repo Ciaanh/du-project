@@ -6,7 +6,7 @@ module.exports = {
         overview: './src/view/index.tsx'
     },
     output: {
-        path: path.resolve(__dirname, 'out'),
+        path: path.resolve(__dirname, 'outView'),
         filename: "[name].js"
     },
     // optimization: {
