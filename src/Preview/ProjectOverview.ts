@@ -59,7 +59,9 @@ export default class ProjectOverview {
         this._extensionPath = extensionPath;
 
         // Set the webview's initial html content 
-        this._panel.webview.html = this._getHtmlForWebview(duProject);
+        // this._panel.webview.html = this._getHtmlForWebview(duProject);
+        this._panel.webview.html = this._getHtmlForWebviewReact(duProject);
+
 
         // Listen for when the panel is disposed
         // This happens when the user closes the panel or when the panel is closed programatically

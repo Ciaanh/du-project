@@ -4,7 +4,15 @@ import App from './App';
 
 import './index.css';
 
+declare global {
+    interface Window {
+        acquireVsCodeApi(): any;
+    }
+}
+
+const vscode = window.acquireVsCodeApi();
+
 ReactDOM.render(
-    <App/>,
+    <App vscode={vscode} />,
     document.getElementById('root')
 );

@@ -3,7 +3,6 @@
 import { Uri, window, commands } from "vscode";
 import { DiskItemType } from "../Tools/enums";
 import ProjectPicker from "../Tools/openFile";
-import { encodeProjectUri, encodeProjectFolder } from "../Preview/contentProvider";
 import ProjectOverview from "../Preview/ProjectOverview";
 import ProjectManager from "../Core/projectManager";
 import Project from "../models/project";
@@ -12,7 +11,6 @@ import Project from "../models/project";
 export default class OverviewProjectOrJson {
 
     private static displayView(targetUri: Uri, type: DiskItemType) {
-
         let tDUProject: Thenable<Project>;
 
         if (type === DiskItemType.Json) {
@@ -25,24 +23,6 @@ export default class OverviewProjectOrJson {
         tDUProject.then((project) => {
             ProjectOverview.createOrShow(project);
         });
-
-        if (type === DiskItemType.Json) {
-            let uriToPreview = encodeProjectUri(targetUri);
-
-            return commands.executeCommand("workbench.action.closeEditorsInOtherGroups").then(() =>
-                commands.executeCommand('vscode.previewHtml', uriToPreview, 1, 'DU Project Preview')
-                    .then((success) => { }, (reason) => { window.showErrorMessage(reason); })
-            );
-        }
-        else if (type === DiskItemType.Folder) {
-            let uriToPreview = encodeProjectFolder(targetUri);
-
-            return commands.executeCommand("workbench.action.closeEditorsInOtherGroups").then(() =>
-                commands.executeCommand('vscode.previewHtml', uriToPreview, 1, 'DU Project Preview')
-                    .then((success) => { }, (reason) => { window.showErrorMessage(reason); })
-            );
-
-        }
     }
 
     public static executeCommand(targetUri: Uri, type: DiskItemType, projectPicker: ProjectPicker) {

@@ -1,7 +1,6 @@
 'use strict';
 
 import { commands, ExtensionContext, Uri, workspace } from 'vscode';
-import ContentProvider from './Preview/contentProvider';
 import ProjectPicker from './Tools/openFile';
 import { DiskItemType } from './Tools/enums';
 import LoadWorkspace from './Commands/LoadWorkspace';
@@ -15,11 +14,6 @@ export function activate(context: ExtensionContext) {
 
     // register the open 
     const projectPicker = new ProjectPicker(context);
-
-    // register the content provider to preview duproject
-    const provider = new ContentProvider();
-
-    workspace.registerTextDocumentContentProvider(ContentProvider.scheme, provider);
 
     // "onCommand:extension.previewDUFile"
     let disposablePreviewFile = commands.registerCommand('extension.previewDUFile', (fileUri: Uri) => {

@@ -92,10 +92,11 @@ export default class ProjectHtml {
             <head>
                 <meta charset="utf-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-                <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src https:; script-src 'nonce-${nonce}';">
+                <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src https:; script-src vscode-resource: 'unsafe-eval' 'unsafe-inline';style-src 'unsafe-inline'">
             </head>
             <body>
                 <div id="root"></div>
+                <script>window.acquireVsCodeApi=acquireVsCodeApi;</script>
                 <script nonce="${nonce}" src="${scriptUri}"></script>
             </body>
             </html>`;
