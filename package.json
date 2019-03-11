@@ -91,12 +91,14 @@
         "@material-ui/icons": "^3.0.2",
         "react": "^16.8.4",
         "react-dom": "^16.8.4",
+        "react-syntax-highlighter": "^10.2.0",
         "vscode": "^1.1.18"
     },
     "devDependencies": {
         "@types/node": "^10.5.2",
         "@types/react": "^16.4.6",
         "@types/react-dom": "^16.0.6",
+        "@types/react-syntax-highlighter": "^10.1.0",
         "css-loader": "^1.0.0",
         "less": "^3.7.0",
         "less-loader": "^4.1.0",

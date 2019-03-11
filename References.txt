@@ -32,3 +32,7 @@ to display project structure on the side bar
 
 
 https://github.com/dschaefer/aliens-vscode.git
+
+
+
+https://github.com/conorhastings/react-syntax-highlighter

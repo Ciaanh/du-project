@@ -5,6 +5,7 @@ import * as path from 'path';
 import Configuration from '../utils/configuration';
 import { DiskItemType } from '../utils/enums';
 import Project from '../models/project';
+import ProjectManager from '../models/projectManager';
 
 export default class ViewLoader {
 
@@ -43,7 +44,7 @@ export default class ViewLoader {
 
         ViewLoader.currentPanels[projectName] = new ViewLoader(project, panel, extensionPath);
 
-        ViewLoader.currentPanels[projectName].initialize(Project)
+        //ViewLoader.currentPanels[projectName].initialize(Project)
     }
 
     private constructor(duProject: Project, panel: vscode.WebviewPanel, extensionPath: string) {
@@ -79,9 +80,9 @@ export default class ViewLoader {
         }, null, this._disposables);
     }
 
-    public initialize(duProject: Project) {
-        this._panel.webview.postMessage({ command: 'initialize', data: duProject });
-    }
+    // public initialize(duProject: Project) {
+    //     this._panel.webview.postMessage({ command: 'initialize', data: duProject });
+    // }
 
     public dispose() {
 
@@ -99,14 +100,14 @@ export default class ViewLoader {
     }
 
 
-    private getNonce() {
-        let text = "";
-        const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        for (let i = 0; i < 32; i++) {
-            text += possible.charAt(Math.floor(Math.random() * possible.length));
-        }
-        return text;
-    }
+    // private getNonce() {
+    //     let text = "";
+    //     const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    //     for (let i = 0; i < 32; i++) {
+    //         text += possible.charAt(Math.floor(Math.random() * possible.length));
+    //     }
+    //     return text;
+    // }
 
     private Generate(duProject: Project) {
 
@@ -117,8 +118,9 @@ export default class ViewLoader {
         const scriptPathOnDisk = vscode.Uri.file(path.join(this._extensionPath, 'projectView', 'main.js'));
         const scriptUri = scriptPathOnDisk.with({ scheme: 'vscode-resource' });
 
-        const nonce = this.getNonce();
+        //const nonce = this.getNonce();
 
+        const projectJson = JSON.stringify(ProjectManager.toJsonObject(duProject));
 
         let projectSource: string;
         let generateProjectText: string;
@@ -145,17 +147,25 @@ export default class ViewLoader {
             <head>
                 <meta charset="utf-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-                <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src https:; script-src 'nonce-${nonce}' 'unsafe-eval';style-src 'unsafe-inline'">
+                <meta http-equiv="Content-Security-Policy" 
+                    content="default-src 'none'; 
+                             img-src https:; 
+                             script-src 'unsafe-eval' 'unsafe-inline' vscode-resource:;
+                             style-src https: 'unsafe-inline';
+                             font-src https:">
                 
                 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
                 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
-                <script nonce="${nonce}" src="${scriptUri}"></script>
+
+                <script>window.initialData = ${projectJson};</script>
+                
+                <script src="${scriptUri}"></script>
             </head>
             <body>
                 <div id="root"></div>
-                <script></script>
-                <script nonce="${nonce}" src="${reactAppUri}"></script>
+
+                <script src="${reactAppUri}"></script>
             </body>
             </html>`;
 

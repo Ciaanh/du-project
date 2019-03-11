@@ -9,6 +9,7 @@ import MethodList from './components/MethodList';
 
 interface IProjectProps {
     vscode: any;
+    initialData: IProject;
 }
 
 interface IProjectState {
@@ -18,6 +19,8 @@ interface IProjectState {
 export default class Project extends React.Component<IProjectProps, IProjectState> {
     constructor(props: any) {
         super(props);
+
+        let initialData = this.props.initialData;
 
         let oldState = this.props.vscode.getState();
 
@@ -39,7 +42,7 @@ export default class Project extends React.Component<IProjectProps, IProjectStat
     render() {
         return (
             <React.Fragment>
-                <SlotList vscode={this.props.vscode} ></SlotList>
+                <SlotList vscode={this.props.vscode} project={this.state.project} ></SlotList>
                 <MethodList vscode={this.props.vscode} ></MethodList>
                 <EventList vscode={this.props.vscode} ></EventList>
             </React.Fragment>
