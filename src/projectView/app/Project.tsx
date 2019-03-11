@@ -1,8 +1,10 @@
 import * as React from 'react';
-import Button from '@material-ui/core/Button';
 
-import Title from './components/Title';
-import IProject from './interfaces/iProject';
+import { IProject } from './interfaces/model';
+
+import SlotList from './components/SlotList';
+import EventList from './components/EventList';
+import MethodList from './components/MethodList';
 
 
 interface IProjectProps {
@@ -34,15 +36,12 @@ export default class Project extends React.Component<IProjectProps, IProjectStat
         });
     }
 
-
-
     render() {
         return (
             <React.Fragment>
-                <Title name={"Coco"} vscode={this.props.vscode} />
-                <Button variant="contained" color="primary">
-                    Hello World
-                </Button>
+                <SlotList vscode={this.props.vscode} ></SlotList>
+                <MethodList vscode={this.props.vscode} ></MethodList>
+                <EventList vscode={this.props.vscode} ></EventList>
             </React.Fragment>
         );
     }

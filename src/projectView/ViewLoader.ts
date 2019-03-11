@@ -43,6 +43,7 @@ export default class ViewLoader {
 
         ViewLoader.currentPanels[projectName] = new ViewLoader(project, panel, extensionPath);
 
+        ViewLoader.currentPanels[projectName].initialize(Project)
     }
 
     private constructor(duProject: Project, panel: vscode.WebviewPanel, extensionPath: string) {
