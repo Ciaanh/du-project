@@ -17,9 +17,9 @@ export default class Project extends React.Component<IProjectProps, IProjectStat
     constructor(props: any) {
         super(props);
 
-this.props.vscode.ge
+        let oldState = this.props.vscode.getState();
 
-        this.state = { project: undefined };
+        this.state = { project: (oldState && oldState.project) || undefined };
     }
 
     componentDidMount() {
