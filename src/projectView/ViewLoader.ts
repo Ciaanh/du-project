@@ -9,12 +9,6 @@ import Project from '../models/project';
 export default class ViewLoader {
 
     private static currentPanels: ViewLoader[] = [];
-    // public static getCurrentPanel(panelName:string){
-    //     if(ProjectOverview.currentPanels===undefined){
-
-    //     }
-    //     return ProjectOverview.currentPanels[panelName];
-    // }
 
     public static readonly viewType = 'duProjectOverview';
     private readonly _panelName: string;
@@ -48,6 +42,7 @@ export default class ViewLoader {
         });
 
         ViewLoader.currentPanels[projectName] = new ViewLoader(project, panel, extensionPath);
+        
     }
 
     private constructor(duProject: Project, panel: vscode.WebviewPanel, extensionPath: string) {
@@ -83,10 +78,8 @@ export default class ViewLoader {
         }, null, this._disposables);
     }
 
-    public doRefactor() {
-        // Send a message to the webview webview.
-        // You can send any JSON serializable data.
-        this._panel.webview.postMessage({ command: 'refactor' });
+    public initialize(duProject: Project) {
+        this._panel.webview.postMessage({ command: 'initialize', project: duProject });
     }
 
     public dispose() {
@@ -117,7 +110,10 @@ export default class ViewLoader {
     private Generate(duProject: Project) {
 
         // Local path to main script run in the webview
-        const scriptPathOnDisk = vscode.Uri.file(path.join(this._extensionPath, 'projectView', 'overview.js'));
+        const reactAppPathOnDisk = vscode.Uri.file(path.join(this._extensionPath, 'projectView', 'overview.js'));
+        const reactAppUri = reactAppPathOnDisk.with({ scheme: 'vscode-resource' });
+
+        const scriptPathOnDisk = vscode.Uri.file(path.join(this._extensionPath, 'projectView', 'main.js'));
         const scriptUri = scriptPathOnDisk.with({ scheme: 'vscode-resource' });
 
         const nonce = this.getNonce();
@@ -139,7 +135,7 @@ export default class ViewLoader {
                 break;
         }
 
-        
+
 
 
         let page =
@@ -148,12 +144,14 @@ export default class ViewLoader {
             <head>
                 <meta charset="utf-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-                <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src https:; script-src vscode-resource: 'unsafe-eval' 'unsafe-inline';style-src 'unsafe-inline'">
+                <meta http-equiv="Content-Security-Policy" 
+                      content="default-src 'none'; img-src https:; script-src 'nonce-${nonce}' 'unsafe-eval';style-src 'unsafe-inline'">
+                <script nonce="${nonce}" src="${scriptUri}"></script>
             </head>
             <body>
                 <div id="root"></div>
-                <script>window.acquireVsCodeApi=acquireVsCodeApi;</script>
-                <script nonce="${nonce}" src="${scriptUri}"></script>
+                <script></script>
+                <script nonce="${nonce}" src="${reactAppUri}"></script>
             </body>
             </html>`;
 

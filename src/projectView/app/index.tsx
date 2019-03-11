@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import App from './App';
+import Project from './Project';
 
 import './index.css';
 
@@ -13,6 +13,6 @@ declare global {
 const vscode = window.acquireVsCodeApi();
 
 ReactDOM.render(
-    <App vscode={vscode} />,
+    <Project vscode={vscode} />,
     document.getElementById('root')
 );
