@@ -1,39 +1,49 @@
 import * as React from 'react';
+import Button from '@material-ui/core/Button';
+
 import Title from './components/Title';
+import IProject from './interfaces/iProject';
 
-interface IMessage{
-    command:string;
-
-}
 
 interface IProjectProps {
     vscode: any;
 }
 
-export default class Project extends React.Component<IProjectProps, any> {
+interface IProjectState {
+    project: IProject | undefined;
+}
+
+export default class Project extends React.Component<IProjectProps, IProjectState> {
     constructor(props: any) {
         super(props);
 
-        // const oldState = this.vscode.getState();
+this.props.vscode.ge
 
+        this.state = { project: undefined };
     }
 
-    componentDidMount(){
+    componentDidMount() {
         window.addEventListener('message', event => {
-        const message:IMessage = event.data; // The json data that the extension sent
-        switch (message.command) {
-            case 'initialize':
-                this.setState(message.)
-                break;
-        }
-    });
+            const message: IMessage = event.data;
+            switch (message.command) {
+                case 'initialize':
+                    this.setState({ project: message.data })
+                    this.props.vscode.setState({ project: message.data });
+                    break;
+            }
+        });
     }
 
 
 
     render() {
         return (
-            <Title name={"Coco"} vscode={this.props.vscode} />
+            <React.Fragment>
+                <Title name={"Coco"} vscode={this.props.vscode} />
+                <Button variant="contained" color="primary">
+                    Hello World
+                </Button>
+            </React.Fragment>
         );
     }
 }

@@ -42,7 +42,7 @@ export default class ViewLoader {
         });
 
         ViewLoader.currentPanels[projectName] = new ViewLoader(project, panel, extensionPath);
-        
+
     }
 
     private constructor(duProject: Project, panel: vscode.WebviewPanel, extensionPath: string) {
@@ -79,7 +79,7 @@ export default class ViewLoader {
     }
 
     public initialize(duProject: Project) {
-        this._panel.webview.postMessage({ command: 'initialize', project: duProject });
+        this._panel.webview.postMessage({ command: 'initialize', data: duProject });
     }
 
     public dispose() {
@@ -144,8 +144,11 @@ export default class ViewLoader {
             <head>
                 <meta charset="utf-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-                <meta http-equiv="Content-Security-Policy" 
-                      content="default-src 'none'; img-src https:; script-src 'nonce-${nonce}' 'unsafe-eval';style-src 'unsafe-inline'">
+                <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src https:; script-src 'nonce-${nonce}' 'unsafe-eval';style-src 'unsafe-inline'">
+                
+                <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
+                <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
                 <script nonce="${nonce}" src="${scriptUri}"></script>
             </head>
             <body>
