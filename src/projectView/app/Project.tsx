@@ -13,7 +13,7 @@ interface IProjectProps {
 }
 
 interface IProjectState {
-    project: IProject | undefined;
+    project: IProject;
 }
 
 export default class Project extends React.Component<IProjectProps, IProjectState> {
@@ -24,7 +24,7 @@ export default class Project extends React.Component<IProjectProps, IProjectStat
 
         let oldState = this.props.vscode.getState();
 
-        this.state = { project: (oldState && oldState.project) || undefined };
+        this.state = { project: (oldState && oldState.project) || initialData };
     }
 
     componentDidMount() {
