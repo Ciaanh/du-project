@@ -93,16 +93,20 @@ export default class ViewLoader {
         // open or modify handler lua file ????
         // investigate execute command on save
 
-        /*
-            let uri = vscode.Uri.file(filePath);
-            // let success = await vscode.commands.executeCommand('vscode.open', uri);
-            vscode.window.showTextDocument(uri).then(editor => {
-                // editor.
-            })
+        
+        
+//             let uri = vscode.Uri.file(filePath);
+//             vscode.workspace.openTextDocument(uri)
+//             // let success = await vscode.commands.executeCommand('vscode.open', uri);
+//             vscode.window.showTextDocument(uri).then(editor => {
+//                 // editor.
+//             })
 
-
+// vscode.workspace.onDidSaveTextDocument((doc)=>{
+// doc.fileName
+// });
             
-        */
+        
     }
 
     // public initialize(duProject: Project) {
