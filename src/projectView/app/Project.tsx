@@ -2,9 +2,8 @@ import * as React from 'react';
 
 import { IProject } from './interfaces/model';
 
-import SlotList from './components/SlotList';
-import EventList from './components/EventList';
-import MethodList from './components/MethodList';
+// @ts-ignore
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 
 
 interface IProjectProps {
@@ -17,6 +16,22 @@ interface IProjectState {
 }
 
 export default class Project extends React.Component<IProjectProps, IProjectState> {
+    private slotIndexes: Array<number> = [
+        -3,
+        -2,
+        -1,
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+    ];
+
     constructor(props: any) {
         super(props);
 
@@ -25,6 +40,9 @@ export default class Project extends React.Component<IProjectProps, IProjectStat
         let oldState = this.props.vscode.getState();
 
         this.state = { project: (oldState && oldState.project) || initialData };
+
+
+        //this.onSelectSlot = this.onSelectSlot.bind(this);
     }
 
     componentDidMount() {
@@ -39,12 +57,48 @@ export default class Project extends React.Component<IProjectProps, IProjectStat
         });
     }
 
+    private onSelectSlot(slotIndex: number) {
+        console.log(slotIndex);
+    }
+
     render() {
+        const code = `--@slotKey:-2
+        --@signature:flush()
+        --@args:
+        -- compute acceleration and angularAcceleration
+        local forward =  Nav:composeForwardAcceleration(Nav.thrustManager:getAccelerationCommand())
+        
+        local angularAcceleration = Nav:composeControlledStabAngularAcceleration(Nav:getRollInput(), Nav:getPitchInput())
+                                + Nav:composeTiltingAngularAcceleration()
+                                + Nav:composeTurningAngularAcceleration(Nav:getYawInput())
+        
+        Nav:setEngineCommand("vertical,torque", Nav:composeLiftUpAcceleration(Nav:getLiftInput()), angularAcceleration)
+        Nav:setEngineCommand("horizontal", forward, nullvector)
+        Nav:setEngineCommand("brake", Nav:composeBrakingAcceleration(Nav:getBrakeInput()), nullvector)`;
+
         return (
             <React.Fragment>
-                <SlotList vscode={this.props.vscode} project={this.state.project} ></SlotList>
-                <MethodList vscode={this.props.vscode} ></MethodList>
-                <EventList vscode={this.props.vscode} ></EventList>
+                <ul>
+                    {
+                        (this.state.project)
+                            ? this.slotIndexes.map(
+                                (slotIndex) => {
+                                    let slot = this.state.project.slots[slotIndex];
+                                    if (slot) {
+                                        return (
+                                            <li key={slotIndex} onClick={() => this.onSelectSlot(slotIndex)}>
+                                                {slot.name}
+                                            </li>);
+                                    }
+                                    return <li key={slotIndex}>
+                                        <span>Slot {slotIndex} is missing.</span>>
+                                    </li>;
+                                })
+                            : null}
+                </ul>
+                <main >
+                    <SyntaxHighlighter language='lua'>{code}</SyntaxHighlighter>
+                </main>
             </React.Fragment>
         );
     }
