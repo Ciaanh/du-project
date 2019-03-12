@@ -6,6 +6,7 @@ import Configuration from '../utils/configuration';
 import { DiskItemType } from '../utils/enums';
 import Project from '../models/project';
 import ProjectManager from '../models/projectManager';
+import HandlerManager from '../models/handlerManager';
 
 export default class ViewLoader {
 
@@ -74,13 +75,24 @@ export default class ViewLoader {
         this._panel.webview.onDidReceiveMessage(message => {
             switch (message.command) {
                 case 'editHandler':
-                    let handlerKey = message.handlerKey;
-                    let slotKey = message.slotKey;
-
-                    vscode.window.showErrorMessage(`handler: ${handlerKey}, slot ${slotKey}`);
+                    this.onEditHandler(message);
                     return;
             }
         }, null, this._disposables);
+    }
+
+    private async onEditHandler(message: any) {
+        let handlerKey = message.handlerKey;
+        let slotKey = message.slotKey;
+
+        let filePath = HandlerManager.getFilePath(handlerKey, slotKey);
+
+        vscode.window.showErrorMessage(`handler: ${handlerKey}, slot ${slotKey}`);
+
+        // open or modify handler lua file ????
+
+        // let uri = vscode.Uri.file(filePath);
+        // let success = await vscode.commands.executeCommand('vscode.open', uri);
     }
 
     // public initialize(duProject: Project) {

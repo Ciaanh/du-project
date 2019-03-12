@@ -8,6 +8,9 @@ import { ProjectItemType, DiskItemType, FileType } from '../utils/enums';
 
 export default class HandlerManager {
 
+    public static getFilePath(handlerKey: string, slotKey: number): string {
+        return "toto";
+    }
 
     public static LoadFromFiles(handlerFileInfo: ProjectFileDescription): Handler {
         let handler = new Handler();
