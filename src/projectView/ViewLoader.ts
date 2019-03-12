@@ -89,10 +89,20 @@ export default class ViewLoader {
 
         vscode.window.showErrorMessage(`handler: ${handlerKey}, slot ${slotKey}`);
 
-        // open or modify handler lua file ????
 
-        // let uri = vscode.Uri.file(filePath);
-        // let success = await vscode.commands.executeCommand('vscode.open', uri);
+        // open or modify handler lua file ????
+        // investigate execute command on save
+
+        /*
+            let uri = vscode.Uri.file(filePath);
+            // let success = await vscode.commands.executeCommand('vscode.open', uri);
+            vscode.window.showTextDocument(uri).then(editor => {
+                // editor.
+            })
+
+
+            
+        */
     }
 
     // public initialize(duProject: Project) {
