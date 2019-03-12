@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { IProject } from './interfaces/model';
+import { IProject, ISlot, IHandler } from './interfaces/model';
 
 // @ts-ignore
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -13,6 +13,8 @@ interface IProjectProps {
 
 interface IProjectState {
     project: IProject;
+    currentSlot?: number;
+    currentHandler?: IHandler;
 }
 
 export default class Project extends React.Component<IProjectProps, IProjectState> {
@@ -38,8 +40,13 @@ export default class Project extends React.Component<IProjectProps, IProjectStat
         let initialData = this.props.initialData;
 
         let oldState = this.props.vscode.getState();
+        if (oldState) {
+            this.state = oldState;
+        }
+        else {
+            this.state = { project: initialData };
+        }
 
-        this.state = { project: (oldState && oldState.project) || initialData };
 
 
         //this.onSelectSlot = this.onSelectSlot.bind(this);
@@ -50,55 +57,111 @@ export default class Project extends React.Component<IProjectProps, IProjectStat
             const message: IMessage = event.data;
             switch (message.command) {
                 case 'initialize':
-                    this.setState({ project: message.data })
-                    this.props.vscode.setState({ project: message.data });
+                    this.defineState({ ...this.state, project: message.data })
                     break;
             }
         });
     }
 
+    private defineState(newSate: any) {
+        this.setState(newSate)
+        this.props.vscode.setState(newSate);
+    }
+
     private onSelectSlot(slotIndex: number) {
-        console.log(slotIndex);
+        this.defineState({ ...this.state, currentSlot: slotIndex, currentHandler: undefined })
+    }
+
+    private onSelectHandler(handler: IHandler) {
+        this.defineState({ ...this.state, currentHandler: handler })
+    }
+
+    private getHandlersBySlot(slotIndex: number): IHandler[] {
+        let result: IHandler[] = [];
+
+        this.state.project.handlers.forEach(handler => {
+            if (handler.filter.slotKey == slotIndex) {
+                result.push(handler);
+            }
+        });
+
+        return result;
+    }
+
+    private renderFilterList(slotIndex: number) {
+
+        let handlers: IHandler[] = this.getHandlersBySlot(slotIndex);
+
+        return (<div className="filterList">
+            {(handlers && handlers.length > 0)
+                ? handlers.map(
+                    (handler, handlerIndex) => {
+                        let argList = (handler.filter.args && handler.filter.args.length > 0)
+                            ? handler.filter.args.map((arg) => { return arg.value; }).join(",")
+                            : null;
+
+                        return (
+                            <li key={handler.key} onClick={() => this.onSelectHandler(handler)}>
+                                <span>
+                                    {handler.filter.signature} : {argList}
+                                </span>
+                            </li>);
+                    })
+                : null}
+        </div>)
+    }
+
+    private renderHandler(handler: IHandler) {
+        return (<main >
+            <a className="editHandler" onClick={() => this.editHandler(handler)}>Edit this code</a>
+            <SyntaxHighlighter language='lua'>{handler.code}</SyntaxHighlighter>
+        </main>)
+    }
+
+    private editHandler(handler: IHandler) {
+        this.props.vscode.postMessage({
+            command: 'editHandler',
+            slotKey: handler.filter.slotKey,
+            handlerKey: handler.key
+        });
     }
 
     render() {
-        const code = `--@slotKey:-2
-        --@signature:flush()
-        --@args:
-        -- compute acceleration and angularAcceleration
-        local forward =  Nav:composeForwardAcceleration(Nav.thrustManager:getAccelerationCommand())
-        
-        local angularAcceleration = Nav:composeControlledStabAngularAcceleration(Nav:getRollInput(), Nav:getPitchInput())
-                                + Nav:composeTiltingAngularAcceleration()
-                                + Nav:composeTurningAngularAcceleration(Nav:getYawInput())
-        
-        Nav:setEngineCommand("vertical,torque", Nav:composeLiftUpAcceleration(Nav:getLiftInput()), angularAcceleration)
-        Nav:setEngineCommand("horizontal", forward, nullvector)
-        Nav:setEngineCommand("brake", Nav:composeBrakingAcceleration(Nav:getBrakeInput()), nullvector)`;
 
         return (
             <React.Fragment>
-                <ul>
-                    {
-                        (this.state.project)
-                            ? this.slotIndexes.map(
-                                (slotIndex) => {
-                                    let slot = this.state.project.slots[slotIndex];
-                                    if (slot) {
-                                        return (
-                                            <li key={slotIndex} onClick={() => this.onSelectSlot(slotIndex)}>
-                                                {slot.name}
-                                            </li>);
-                                    }
-                                    return <li key={slotIndex}>
-                                        <span>Slot {slotIndex} is missing.</span>>
+                <div className="slotList">
+                    <ul>
+                        {
+                            (this.state.project)
+                                ? this.slotIndexes.map(
+                                    (slotIndex) => {
+                                        let slot = this.state.project.slots[slotIndex];
+                                        if (slot) {
+                                            return (
+                                                <li key={slotIndex} onClick={() => this.onSelectSlot(slotIndex)}>
+                                                    {slot.name}
+                                                </li>);
+                                        }
+                                        return <li key={slotIndex}>
+                                            <span>Slot {slotIndex} is missing.</span>>
                                     </li>;
-                                })
-                            : null}
-                </ul>
-                <main >
-                    <SyntaxHighlighter language='lua'>{code}</SyntaxHighlighter>
-                </main>
+                                    })
+                                : null}
+                    </ul>
+                </div>
+
+                {
+                    (this.state.currentSlot)
+                        ? this.renderFilterList(this.state.currentSlot)
+                        : null
+                }
+
+                {
+                    (this.state.currentHandler)
+                        ? this.renderHandler(this.state.currentHandler)
+                        : null
+                }
             </React.Fragment>
         );
     }

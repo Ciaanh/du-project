@@ -73,8 +73,11 @@ export default class ViewLoader {
         // Handle messages from the webview
         this._panel.webview.onDidReceiveMessage(message => {
             switch (message.command) {
-                case 'alert':
-                    vscode.window.showErrorMessage(message.text);
+                case 'editHandler':
+                    let handlerKey = message.handlerKey;
+                    let slotKey = message.slotKey;
+
+                    vscode.window.showErrorMessage(`handler: ${handlerKey}, slot ${slotKey}`);
                     return;
             }
         }, null, this._disposables);
@@ -100,23 +103,20 @@ export default class ViewLoader {
     }
 
 
-    // private getNonce() {
-    //     let text = "";
-    //     const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    //     for (let i = 0; i < 32; i++) {
-    //         text += possible.charAt(Math.floor(Math.random() * possible.length));
-    //     }
-    //     return text;
-    // }
+    private getNonce() {
+        let text = "";
+        const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        for (let i = 0; i < 32; i++) {
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+        return text;
+    }
 
     private Generate(duProject: Project) {
 
         // Local path to main script run in the webview
         const reactAppPathOnDisk = vscode.Uri.file(path.join(this._extensionPath, 'projectView', 'overview.js'));
         const reactAppUri = reactAppPathOnDisk.with({ scheme: 'vscode-resource' });
-
-        const scriptPathOnDisk = vscode.Uri.file(path.join(this._extensionPath, 'projectView', 'main.js'));
-        const scriptUri = scriptPathOnDisk.with({ scheme: 'vscode-resource' });
 
         //const nonce = this.getNonce();
 
@@ -138,7 +138,7 @@ export default class ViewLoader {
                 break;
         }
 
-
+        const nonce = this.getNonce();
 
 
         let page =
@@ -150,7 +150,7 @@ export default class ViewLoader {
                 <meta http-equiv="Content-Security-Policy" 
                     content="default-src 'none'; 
                              img-src https:; 
-                             script-src 'unsafe-eval' 'unsafe-inline' vscode-resource:;
+                             script-src 'unsafe-eval' 'unsafe-inline' 'nonce-${nonce}';
                              style-src https: 'unsafe-inline';
                              font-src https:">
                 
@@ -158,14 +158,15 @@ export default class ViewLoader {
                 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
 
-                <script>window.initialData = ${projectJson};</script>
-                
-                <script src="${scriptUri}"></script>
+                <script nonce="${nonce}">
+                    window.acquireVsCodeApi = acquireVsCodeApi;
+                    window.initialData = ${projectJson};
+                </script>
             </head>
             <body>
                 <div id="root"></div>
 
-                <script src="${reactAppUri}"></script>
+                <script nonce="${nonce}" src="${reactAppUri}"></script>
             </body>
             </html>`;
 
