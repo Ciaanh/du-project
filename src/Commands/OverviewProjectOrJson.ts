@@ -2,7 +2,6 @@
 
 import { Uri, window, commands } from "vscode";
 import { DiskItemType } from "../utils/enums";
-import ProjectPicker from "../utils/openFile";
 import ViewLoader from "../projectView/ViewLoader";
 import ProjectManager from "../models/projectManager";
 import Project from "../models/project";
@@ -25,7 +24,7 @@ export default class OverviewProjectOrJson {
         });
     }
 
-    public static executeCommand(targetUri: Uri, type: DiskItemType, projectPicker: ProjectPicker) {
+    public static executeCommand(targetUri: Uri, type: DiskItemType) {
         if (type === DiskItemType.Json) {
             let fileUriToPreview;
 
@@ -35,11 +34,23 @@ export default class OverviewProjectOrJson {
                 // get uri of file to preview
                 // from active text if duproject or from open file popin
                 let editor = window.activeTextEditor;
+                let openDialogOptions = {
+                    canSelectFiles: true,
+                    canSelectMany: false,
+                    filters: {
+                        'JSON': ['json']
+                    }
+                };
 
                 // display open pop in to get the name of the file to preview        
                 if (!editor) {
-                    projectPicker.pickFile((pickedResultUri) => {
-                        commands.executeCommand('extension.previewDUFile', pickedResultUri);
+                    window.showOpenDialog(openDialogOptions).then((uri) => {
+                        if (uri && uri.length > 0) {
+                            commands.executeCommand('extension.previewDUFile', uri[0]);
+                        }
+                        else {
+                            return; // should raise error or warning
+                        }
                     });
                     return;
                 }
@@ -51,8 +62,13 @@ export default class OverviewProjectOrJson {
                     if (doc && doc.languageId === "duproject") {
                         fileUriToPreview = doc.uri;
                     } else {
-                        projectPicker.pickFile((pickedResultUri) => {
-                            commands.executeCommand('extension.previewDUFile', pickedResultUri);
+                        window.showOpenDialog(openDialogOptions).then((uri) => {
+                            if (uri && uri.length > 0) {
+                                commands.executeCommand('extension.previewDUFile', uri[0]);
+                            }
+                            else {
+                                return; // should raise error or warning
+                            }
                         });
                         return;
                     }
@@ -68,8 +84,19 @@ export default class OverviewProjectOrJson {
             if (targetUri && targetUri.path != "") {
                 directoryUriToPreview = targetUri;
             } else {
-                projectPicker.pickFolder((pickedResultUri) => {
-                    commands.executeCommand('extension.previewDUProject', pickedResultUri);
+                let openDialogOptions = {
+                    canSelectFiles: false,
+                    canSelectFolders: true,
+                    canSelectMany: false
+                };
+
+                window.showOpenDialog(openDialogOptions).then((uri) => {
+                    if (uri && uri.length > 0) {
+                        commands.executeCommand('extension.previewDUProject', uri[0]);
+                    }
+                    else {
+                        return; // should raise error or warning
+                    }
                 });
                 return;
             }

@@ -1,7 +1,6 @@
 'use strict';
 
 import { commands, ExtensionContext, Uri, workspace } from 'vscode';
-import ProjectPicker from './utils/openFile';
 import { DiskItemType } from './utils/enums';
 import LoadWorkspace from './commands/LoadWorkspace';
 import GenerateProjectOrJson from './commands/GenerateProjectOrFile';
@@ -12,17 +11,14 @@ export function activate(context: ExtensionContext) {
 
     Configuration.ExtensionPath = context.extensionPath;
 
-    // register the open 
-    const projectPicker = new ProjectPicker(context);
-
     // "onCommand:extension.previewDUFile"
     let disposablePreviewFile = commands.registerCommand('extension.previewDUFile', (fileUri: Uri) => {
-        return OverviewProjectOrJson.executeCommand(fileUri, DiskItemType.Json, projectPicker);
+        OverviewProjectOrJson.executeCommand(fileUri, DiskItemType.Json);
     });
 
     // "onCommand:extension.previewDUProject"
     let disposablePreviewProject = commands.registerCommand('extension.previewDUProject', (directoryUri: Uri) => {
-        return OverviewProjectOrJson.executeCommand(directoryUri, DiskItemType.Folder, projectPicker);
+        OverviewProjectOrJson.executeCommand(directoryUri, DiskItemType.Folder);
     });
 
     // internal command extension.generateProjectOrFile called from preview to generate project or json

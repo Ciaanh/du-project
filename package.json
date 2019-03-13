@@ -17,10 +17,11 @@
     ],
     "main": "./out/extension",
     "activationEvents": [
-        "onCommand:extension.previewDUFile",
-        "onCommand:extension.previewDUProject",
         "onLanguage:duproject",
-        "onWebviewPanel:duProjectOverview"
+        "onWebviewPanel:duProjectOverview",
+        "onCommand:extension.loadDefaultDUWorkspace",
+        "onCommand:extension.previewDUFile",
+        "onCommand:extension.previewDUProject"        
     ],
     "contributes": {
         "languages": [
@@ -48,7 +49,7 @@
             },
             {
                 "command": "extension.loadDefaultDUWorkspace",
-                "title": "open the default workspace from the configuration if defined.",
+                "title": "Open project.",
                 "category": "DU project"
             }
         ],
