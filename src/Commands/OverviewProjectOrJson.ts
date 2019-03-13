@@ -26,10 +26,9 @@ export default class OverviewProjectOrJson {
 
     public static executeCommand(targetUri: Uri, type: DiskItemType) {
         if (type === DiskItemType.Json) {
-            let fileUriToPreview;
 
             if (targetUri && targetUri.path != "") {
-                fileUriToPreview = targetUri;
+                OverviewProjectOrJson.displayView(targetUri, type);
             } else {
                 // get uri of file to preview
                 // from active text if duproject or from open file popin
@@ -46,7 +45,7 @@ export default class OverviewProjectOrJson {
                 if (!editor) {
                     window.showOpenDialog(openDialogOptions).then((uri) => {
                         if (uri && uri.length > 0) {
-                            commands.executeCommand('extension.previewDUFile', uri[0]);
+                            OverviewProjectOrJson.displayView(uri[0], type);
                         }
                         else {
                             return; // should raise error or warning
@@ -60,11 +59,11 @@ export default class OverviewProjectOrJson {
                     let doc = editor.document;
                     // check if file in editor window is valid as duproject
                     if (doc && doc.languageId === "duproject") {
-                        fileUriToPreview = doc.uri;
+                        OverviewProjectOrJson.displayView(doc.uri, type);
                     } else {
                         window.showOpenDialog(openDialogOptions).then((uri) => {
                             if (uri && uri.length > 0) {
-                                commands.executeCommand('extension.previewDUFile', uri[0]);
+                                OverviewProjectOrJson.displayView(uri[0], type);
                             }
                             else {
                                 return; // should raise error or warning
@@ -75,14 +74,12 @@ export default class OverviewProjectOrJson {
                 }
             }
 
-            return OverviewProjectOrJson.displayView(fileUriToPreview, type);
+            return;
 
         }
         else if (type === DiskItemType.Folder) {
-            let directoryUriToPreview;
-
             if (targetUri && targetUri.path != "") {
-                directoryUriToPreview = targetUri;
+                OverviewProjectOrJson.displayView(targetUri, type);
             } else {
                 let openDialogOptions = {
                     canSelectFiles: false,
@@ -92,7 +89,7 @@ export default class OverviewProjectOrJson {
 
                 window.showOpenDialog(openDialogOptions).then((uri) => {
                     if (uri && uri.length > 0) {
-                        commands.executeCommand('extension.previewDUProject', uri[0]);
+                        OverviewProjectOrJson.displayView(uri[0], type);
                     }
                     else {
                         return; // should raise error or warning
@@ -101,7 +98,7 @@ export default class OverviewProjectOrJson {
                 return;
             }
 
-            return OverviewProjectOrJson.displayView(directoryUriToPreview, type);
+            return;
         }
     }
 }

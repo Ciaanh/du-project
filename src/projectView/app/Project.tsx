@@ -46,10 +46,6 @@ export default class Project extends React.Component<IProjectProps, IProjectStat
         else {
             this.state = { project: initialData };
         }
-
-
-
-        //this.onSelectSlot = this.onSelectSlot.bind(this);
     }
 
     componentDidMount() {
