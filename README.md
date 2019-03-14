@@ -2,7 +2,6 @@
 
 This extension for Visual Studio Code provide some tools to manage code project for the game Dual Universe
 
-There is a trello available to notify Bugs and Ideas: https://trello.com/b/Dnl4fPQ9/vs-code-du-project-extension
 
 ## Features
 
@@ -16,22 +15,19 @@ The folders containing the generated project with each .lua files are named **_`
 ```
 Example of project structure :
 
-du_project
+du_projectName
 │
-└───Events
+└───projectName.json
 │
 └───Methods
+|   method_000.lua
+|   method_001.lua
+|   method_<methodIndex>.lua
 |
-└───Slots
-│   │
-│   └───slot_<slotKey>_<slotName>
-|       │   handler_<key>_<filter-action>_<filter-args>.lua
-|       |
-│       └───Type
-|       |   │
-|       |   └───Events
-|       |   │
-|       |   └───Methods
+└───Slot_<slotKey>
+    handler_<key>.lua
+    method_<index>.lua
+
 ```
 
 ## Dependencies
@@ -51,9 +47,18 @@ The **method** and **event** object are not defined yet, if the Json you try to 
 
 ## Release Notes
 
-### 0.1903.4 alpha version
+### 0.1904.1 alpha version
 
 Replace ContentProvider with Webview API
+
+* Only two actions: 
+* - Create project with copy/paste code from game
+* - Overview an existing du project
+
+* Improve and simplify project structure : 
+* - Du project now rely on .json file from the game not the folder structure, only .lua code files are extracted with simpler naming
+
+* Overview will check integrity of project (content of .lua files and content in json)
 
 ### 0.1903.3 alpha version
 
