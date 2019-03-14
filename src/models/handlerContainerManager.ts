@@ -1,7 +1,7 @@
 'use strict';
 
 import ProjectFileDescription from '../models/projectFileDescription';
-import { ProjectItemType, DiskItemType } from '../utils/enums';
+import { ProjectItemType, SourceType } from '../utils/enums';
 import Handler from '../models/handler';
 import HandlerContainer from '../models/handlerContainer';
 import HandlerManager from './handlerManager';
@@ -11,10 +11,10 @@ export default class HandlerContainerManager {
         let handlers = new HandlerContainer();
 
         slotContainer.subItems.forEach(slot => {
-            if (slot.diskItemType == DiskItemType.Folder && slot.itemType == ProjectItemType.Slot) {
+            if (slot.diskItemType == SourceType.Folder && slot.itemType == ProjectItemType.Slot) {
 
                 slot.subItems.forEach(subItem => {
-                    if (subItem.diskItemType == DiskItemType.Json && subItem.itemType == ProjectItemType.Handler) {
+                    if (subItem.diskItemType == SourceType.Json && subItem.itemType == ProjectItemType.Handler) {
                         let newHandler = HandlerManager.LoadFromFiles(subItem);
                         if (newHandler) handlers.add(newHandler);
                     }

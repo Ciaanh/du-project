@@ -6,8 +6,4 @@ export default class duProject {
     public name: string;
 
     public project: IProject;
-
-    public isValidProject(): boolean {
-        return true;
-    }
 }

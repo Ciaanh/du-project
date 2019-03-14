@@ -5,6 +5,10 @@ import duProject from './duProject';
 
 export default class duProjectManager {
 
+    public static isValidProject(uri: vscode.Uri): boolean {
+        return true;
+    }
+
     public static LoadProject(uri: vscode.Uri): Thenable<duProject> {
         return ProjectFileDescription.loadProjectFromDisk(uri).then(projectFiles => {
             return ProjectManager.LoadFromFiles(projectFiles, uri);

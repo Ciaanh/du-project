@@ -20,7 +20,7 @@
         "onLanguage:duproject",
         "onWebviewPanel:duProjectOverview",
         "onCommand:extension.loadDefaultDUWorkspace",
-        "onCommand:extension.previewDUFile",
+        "onCommand:extension.loadJson",
         "onCommand:extension.previewDUProject"        
     ],
     "contributes": {
@@ -38,13 +38,13 @@
         ],
         "commands": [
             {
-                "command": "extension.previewDUFile",
-                "title": "show preview from file.",
+                "command": "extension.loadJson",
+                "title": "Create project from in game JSON.",
                 "category": "DU project"
             },
             {
                 "command": "extension.previewDUProject",
-                "title": "show preview from project.",
+                "title": "Display preview from project.",
                 "category": "DU project"
             },
             {

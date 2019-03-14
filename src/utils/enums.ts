@@ -1,6 +1,6 @@
 'use strict';
 
-export enum DiskItemType {
+export enum SourceType {
     Json,
     Folder,
     Undefined

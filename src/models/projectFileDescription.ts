@@ -2,14 +2,14 @@
 
 import * as vscode from 'vscode';
 import * as fs from "fs";
-import { DiskItemType, ProjectItemType, GenerationStatus, FileType } from '../utils/enums'
+import { SourceType, ProjectItemType, GenerationStatus, FileType } from '../utils/enums'
 import Project from '../models/project';
 import SlotContainerManager from './slotContainerManager';
 import MethodContainerManager from './methodContainerManager';
 import EventContainerManager from './eventContainerManager';
 
 export default class ProjectFileDescription {
-    public diskItemType: DiskItemType;
+    public diskItemType: SourceType;
     public itemType: ProjectItemType;
     public name: string;
 
@@ -22,14 +22,14 @@ export default class ProjectFileDescription {
 
     constructor() {
         this.itemType = ProjectItemType.Empty;
-        this.diskItemType = DiskItemType.Undefined;
+        this.diskItemType = SourceType.Undefined;
         this.subItems = new Array<ProjectFileDescription>();
     }
 
     public generate(root: string): GenerationStatus | Thenable<GenerationStatus> {
         let projectRoot = root;
         switch (this.diskItemType) {
-            case DiskItemType.Json:
+            case SourceType.Json:
 
                 let filePath = projectRoot + "\\" + this.name
 
@@ -48,7 +48,7 @@ export default class ProjectFileDescription {
                     }
                 })
                 return GenerationStatus.ElementAlreadyExists;
-            case DiskItemType.Folder:
+            case SourceType.Folder:
                 let folderPath = projectRoot;
                 if (this.itemType == ProjectItemType.Root) {
                     folderPath += "\\du_" + this.name;
@@ -101,7 +101,7 @@ export default class ProjectFileDescription {
 
         projectItem.name = project.projectName;
         projectItem.itemType = ProjectItemType.Root;
-        projectItem.diskItemType = DiskItemType.Folder;
+        projectItem.diskItemType = SourceType.Folder;
         projectItem.subItems = new Array<ProjectFileDescription>();
         projectItem.subItems.push(SlotContainerManager.createSlots(project.slots, project.handlers));
         projectItem.subItems.push(MethodContainerManager.createMethods(project.methods.get()));
@@ -122,7 +122,7 @@ export default class ProjectFileDescription {
 
                     project.name = projectName;
                     project.itemType = ProjectItemType.Root;
-                    project.diskItemType = DiskItemType.Folder;
+                    project.diskItemType = SourceType.Folder;
 
                     let subItems = await ProjectFileDescription.loadSubitemsFromDisk(uri);
                     project.subItems.push(...subItems);
@@ -182,7 +182,7 @@ export default class ProjectFileDescription {
         }
 
         project.name = directoryName;
-        project.diskItemType = DiskItemType.Folder;
+        project.diskItemType = SourceType.Folder;
 
         let subItems = await ProjectFileDescription.loadSubitemsFromDisk(uri);
         project.subItems.push(...subItems);
@@ -204,7 +204,7 @@ export default class ProjectFileDescription {
             project.fileType = FileType.Lua;
             project.itemType = ProjectItemType.Handler;
             project.name = documentName;
-            project.diskItemType = DiskItemType.Json;
+            project.diskItemType = SourceType.Json;
 
             let content = await ProjectFileDescription.readFile(uri.fsPath);
             project.content = content;
@@ -218,7 +218,7 @@ export default class ProjectFileDescription {
             project.fileType = FileType.Lua;
             project.itemType = ProjectItemType.Method;
             project.name = documentName;
-            project.diskItemType = DiskItemType.Json;
+            project.diskItemType = SourceType.Json;
 
             let content = await ProjectFileDescription.readFile(uri.fsPath);
             project.content = content;
@@ -232,7 +232,7 @@ export default class ProjectFileDescription {
             project.fileType = FileType.List;
             project.itemType = ProjectItemType.Event;
             project.name = documentName;
-            project.diskItemType = DiskItemType.Json;
+            project.diskItemType = SourceType.Json;
 
             let content = await ProjectFileDescription.readFile(uri.fsPath);
             project.content = content;

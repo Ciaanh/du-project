@@ -1,7 +1,7 @@
 'use strict';
 
 import ProjectFileDescription from "../models/projectFileDescription";
-import { ProjectItemType, DiskItemType } from "../utils/enums";
+import { ProjectItemType, SourceType } from "../utils/enums";
 import Type from "../models/type";
 import MethodContainerManager from "./methodContainerManager";
 import EventContainerManager from "./eventContainerManager";
@@ -12,7 +12,7 @@ export default class TypeManager {
         let type = new Type();
 
         files.subItems.forEach(item => {
-            if (item.diskItemType == DiskItemType.Folder
+            if (item.diskItemType == SourceType.Folder
                 && item.itemType == ProjectItemType.MethodContainer
                 && !type.methods) {
                 type.methods = MethodContainerManager.LoadFromFiles(item);
@@ -21,7 +21,7 @@ export default class TypeManager {
                 // error type already defined
             }
 
-            if (item.diskItemType == DiskItemType.Folder
+            if (item.diskItemType == SourceType.Folder
                 && item.itemType == ProjectItemType.EventContainer
                 && !type.events) {
                 type.events = EventContainerManager.LoadFromFiles(item);
@@ -70,7 +70,7 @@ export default class TypeManager {
         let typeObject = new ProjectFileDescription();
         typeObject.itemType = ProjectItemType.Type;
         typeObject.name = "Type";
-        typeObject.diskItemType = DiskItemType.Folder;
+        typeObject.diskItemType = SourceType.Folder;
 
         let subItems = new Array<ProjectFileDescription>();
         if (type) {

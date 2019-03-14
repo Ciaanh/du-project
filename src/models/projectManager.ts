@@ -3,7 +3,7 @@
 import * as vscode from 'vscode';
 import * as fs from "fs";
 import Project from '../models/project';
-import { ProjectItemType, DiskItemType } from '../utils/enums';
+import { ProjectItemType, SourceType } from '../utils/enums';
 import SlotContainerManager from '../models/slotContainerManager';
 import MethodContainerManager from '../models/methodContainerManager';
 import EventContainerManager from '../models/eventContainerManager';
@@ -90,7 +90,7 @@ export default class ProjectManager {
     }
 
     public static LoadFromFiles(files: ProjectFileDescription, uri: vscode.Uri): Project {
-        let project = new Project(files.name, DiskItemType.Folder, uri);
+        let project = new Project(files.name, SourceType.Folder, uri);
 
         if (files.itemType == ProjectItemType.Root) {
             files.subItems.forEach(item => {
@@ -115,7 +115,7 @@ export default class ProjectManager {
     }
 
     public static LoadFromJson(projectName: string, projectAsString: string, uri: vscode.Uri): Project {
-        let project = new Project(projectName, DiskItemType.Json, uri);
+        let project = new Project(projectName, SourceType.Json, uri);
 
         let projectAsJson = JSON.parse(projectAsString);
 

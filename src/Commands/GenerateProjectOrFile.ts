@@ -1,14 +1,14 @@
 'use strict';
 
 import { Uri, workspace } from "vscode";
-import { DiskItemType } from "../utils/enums";
+import { SourceType } from "../utils/enums";
 import ProjectManager from "../models/projectManager";
 import ProjectFileDescription from "../models/projectFileDescription";
 
 export default class GenerateProjectOrJson {
 
-    public static executeCommand(projectName: string, target: string, source: DiskItemType) {
-        if (source === DiskItemType.Json) {
+    public static executeCommand(projectName: string, target: string, source: SourceType) {
+        if (source === SourceType.Json) {
             if (target) {
                 let targetUri = Uri.parse(target);
                 let tDUProject = ProjectManager.LoadJsonURI(targetUri);
@@ -18,7 +18,7 @@ export default class GenerateProjectOrJson {
                 });
             }
         }
-        else if (source === DiskItemType.Folder) {
+        else if (source === SourceType.Folder) {
             if (target) {
                 let targetUri = Uri.parse(target);
                 let tDUProject = ProjectManager.LoadProject(targetUri);

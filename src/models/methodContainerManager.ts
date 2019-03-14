@@ -1,7 +1,7 @@
 'use strict';
 
 import ProjectFileDescription from '../models/projectFileDescription';
-import { DiskItemType, ProjectItemType } from '../utils/enums';
+import { SourceType, ProjectItemType } from '../utils/enums';
 import MethodContainer from '../models/methodContainer';
 import MethodManager from './methodManager';
 import Method from '../models/method';
@@ -12,7 +12,7 @@ export default class MethodContainerManager {
         let methods = new MethodContainer();
 
         files.subItems.forEach(item => {
-            if (item.diskItemType == DiskItemType.Json
+            if (item.diskItemType == SourceType.Json
                 && item.itemType == ProjectItemType.Method) {
                 methods.add(MethodManager.LoadFromFiles(item));
             }
@@ -50,7 +50,7 @@ export default class MethodContainerManager {
         let methodContainer = new ProjectFileDescription();
         methodContainer.itemType = ProjectItemType.MethodContainer;
         methodContainer.name = "Methods";
-        methodContainer.diskItemType = DiskItemType.Folder;
+        methodContainer.diskItemType = SourceType.Folder;
 
         let methodItems = new Array<ProjectFileDescription>();
         if (methods) {

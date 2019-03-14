@@ -3,7 +3,7 @@
 import ProjectFileDescription from "../models/projectFileDescription";
 import EventContainer from "../models/eventContainer";
 import EventManager from "./eventManager";
-import { DiskItemType, ProjectItemType } from "../utils/enums";
+import { SourceType, ProjectItemType } from "../utils/enums";
 
 
 export default class EventContainerManager {
@@ -12,7 +12,7 @@ export default class EventContainerManager {
         let eventContainer = new EventContainer();
 
         files.subItems.forEach(item => {
-            if (item.diskItemType == DiskItemType.Json
+            if (item.diskItemType == SourceType.Json
                 && item.itemType == ProjectItemType.Event) {
                 eventContainer.addRange(EventManager.LoadFromFiles(item));
             }
@@ -56,7 +56,7 @@ export default class EventContainerManager {
         let eventContainer = new ProjectFileDescription();
         eventContainer.itemType = ProjectItemType.EventContainer;
         eventContainer.name = "Events";
-        eventContainer.diskItemType = DiskItemType.Folder;
+        eventContainer.diskItemType = SourceType.Folder;
 
         let eventItems = new Array<ProjectFileDescription>();
         if (events) {

@@ -4,11 +4,11 @@ import HandlerContainer from './handlerContainer';
 import SlotContainer from './slotContainer';
 import EventContainer from './eventContainer';
 import MethodContainer from './methodContainer';
-import { DiskItemType } from '../utils/enums';
+import { SourceType } from '../utils/enums';
 import { Uri } from 'vscode';
 
 export default class Project {
-    public sourceType: DiskItemType;
+    public sourceType: SourceType;
     public sourceUri: Uri;
     public projectName: string;
 
@@ -18,7 +18,7 @@ export default class Project {
     public events: EventContainer;
 
 
-    constructor(name: string, type: DiskItemType, uri: Uri) {
+    constructor(name: string, type: SourceType, uri: Uri) {
         this.sourceType = type,
         this.sourceUri = uri;
         this.projectName = name;

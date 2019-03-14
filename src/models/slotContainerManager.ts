@@ -1,7 +1,7 @@
 'use strict';
 
 import ProjectFileDescription from '../models/projectFileDescription';
-import { DiskItemType, ProjectItemType } from '../utils/enums';
+import { SourceType, ProjectItemType } from '../utils/enums';
 import SlotContainer from '../models/slotContainer';
 import SlotManager from './slotManager';
 import HandlerContainer from '../models/handlerContainer';
@@ -10,7 +10,7 @@ export default class SlotContainerManager {
     public static LoadFromFiles(files: ProjectFileDescription): SlotContainer {
         let slots = new SlotContainer();
         files.subItems.forEach(slotDescription => {
-            if (slotDescription.diskItemType == DiskItemType.Folder && slotDescription.itemType == ProjectItemType.Slot) {
+            if (slotDescription.diskItemType == SourceType.Folder && slotDescription.itemType == ProjectItemType.Slot) {
                 const slotInfos = slotDescription.name.split("_");
                 const slotIndex = Number.parseInt(slotInfos[1]);
                 const slotName = slotInfos[2];
@@ -89,7 +89,7 @@ export default class SlotContainerManager {
         let slotContainer = new ProjectFileDescription();
         slotContainer.itemType = ProjectItemType.Slot;
         slotContainer.name = "Slots";
-        slotContainer.diskItemType = DiskItemType.Folder;
+        slotContainer.diskItemType = SourceType.Folder;
 
         let slotItems = new Array<ProjectFileDescription>();
         if (slots) {

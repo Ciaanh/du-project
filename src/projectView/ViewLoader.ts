@@ -3,10 +3,11 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import Configuration from '../utils/configuration';
-import { DiskItemType } from '../utils/enums';
+import { SourceType } from '../utils/enums';
 import Project from '../models/project';
 import ProjectManager from '../models/projectManager';
 import HandlerManager from '../models/handlerManager';
+import duProject from '../duProject';
 
 export default class ViewLoader {
 
@@ -18,9 +19,9 @@ export default class ViewLoader {
     private readonly _extensionPath: string;
     private _disposables: vscode.Disposable[] = [];
 
-    public static createOrShow(project: Project) {
+    public static createOrShow(project: duProject) {
 
-        let projectName = project.projectName;
+        let projectName = project.name;
 
         const column = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : undefined;
 
@@ -48,8 +49,8 @@ export default class ViewLoader {
         //ViewLoader.currentPanels[projectName].initialize(Project)
     }
 
-    private constructor(duProject: Project, panel: vscode.WebviewPanel, extensionPath: string) {
-        this._panelName = duProject.projectName;
+    private constructor(duProject: duProject, panel: vscode.WebviewPanel, extensionPath: string) {
+        this._panelName = duProject.name;
         this._panel = panel;
         this._extensionPath = extensionPath;
 
@@ -93,20 +94,20 @@ export default class ViewLoader {
         // open or modify handler lua file ????
         // investigate execute command on save
 
-        
-        
-//             let uri = vscode.Uri.file(filePath);
-//             vscode.workspace.openTextDocument(uri)
-//             // let success = await vscode.commands.executeCommand('vscode.open', uri);
-//             vscode.window.showTextDocument(uri).then(editor => {
-//                 // editor.
-//             })
 
-// vscode.workspace.onDidSaveTextDocument((doc)=>{
-// doc.fileName
-// });
-            
-        
+
+        //             let uri = vscode.Uri.file(filePath);
+        //             vscode.workspace.openTextDocument(uri)
+        //             // let success = await vscode.commands.executeCommand('vscode.open', uri);
+        //             vscode.window.showTextDocument(uri).then(editor => {
+        //                 // editor.
+        //             })
+
+        // vscode.workspace.onDidSaveTextDocument((doc)=>{
+        // doc.fileName
+        // });
+
+
     }
 
     // public initialize(duProject: Project) {
@@ -138,34 +139,16 @@ export default class ViewLoader {
         return text;
     }
 
-    private Generate(duProject: Project) {
+    private Generate(duProject: duProject) {
 
         // Local path to main script run in the webview
         const reactAppPathOnDisk = vscode.Uri.file(path.join(this._extensionPath, 'projectView', 'overview.js'));
         const reactAppUri = reactAppPathOnDisk.with({ scheme: 'vscode-resource' });
 
-        //const nonce = this.getNonce();
-
-        const projectJson = JSON.stringify(ProjectManager.toJsonObject(duProject));
-
-        let projectSource: string;
-        let generateProjectText: string;
-
-        switch (duProject.sourceType) {
-            case DiskItemType.Json:
-                projectSource = "<h2>Loaded from a .json file.</h2>";
-                generateProjectText = "Generate project from this file";
-                break;
-            case DiskItemType.Folder:
-                projectSource = "<h2>Loaded from a project folder.</h2>";
-                generateProjectText = "Generate a json file for the game from this project";
-                break;
-            default:
-                break;
-        }
+        // const projectJson = JSON.stringify(ProjectManager.toJsonObject(duProject));
+        const projectJson = JSON.stringify(duProject.project);
 
         const nonce = this.getNonce();
-
 
         let page =
             `<!DOCTYPE html>
@@ -177,14 +160,9 @@ export default class ViewLoader {
                     content="default-src 'none'; 
                              img-src https:; 
                              script-src 'unsafe-eval' 'unsafe-inline' 'nonce-${nonce}';
-                             style-src https: 'unsafe-inline';
-                             font-src https:">
-                
-                <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
-                <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+                             style-src 'unsafe-inline';">
 
-
-                <script nonce="${nonce}">
+                <script>
                     window.acquireVsCodeApi = acquireVsCodeApi;
                     window.initialData = ${projectJson};
                 </script>

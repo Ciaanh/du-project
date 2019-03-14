@@ -3,7 +3,7 @@
 import ModelHelper from '../utils/modelHelper';
 import ProjectFileDescription from "../models/projectFileDescription";
 import Method from '../models/method';
-import { ProjectItemType, DiskItemType, FileType } from '../utils/enums';
+import { ProjectItemType, SourceType, FileType } from '../utils/enums';
 
 
 export default class MethodManager {
@@ -88,7 +88,7 @@ export default class MethodManager {
 
         projectItem.name = `method_${index}`;
         projectItem.itemType = ProjectItemType.Method;
-        projectItem.diskItemType = DiskItemType.Json;
+        projectItem.diskItemType = SourceType.Json;
         projectItem.fileType = FileType.Lua;
 
         projectItem.content = MethodManager.toFileContent(method);

@@ -4,7 +4,7 @@ import ProjectFileDescription from '../models/projectFileDescription';
 import ModelHelper from '../utils/modelHelper';
 import Handler from '../models/handler';
 import FilterManager from './filterManager';
-import { ProjectItemType, DiskItemType, FileType } from '../utils/enums';
+import { ProjectItemType, SourceType, FileType } from '../utils/enums';
 
 export default class HandlerManager {
 
@@ -113,7 +113,7 @@ export default class HandlerManager {
 
         projectItem.name = `handler_${handler.key}`;
         projectItem.itemType = ProjectItemType.Handler;
-        projectItem.diskItemType = DiskItemType.Json;
+        projectItem.diskItemType = SourceType.Json;
         projectItem.fileType = FileType.Lua;
 
         projectItem.content = HandlerManager.toFileContent(handler);

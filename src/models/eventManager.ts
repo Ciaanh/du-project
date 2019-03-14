@@ -2,7 +2,7 @@
 
 import ProjectFileDescription from "../models/projectFileDescription";
 import Event from "../models/event";
-import { ProjectItemType, DiskItemType, FileType } from "../utils/enums";
+import { ProjectItemType, SourceType, FileType } from "../utils/enums";
 
 export default class EventManager {
 
@@ -49,7 +49,7 @@ export default class EventManager {
 
         projectItem.name = `eventList`;
         projectItem.itemType = ProjectItemType.Event;
-        projectItem.diskItemType = DiskItemType.Json;
+        projectItem.diskItemType = SourceType.Json;
         projectItem.fileType = FileType.List;
 
         projectItem.content = content;

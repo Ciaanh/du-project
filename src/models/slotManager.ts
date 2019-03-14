@@ -1,7 +1,7 @@
 'use strict';
 
 import ProjectFileDescription from "../models/projectFileDescription";
-import { DiskItemType, ProjectItemType } from "../utils/enums";
+import { SourceType, ProjectItemType } from "../utils/enums";
 import Slot from "../models/slot";
 import HandlerContainer from "../models/handlerContainer";
 import HandlerContainerManager from "./handlerContainerManager";
@@ -16,7 +16,7 @@ export default class SlotManager {
         slot.name = slotName;
 
         files.subItems.forEach(item => {
-            if (item.diskItemType == DiskItemType.Folder
+            if (item.diskItemType == SourceType.Folder
                 && item.itemType == ProjectItemType.Type
                 && !slot.type) {
                 slot.type = TypeManager.LoadFromFiles(item);
@@ -71,7 +71,7 @@ export default class SlotManager {
         // warning separator _ may be contained in the slot name, replace it
         projectItem.name = `slot_${slot.slotKey.toString()}_${slot.name}`;
         projectItem.itemType = ProjectItemType.Slot;
-        projectItem.diskItemType = DiskItemType.Folder;
+        projectItem.diskItemType = SourceType.Folder;
 
         projectItem.subItems = HandlerContainerManager.createHandlers(handlers);
 
