@@ -92,8 +92,8 @@ export default class duProjectManager {
     //         ArgContainerManager.toFileContent(filter.args);
     // }
 
-    private static GetContent(handlerContent: string): any {
-        let code = handlerContent.replace(/\r/g, '\n');
+    private static GetContent(fileContent: string): any {
+        let code = fileContent.replace(/\r/g, '\n');
         let content = {};
 
         let contentLines = code.split('\n');
