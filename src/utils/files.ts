@@ -27,9 +27,9 @@ export default class Files {
         });
     }
 
-    public static async readFile(filename: string): Promise<string> {
+    public static async readFile(file: vscode.Uri): Promise<string> {
         return new Promise<string>((resolve, reject) => {
-            let readStream = fs.createReadStream(filename);
+            let readStream = fs.createReadStream(file.fsPath);
             let chunks = [];
 
             readStream.on('error', err => {
@@ -44,5 +44,13 @@ export default class Files {
                 return resolve(Buffer.concat(chunks).toString());
             });
         });
+    }
+
+    public static async exists(file: vscode.Uri): Promise<boolean> {
+        let existsFile = false;
+        await fs.exists(file.fsPath, (exists) => {
+            existsFile = exists;
+        })
+        return existsFile;
     }
 }

@@ -3,9 +3,10 @@
 import * as vscode from 'vscode';
 import * as fs from "fs";
 
-import duProject from './duProject';
+import { duProject, methodFileError } from './duProject';
 import Files from './utils/files';
 import { IProject } from './duModel';
+import { MethodErrorReason } from './utils/enums';
 
 export default class duProjectManager {
 
@@ -25,7 +26,7 @@ export default class duProjectManager {
                     let projectName = documentpath[documentpath.length - 1].replace("du_", "");
 
                     project.name = projectName;
-                    project.uri = uri;
+                    project.rootUri = uri;
 
                     let projectFromJson = await duProjectManager.loadProjectJson(projectName, uri);
                     if (projectFromJson) {
@@ -67,14 +68,61 @@ export default class duProjectManager {
         return null;
     }
 
-    private static Consolidate(project: duProject): boolean {
+    private static async Consolidate(duProject: duProject): Promise<boolean> {
         // compare json to files on disk to create missing files and update content
         // must be careful with priority json or lua files
 
-        // project.methods
-        // check folder methods, check each method by index, filename : method_<methodIndex>.lua
-        // signature as header --@signature
 
+
+        if (duProject.project) {
+            if (duProject.project.methods && duProject.project.methods.length > 0) {
+                // load methods directory
+                let methodsDirUri = vscode.Uri.file(duProject.rootUri.fsPath + '\\Methods');
+
+                let methodsDirStats = await Files.readFileStats(methodsDirUri);
+                if (methodsDirStats.isDirectory()) {
+                    let methodsDir = await Files.readDirectory(methodsDirUri);
+
+                    let methodsErrors: methodFileError[] = [];
+
+                    await duProject.project.methods.forEach(async (method, index) => {
+                        // check folder methods, check each method by index, filename : method_<methodIndex>.lua
+                        // signature as header --@signature
+                        let methodFileName: string = `method_${index}.lua`;
+                        let methodUri = vscode.Uri.file(methodsDirUri.fsPath + '\\' + methodFileName);
+                        let methodDirStats = await Files.readFileStats(methodUri);
+
+                        if (methodDirStats.isFile()) {
+                            let fileContent = await Files.readFile(methodUri);
+
+                            let methodFileContent = duProjectManager.GetContent(fileContent);
+
+
+                            if (methodFileContent.hasOwnProperty('code')) {
+                                if (method.code !== methodFileContent.code) {
+                                    // error, reference json and file content is different
+                                    console.log(`Different code between json and file for ${methodUri}`);
+                                    methodsErrors.push(new methodFileError(methodUri,index,methodFileContent,method,MethodErrorReason.))
+                                }
+                            }
+
+                            if (methodFileContent.hasOwnProperty('signature')) {
+                                if (method.signature !== methodFileContent.signature) {
+                                    // error, reference json and file content is different
+                                    console.log(`Different signature between json and file for ${methodUri}`)
+
+                                }
+                            }
+
+                            
+                        }
+
+
+                        
+                    });
+                }
+            }
+        }
 
         return false;
     }
@@ -108,10 +156,7 @@ export default class duProjectManager {
         return content;
     }
 
-    private static ExistsFile(uri: vscode.Uri): boolean {
-        return false;
-    }
-
+    
     private static CreateFile(uri: vscode.Uri, content: string) {
 
     }

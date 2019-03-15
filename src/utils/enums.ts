@@ -1,5 +1,12 @@
 'use strict';
 
+export enum MethodErrorReason {
+    Code,
+    Signature,
+    NotExistFile,
+    NotExistMethod
+}
+
 export enum SourceType {
     Json,
     Folder,
