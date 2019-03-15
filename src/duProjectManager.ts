@@ -3,10 +3,12 @@
 import * as vscode from 'vscode';
 import * as fs from "fs";
 
-import { duProject, methodFileError } from './duProject';
+import { duProject, methodFileError, slotFileError, handlerFileError } from './duProject';
 import Files from './utils/files';
-import { IProject } from './duModel';
-import { MethodErrorReason } from './utils/enums';
+import { IProject, ISlot, IMethod, IHandler } from './duModel';
+import { MethodErrorReason, Slots } from './utils/enums';
+import { isNullOrUndefined } from 'util';
+import { array } from 'prop-types';
 
 export default class duProjectManager {
 
@@ -46,13 +48,13 @@ export default class duProjectManager {
     private static async loadProjectJson(projectName: string, rootUri: vscode.Uri): Promise<IProject> {
         let directoryContent = await Files.readDirectory(rootUri);
 
-        let projectFile = directoryContent
+        let projectFile = await directoryContent
             .map(async fileSystemElement => {
                 let itemUri = vscode.Uri.file(rootUri.fsPath + '\\' + fileSystemElement);
                 let fileStats = await Files.readFileStats(itemUri);
 
                 if (fileStats.isFile() && fileSystemElement === `${projectName}.json`) {
-                    let content = await Files.readFile(rootUri.fsPath);
+                    let content = await Files.readFile(rootUri);
                     let projectAsJson: IProject = JSON.parse(content);
 
                     return projectAsJson;
@@ -71,60 +73,124 @@ export default class duProjectManager {
     private static async Consolidate(duProject: duProject): Promise<boolean> {
         // compare json to files on disk to create missing files and update content
         // must be careful with priority json or lua files
-
-
+        let methodsErrors: methodFileError[];
+        let slotsErrors: slotFileError[];
 
         if (duProject.project) {
             if (duProject.project.methods && duProject.project.methods.length > 0) {
                 // load methods directory
                 let methodsDirUri = vscode.Uri.file(duProject.rootUri.fsPath + '\\Methods');
+                methodsErrors = await duProjectManager.consolidateMethods(duProject.project.methods, methodsDirUri);
+                console.log(methodsErrors);
+            }
 
-                let methodsDirStats = await Files.readFileStats(methodsDirUri);
-                if (methodsDirStats.isDirectory()) {
-                    let methodsDir = await Files.readDirectory(methodsDirUri);
-
-                    let methodsErrors: methodFileError[] = [];
-
-                    await duProject.project.methods.forEach(async (method, index) => {
-                        // check folder methods, check each method by index, filename : method_<methodIndex>.lua
-                        // signature as header --@signature
-                        let methodFileName: string = `method_${index}.lua`;
-                        let methodUri = vscode.Uri.file(methodsDirUri.fsPath + '\\' + methodFileName);
-                        let methodDirStats = await Files.readFileStats(methodUri);
-
-                        if (methodDirStats.isFile()) {
-                            let fileContent = await Files.readFile(methodUri);
-
-                            let methodFileContent = duProjectManager.GetContent(fileContent);
-
-
-                            if (methodFileContent.hasOwnProperty('code')) {
-                                if (method.code !== methodFileContent.code) {
-                                    // error, reference json and file content is different
-                                    console.log(`Different code between json and file for ${methodUri}`);
-                                    methodsErrors.push(new methodFileError(methodUri,index,methodFileContent,method,MethodErrorReason.))
-                                }
-                            }
-
-                            if (methodFileContent.hasOwnProperty('signature')) {
-                                if (method.signature !== methodFileContent.signature) {
-                                    // error, reference json and file content is different
-                                    console.log(`Different signature between json and file for ${methodUri}`)
-
-                                }
-                            }
-
-                            
-                        }
-
-
-                        
-                    });
-                }
+            if (duProject.project.slots) {
+                slotsErrors = await duProjectManager.consolidateSlots(duProject.project.slots, duProject.rootUri, duProject.project.handlers);
+                console.log(slotsErrors);
             }
         }
 
-        return false;
+        let isValid = !(methodsErrors && methodsErrors.length > 0);
+
+        return isValid;
+    }
+
+    private static async consolidateSlots(slots: ISlot[], rootUri: vscode.Uri, handlers: IHandler[]): Promise<slotFileError[]> {
+        let slotErrors = await Slots.indexes.map(async (index) => {
+            let slotDirName: string = `slot_${index}`;
+            let slotDirUri = vscode.Uri.file(rootUri.fsPath + '\\' + slotDirName);
+
+            let slot: ISlot = slots[index];
+
+            // check if slot is defined and file is defined
+            if (!isNullOrUndefined(slot)) {
+                if (slot.type && slot.type.methods) {
+                    let methodsErrors = await duProjectManager.consolidateMethods(slot.type.methods, slotDirUri);
+                }
+
+                let slotHandlers = duProjectManager.getHandlersBySlot(index, handlers);
+                if (slotHandlers && slotHandlers.length > 0) {
+                    let handlersErrors = await duProjectManager.consolidateHandlers(slotHandlers, slotDirUri);
+                }
+            }
+
+            return new slotFileError(index);
+        });
+
+        return await Promise.all(slotErrors.filter((value) => { return value != null; }));
+    }
+
+    private static getHandlersBySlot(slotIndex: number, handlers: IHandler[]): IHandler[] {
+        return handlers.filter(handler => {
+            return handler.filter.slotKey == slotIndex;
+        });
+    }
+
+    private static async consolidateHandlers(handler: IHandler[], handlersDirUri: vscode.Uri): Promise<handlerFileError[]> {
+        return null;
+    }
+
+    private static async consolidateMethods(methods: IMethod[], methodsDirUri: vscode.Uri): Promise<methodFileError[]> {
+        let methodsErrors: methodFileError[] = [];
+
+        let methodsDirStats = await Files.readFileStats(methodsDirUri);
+        if (methodsDirStats.isDirectory()) {
+            // check folder methods, check each method by index, filename : method_<methodIndex>.lua
+
+            // check that methods from Json exist as a file
+            await methods.forEach(async (method, index) => {
+                let methodFileName: string = `method_${index}.lua`;
+                let methodUri = vscode.Uri.file(methodsDirUri.fsPath + '\\' + methodFileName);
+
+                if (!Files.exists(methodUri)) {
+                    methodsErrors.push(new methodFileError(methodUri, index, null, method, MethodErrorReason.NotExistFile));
+                }
+                else {
+                    let methodDirStats = await Files.readFileStats(methodUri);
+                    if (methodDirStats.isFile()) {
+                        let fileContent = await Files.readFile(methodUri);
+                        let methodFileContent = duProjectManager.GetContent(fileContent);
+
+                        if (methodFileContent.hasOwnProperty('code')) {
+                            if (method.code !== methodFileContent.code) {
+                                // error, reference json and file content is different
+                                console.log(`Different code between json and file for ${methodUri}`);
+                                methodsErrors.push(new methodFileError(methodUri, index, methodFileContent, method, MethodErrorReason.Code))
+                            }
+                        }
+
+                        if (methodFileContent.hasOwnProperty('signature')) {
+                            if (method.signature !== methodFileContent.signature) {
+                                // error, reference json and file content is different
+                                console.log(`Different signature between json and file for ${methodUri}`)
+                                methodsErrors.push(new methodFileError(methodUri, index, methodFileContent, method, MethodErrorReason.Signature))
+                            }
+                        }
+                    }
+                }
+            });
+
+            let methodsDir = await Files.readDirectory(methodsDirUri);
+            // check that methods from files exist in Json
+            await methodsDir.forEach(async (methodFile) => {
+                // method_<methodIndex>.lua
+                let methodUri = vscode.Uri.file(methodsDirUri.fsPath + '\\' + methodFile);
+                let methodDirStats = await Files.readFileStats(methodUri);
+                if (methodDirStats.isFile()) {
+                    let index: number = Number.parseInt(methodFile.replace("method_", "").replace(".lua", ""));
+                    let methodFromJson = methods[index];
+
+                    if (isNullOrUndefined(methodFromJson)) {
+                        let fileContent = await Files.readFile(methodUri);
+                        let methodFileContent = duProjectManager.GetContent(fileContent);
+
+                        methodsErrors.push(new methodFileError(methodUri, index, methodFileContent, null, MethodErrorReason.NotExistJson));
+                    }
+                }
+            });
+        }
+
+        return methodsErrors;
     }
 
 
@@ -156,7 +222,7 @@ export default class duProjectManager {
         return content;
     }
 
-    
+
     private static CreateFile(uri: vscode.Uri, content: string) {
 
     }

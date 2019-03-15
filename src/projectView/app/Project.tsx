@@ -73,15 +73,9 @@ export default class Project extends React.Component<IProjectProps, IProjectStat
     }
 
     private getHandlersBySlot(slotIndex: number): IHandler[] {
-        let result: IHandler[] = [];
-
-        this.state.project.handlers.forEach(handler => {
-            if (handler.filter.slotKey == slotIndex) {
-                result.push(handler);
-            }
+        return this.state.project.handlers.filter(handler => {
+            return handler.filter.slotKey == slotIndex;
         });
-
-        return result;
     }
 
     private renderFilterList(slotIndex: number) {
