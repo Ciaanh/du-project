@@ -3,19 +3,19 @@
 import { Uri, window, commands } from "vscode";
 import { SourceType } from "../utils/enums";
 import ViewLoader from "../projectView/ViewLoader";
-import duProject from "../duProject";
-import duProjectManager from "../duProjectManager";
+import { duProject } from "../models/duProject";
+import duProjectManager from "../models/duProjectManager";
 
 
 export default class OverviewProject {
 
-    private static displayView(targetUri: Uri) {
-        if (duProjectManager.isValidProject(targetUri)) {
-            duProjectManager
-                .LoadProject(targetUri)
-                .then((project) => {
-                    ViewLoader.createOrShow(project);
-                });
+    private static async displayView(targetUri: Uri) {
+        let project = await duProjectManager.LoadProject(targetUri);
+        if (project) {
+            ViewLoader.createOrShow(project);
+        }
+        else{
+            // Project loading error
         }
     }
 

@@ -1,17 +1,30 @@
 'use strict';
 
 import Configuration from "../utils/configuration";
-import { workspace, commands, window, Uri } from "vscode";
+import { workspace, commands, window, Uri, InputBoxOptions } from "vscode";
 import OverviewProject from "./OverviewProject";
+import duProjectManager from "../models/duProjectManager";
 
 export default class LoadJson {
 
     public static executeCommand() {
         let projectUri: Uri;
 
+
+
         // change behavior, should open window to paste json from the game 
         // then create folder with .json file and generate code files 
         // for handlers and methods
+
+        let inputBoxOptions: InputBoxOptions = {
+            ignoreFocusOut: true,
+            validateInput: duProjectManager.validateJson,
+            prompt: "Paste json exported from the game.",
+        }
+        window.showInputBox(inputBoxOptions).then(value => {
+            duProjectManager.GenerateProjectFromJson(value);
+        });
+
         //if (type === SourceType.Json) {
 
         // if (targetUri && targetUri.path != "") {

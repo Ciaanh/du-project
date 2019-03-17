@@ -1,6 +1,6 @@
 import { Uri } from "vscode";
-import { IProject, IMethod } from "./duModel";
-import { MethodErrorReason, HandlerErrorReason, SlotErrorReason } from "./utils/enums";
+import { IProject, IMethod, IHandler } from "./duModel";
+import { MethodErrorReason, HandlerErrorReason, SlotErrorReason } from "../utils/enums";
 
 export class duProject {
     public rootUri: Uri;
@@ -46,14 +46,17 @@ export class handlerFileError {
     public reason: HandlerErrorReason;
 
     public uri: Uri;
-    public index: number;
-    public fileContent: IMethod;
-    public jsonContent: IMethod;
+    public key: string;
+    public slot: number;
+
+    public fileContent: IHandler;
+    public jsonContent: IHandler;
 
 
-    constructor(uri: Uri, index: number, fileContent: IMethod, jsonContent: IMethod, error: HandlerErrorReason) {
+    constructor(uri: Uri, key: string, slot: number, fileContent: IHandler, jsonContent: IHandler, error: HandlerErrorReason) {
         this.uri = uri;
-        this.index = index;
+        this.key = key;
+        this.slot = slot;
         this.fileContent = fileContent;
         this.jsonContent = jsonContent;
         this.reason = error;

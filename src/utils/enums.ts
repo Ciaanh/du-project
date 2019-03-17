@@ -27,6 +27,8 @@ export enum HandlerErrorReason {
     Code,
     Key,
     Filter,
+    KeyNotDefined,
+    SlotNotDefined,
     NotExistFile,
     NotExistJson
 }

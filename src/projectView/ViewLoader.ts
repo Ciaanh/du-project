@@ -4,16 +4,16 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import Configuration from '../utils/configuration';
 import { SourceType } from '../utils/enums';
-import Project from '../models/project';
-import ProjectManager from '../models/projectManager';
-import HandlerManager from '../models/handlerManager';
-import duProject from '../duProject';
+import { duProject } from '../models/duProject';
+import duProjectManager from '../models/duProjectManager';
 
 export default class ViewLoader {
 
     private static currentPanels: ViewLoader[] = [];
 
     public static readonly viewType = 'duProjectOverview';
+
+    private _projectRoot: vscode.Uri;
     private readonly _panelName: string;
     private readonly _panel: vscode.WebviewPanel;
     private readonly _extensionPath: string;
@@ -50,6 +50,7 @@ export default class ViewLoader {
     }
 
     private constructor(duProject: duProject, panel: vscode.WebviewPanel, extensionPath: string) {
+        this._projectRoot = duProject.rootUri;
         this._panelName = duProject.name;
         this._panel = panel;
         this._extensionPath = extensionPath;
@@ -86,7 +87,7 @@ export default class ViewLoader {
         let handlerKey = message.handlerKey;
         let slotKey = message.slotKey;
 
-        let filePath = HandlerManager.getFilePath(handlerKey, slotKey);
+        let filePath = duProjectManager.getHandlerUri(handlerKey, slotKey, this._projectRoot);
 
         vscode.window.showErrorMessage(`handler: ${handlerKey}, slot ${slotKey}`);
 
