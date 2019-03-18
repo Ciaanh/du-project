@@ -19,9 +19,8 @@
     "activationEvents": [
         "onLanguage:duproject",
         "onWebviewPanel:duProjectOverview",
-        "onCommand:extension.loadDefaultDUWorkspace",
         "onCommand:extension.loadJson",
-        "onCommand:extension.previewDUProject"        
+        "onCommand:extension.loadProject"
     ],
     "contributes": {
         "languages": [
@@ -43,13 +42,8 @@
                 "category": "DU project"
             },
             {
-                "command": "extension.previewDUProject",
-                "title": "Display preview from project.",
-                "category": "DU project"
-            },
-            {
-                "command": "extension.loadDefaultDUWorkspace",
-                "title": "Open project.",
+                "command": "extension.loadProject",
+                "title": "Open and display DU project.",
                 "category": "DU project"
             }
         ],
@@ -57,14 +51,6 @@
             "type": "object",
             "title": "DU Project configuration",
             "properties": {
-                "duproject.defaultWorkspace": {
-                    "type": [
-                        "string",
-                        "null"
-                    ],
-                    "default": null,
-                    "description": "Default path for workspace containing projects."
-                },
                 "duproject.isDebug": {
                     "type": [
                         "boolean"
