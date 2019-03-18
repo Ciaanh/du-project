@@ -22,7 +22,11 @@ export default class LoadJson {
                 // define where to save and create folder
                 let saveDialogOption: SaveDialogOptions = {};
                 await window.showSaveDialog(saveDialogOption).then(async (saveTarget: Uri) => {
-                    let project = await duProjectManager.GenerateProjectFromJson(value, saveTarget);
+                    let projectName = "toto";
+
+                    // display request for project name
+
+                    let project = await duProjectManager.GenerateProjectFromJson(projectName, value, saveTarget);
                     if (project) {
                         commands.executeCommand("vscode.openFolder", project.rootUri, false).then(() => {
                             ViewLoader.ShowOverview(project);

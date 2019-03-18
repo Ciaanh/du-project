@@ -8,14 +8,14 @@ This extension for Visual Studio Code provide some tools to manage code project 
 This extension is to be used to make it easier to manage code projects for Dual Universe outside of the game.
 Using the built-in command we can display an HTML preview of Json files exported from the game, create projects folders and then recompile the project to Json in order to import it back into the game.
 
-The files containing the code from the game should be named \<_`projectName`_\>**_`.json`_**
+The json file containing the project definition (code which can be past to the game) is named \<_`projectName`_\>**_`.json`_**
 
-The folders containing the generated project with each .lua files are named **_`du_`_**\<`projectName`\>
+The folder containing the generated project with each .lua files is named as the .json file : \<`projectName`\>
 
 ```
 Example of project structure :
 
-du_projectName
+projectName
 │
 └───projectName.json
 │

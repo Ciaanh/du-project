@@ -16,7 +16,7 @@ export default class duProjectManager {
                 let project = new duProject();
                 if (root.isDirectory()) {
                     let documentpath = uri.path.split("/");
-                    let projectName = documentpath[documentpath.length - 1].replace("du_", "");
+                    let projectName = documentpath[documentpath.length - 1];
 
                     project.name = projectName;
                     project.rootUri = uri;
@@ -369,8 +369,13 @@ export default class duProjectManager {
         return undefined;
     }
 
-    public static async GenerateProjectFromJson(jsonProject: string, target: vscode.Uri): Promise<duProject> {
+    public static async GenerateProjectFromJson(projectname: string, jsonProject: string, target: vscode.Uri): Promise<duProject> {
         console.log(`called to generate a project from json \n${jsonProject}`);
+
+        let dirUri = vscode.Uri.file(target.fsPath + '\\' + projectname);
+
+        let projectAsJson: IProject = JSON.parse(jsonProject);
+
         return undefined;
     }
 
