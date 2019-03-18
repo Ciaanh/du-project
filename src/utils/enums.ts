@@ -40,33 +40,33 @@ export enum MethodErrorReason {
     NotExistJson
 }
 
-export enum SourceType {
-    Json,
-    Folder,
-    Undefined
-}
+// export enum SourceType {
+//     Json,
+//     Folder,
+//     Undefined
+// }
 
-export enum FileType {
-    Lua,
-    List
-}
+// export enum FileType {
+//     Lua,
+//     List
+// }
 
-export enum ProjectItemType {
-    Root,
-    Slot,
-    Handler,
-    Method,
-    Event,
-    SlotContainer,
-    MethodContainer,
-    EventContainer,
-    Type,
-    Empty
-}
+// export enum ProjectItemType {
+//     Root,
+//     Slot,
+//     Handler,
+//     Method,
+//     Event,
+//     SlotContainer,
+//     MethodContainer,
+//     EventContainer,
+//     Type,
+//     Empty
+// }
 
-export enum GenerationStatus {
-    Succeed,
-    ProjectAlreadyExists,
-    ElementAlreadyExists,
-    UnknownError
-}
+// export enum GenerationStatus {
+//     Succeed,
+//     ProjectAlreadyExists,
+//     ElementAlreadyExists,
+//     UnknownError
+// }

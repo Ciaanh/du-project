@@ -1,14 +1,12 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import * as fs from "fs";
 
 import { duProject, methodFileError, slotFileError, handlerFileError } from './duProject';
 import Files from '../utils/files';
 import { IProject, ISlot, IMethod, IHandler } from './duModel';
 import { MethodErrorReason, Slots, SlotErrorReason, HandlerErrorReason } from '../utils/enums';
 import { isNullOrUndefined } from 'util';
-import { array } from 'prop-types';
 
 export default class duProjectManager {
 
@@ -366,12 +364,14 @@ export default class duProjectManager {
 
 
 
-    public static validateJson(value: string): string | undefined {
+    public static validateJson(jsonProject: string): string | undefined {
+        console.log(`validate json \n${jsonProject}`);
         return undefined;
     }
 
-    public static GenerateProjectFromJson(jsonProject: string) {
-
+    public static async GenerateProjectFromJson(jsonProject: string, target: vscode.Uri): Promise<duProject> {
+        console.log(`called to generate a project from json \n${jsonProject}`);
+        return undefined;
     }
 
 }

@@ -3,7 +3,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import Configuration from '../utils/configuration';
-import { SourceType } from '../utils/enums';
 import { duProject } from '../models/duProject';
 import duProjectManager from '../models/duProjectManager';
 
@@ -19,7 +18,7 @@ export default class ViewLoader {
     private readonly _extensionPath: string;
     private _disposables: vscode.Disposable[] = [];
 
-    public static createOrShow(project: duProject) {
+    public static ShowOverview(project: duProject) {
 
         let projectName = project.name;
 
