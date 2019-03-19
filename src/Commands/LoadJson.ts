@@ -3,6 +3,7 @@
 import { commands, window, InputBoxOptions, SaveDialogOptions, Uri } from "vscode";
 import duProjectManager from "../models/duProjectManager";
 import ViewLoader from "../projectView/ViewLoader";
+import Configuration from "../utils/configuration";
 
 export default class LoadJson {
 
@@ -18,19 +19,23 @@ export default class LoadJson {
         }
         window.showInputBox(inputBoxOptions).then(async value => {
             if (value) {
-
                 // define where to save and create folder
-                let saveDialogOption: SaveDialogOptions = {};
+                let saveDialogOption: SaveDialogOptions = {
+                    saveLabel: "Save new project"
+                };
                 await window.showSaveDialog(saveDialogOption).then(async (saveTarget: Uri) => {
-                    let projectName = "toto";
-
-                    // display request for project name
+                    let documentpath = saveTarget.path.split("/");
+                    let projectName = documentpath[documentpath.length - 1];
 
                     let project = await duProjectManager.GenerateProjectFromJson(projectName, value, saveTarget);
                     if (project) {
-                        commands.executeCommand("vscode.openFolder", project.rootUri, false).then(() => {
+                        // if (Configuration.openProjectWorkspace()) {
+                        //     await commands.executeCommand("vscode.openFolder", project.rootUri, true);
+                        // }
+                        // else {
                             ViewLoader.ShowOverview(project);
-                        });
+                        // }
+
                     }
                     else {
                         // invalid project 

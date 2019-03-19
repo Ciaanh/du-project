@@ -129,16 +129,6 @@ export default class ViewLoader {
         }
     }
 
-
-    private getNonce() {
-        let text = "";
-        const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        for (let i = 0; i < 32; i++) {
-            text += possible.charAt(Math.floor(Math.random() * possible.length));
-        }
-        return text;
-    }
-
     private Generate(duProject: duProject) {
 
         // Local path to main script run in the webview
@@ -147,8 +137,6 @@ export default class ViewLoader {
 
         // const projectJson = JSON.stringify(ProjectManager.toJsonObject(duProject));
         const projectJson = JSON.stringify(duProject.project);
-
-        const nonce = this.getNonce();
 
         let page =
             `<!DOCTYPE html>
@@ -159,7 +147,7 @@ export default class ViewLoader {
                 <meta http-equiv="Content-Security-Policy" 
                     content="default-src 'none'; 
                              img-src https:; 
-                             script-src 'unsafe-eval' 'unsafe-inline' 'nonce-${nonce}';
+                             script-src 'unsafe-eval' 'unsafe-inline' vscode-resource:;
                              style-src 'unsafe-inline';">
 
                 <script>
@@ -170,7 +158,7 @@ export default class ViewLoader {
             <body>
                 <div id="root"></div>
 
-                <script nonce="${nonce}" src="${reactAppUri}"></script>
+                <script src="${reactAppUri}"></script>
             </body>
             </html>`;
 

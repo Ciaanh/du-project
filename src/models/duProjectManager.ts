@@ -11,57 +11,48 @@ import { isNullOrUndefined } from 'util';
 export default class duProjectManager {
 
     public static async LoadProject(uri: vscode.Uri): Promise<duProject> {
-        return await Files.readFileStats(uri).then(
-            async (root) => {
-                let project = new duProject();
-                if (root.isDirectory()) {
-                    let documentpath = uri.path.split("/");
-                    let projectName = documentpath[documentpath.length - 1];
+        let project = new duProject();
 
-                    project.name = projectName;
-                    project.rootUri = uri;
+        let rootStats = await Files.readFileStats(uri);
+        if (rootStats) {
+            if (rootStats.isDirectory()) {
+                let documentpath = uri.path.split("/");
+                let projectName = documentpath[documentpath.length - 1];
 
-                    let projectFromJson = await duProjectManager.loadProjectJson(projectName, uri);
-                    if (projectFromJson) {
-                        project.project = projectFromJson;
-                    }
-                    return project;
+                project.name = projectName;
+                project.rootUri = uri;
+
+                let projectFromJson = await duProjectManager.loadProjectJson(projectName, uri);
+                if (projectFromJson) {
+                    project.project = projectFromJson;
                 }
-                return null;
-            }).then((project) => {
-                if (duProjectManager.Consolidate(project)) {
-                    return project;
-                }
-                return null;
-            });
+            }
+
+            if (duProjectManager.Consolidate(project)) {
+                return project;
+            }
+        }
+        return undefined;
     }
 
-    private static async loadProjectJson(projectName: string, rootUri: vscode.Uri): Promise<IProject> {
-        let directoryContent = await Files.readDirectory(rootUri);
+    private static  loadProjectJson(projectName: string, rootUri: vscode.Uri): IProject {
+        let projectJsonFileName: string = `${projectName}.json`;
+        let projectJsonUri = vscode.Uri.file(rootUri.fsPath + '\\' + projectJsonFileName);
 
-        let projectFile = await directoryContent
-            .map(async fileSystemElement => {
-                let itemUri = vscode.Uri.file(rootUri.fsPath + '\\' + fileSystemElement);
-                let fileStats = await Files.readFileStats(itemUri);
+        if (Files.exists(projectJsonUri)) {
+            let content = Files.readFile(projectJsonUri);
+            let projectAsJson: IProject = JSON.parse(content);
 
-                if (fileStats.isFile() && fileSystemElement === `${projectName}.json`) {
-                    let content = await Files.readFile(rootUri);
-                    let projectAsJson: IProject = JSON.parse(content);
-
-                    return projectAsJson;
-                }
-                return null;
-            })
-            .filter((value) => { return value != null; });
-
-        let loadedJsons = await Promise.all(projectFile);
-        if (loadedJsons.length == 1) {
-            return loadedJsons[0];
+            return projectAsJson;
         }
-        return null;
+
+        return undefined;
     }
 
     private static async Consolidate(duProject: duProject): Promise<boolean> {
+        if (!duProject.project) {
+            return false;
+        }
         // compare json to files on disk to create missing files and update content
         // must be careful with priority json or lua files
         let methodsErrors: methodFileError[];
@@ -130,8 +121,8 @@ export default class duProjectManager {
             let slot: ISlot = slots[index];
             let slotErrors = new slotFileError(index);
 
+            let existsSlotDirectory = Files.exists(slotDirUri);
             // check if slot is defined and file is defined
-            let existsSlotDirectory = await Files.exists(slotDirUri);
             if (!existsSlotDirectory) {
                 slotErrors.slotErrors.push(SlotErrorReason.NotExistDirectory);
             }
@@ -193,7 +184,7 @@ export default class duProjectManager {
                 else {
                     let handlerDirStats = await Files.readFileStats(handlerUri);
                     if (handlerDirStats.isFile()) {
-                        let fileContent = await Files.readFile(handlerUri);
+                        let fileContent = Files.readFile(handlerUri);
                         let handlerFileContent = duProjectManager.GetContent(fileContent);
 
                         if (handlerFileContent.hasOwnProperty('code')) {
@@ -236,7 +227,7 @@ export default class duProjectManager {
                     let handlerFromJson = handlers.filter(handler => { return handler.key === key });
 
                     if (!handlerFromJson || handlerFromJson.length > 0) {
-                        let fileContent = await Files.readFile(handlerUri);
+                        let fileContent = Files.readFile(handlerUri);
                         let handlerFileContent = duProjectManager.GetContent(fileContent);
 
                         handlersErrors.push(new handlerFileError(handlerUri, key, slotKey, handlerFileContent, null, HandlerErrorReason.NotExistJson));
@@ -266,7 +257,7 @@ export default class duProjectManager {
                 else {
                     let methodDirStats = await Files.readFileStats(methodUri);
                     if (methodDirStats.isFile()) {
-                        let fileContent = await Files.readFile(methodUri);
+                        let fileContent = Files.readFile(methodUri);
                         let methodFileContent = duProjectManager.GetContent(fileContent);
 
                         if (methodFileContent.hasOwnProperty('code')) {
@@ -299,7 +290,7 @@ export default class duProjectManager {
                     let methodFromJson = methods[index];
 
                     if (isNullOrUndefined(methodFromJson)) {
-                        let fileContent = await Files.readFile(methodUri);
+                        let fileContent = Files.readFile(methodUri);
                         let methodFileContent = duProjectManager.GetContent(fileContent);
 
                         methodsErrors.push(new methodFileError(methodUri, index, methodFileContent, null, MethodErrorReason.NotExistJson));
@@ -362,21 +353,30 @@ export default class duProjectManager {
 
 
 
-
+    public static validateProjectName(projectName: string): string | undefined {
+        if (projectName.length > 25) {
+            return `Project name "${projectName} is too long, should be less the 25 char.`;
+        }
+        return undefined;
+    }
 
     public static validateJson(jsonProject: string): string | undefined {
-        console.log(`validate json \n${jsonProject}`);
+        console.log(`validate json`);
         return undefined;
     }
 
     public static async GenerateProjectFromJson(projectname: string, jsonProject: string, target: vscode.Uri): Promise<duProject> {
-        console.log(`called to generate a project from json \n${jsonProject}`);
-
-        let dirUri = vscode.Uri.file(target.fsPath + '\\' + projectname);
+        Files.makeDir(target);
+        Files.makeJson(projectname, target, jsonProject);
 
         let projectAsJson: IProject = JSON.parse(jsonProject);
 
-        return undefined;
+        let duproject = new duProject();
+        duproject.name = projectname;
+        duproject.rootUri = target;
+        duproject.project = projectAsJson;
+
+        return duproject;
     }
 
 }

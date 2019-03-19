@@ -2,8 +2,41 @@
 
 import * as vscode from 'vscode';
 import * as fs from "fs";
+import * as path from 'path';
 
 export default class Files {
+
+    public static async  makeLua(fileName: string, directory: vscode.Uri, content: string) {
+        let fileNameWithExtension: string = `${fileName}.lua`;
+        let fileUri = vscode.Uri.file(directory.fsPath + '\\' + fileNameWithExtension);
+
+        return await Files.makeFile(fileUri, content);
+    }
+
+    public static async  makeJson(fileName: string, directory: vscode.Uri, content: string) {
+        let fileNameWithExtension: string = `${fileName}.json`;
+        let fileUri = vscode.Uri.file(directory.fsPath + '\\' + fileNameWithExtension);
+
+        return await Files.makeFile(fileUri, content);
+    }
+
+    private static makeFile(fileUri: vscode.Uri, content: string) {
+        if (!Files.exists(fileUri)) {
+            let writeStream = fs.createWriteStream(fileUri.fsPath);
+            writeStream.write(content, () => {
+                writeStream.end(() => {
+                    writeStream.close();
+                });
+            });
+        }
+    }
+
+
+    public static makeDir(dir: vscode.Uri) {
+        if (fs.existsSync(dir.fsPath)) return;
+
+        fs.mkdirSync(dir.fsPath);
+    }
 
     public static readFileStats(file: vscode.Uri): Promise<fs.Stats> {
         return new Promise((resolve, reject) => {
@@ -16,41 +49,15 @@ export default class Files {
         });
     }
 
-    public static readDirectory(directory: vscode.Uri): Promise<string[]> {
-        return new Promise((resolve, reject) => {
-            fs.readdir(directory.fsPath, (err, list) => {
-                if (err) {
-                    return reject(err);
-                }
-                resolve(list);
-            });
-        });
+    public static readDirectory(directory: vscode.Uri): string[] {
+        return fs.readdirSync(directory.fsPath);
     }
 
-    public static async readFile(file: vscode.Uri): Promise<string> {
-        return new Promise<string>((resolve, reject) => {
-            let readStream = fs.createReadStream(file.fsPath);
-            let chunks = [];
-
-            readStream.on('error', err => {
-                return reject(err);
-            });
-
-            readStream.on('data', chunk => {
-                chunks.push(chunk);
-            });
-
-            readStream.on('close', () => {
-                return resolve(Buffer.concat(chunks).toString());
-            });
-        });
+    public static readFile(file: vscode.Uri): string {
+        return fs.readFileSync(file.fsPath, 'utf8');
     }
 
-    public static async exists(file: vscode.Uri): Promise<boolean> {
-        let existsFile = false;
-        await fs.exists(file.fsPath, (exists) => {
-            existsFile = exists;
-        })
-        return existsFile;
+    public static exists(file: vscode.Uri): boolean {
+        return fs.existsSync(file.fsPath);
     }
 }
