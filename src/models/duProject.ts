@@ -1,15 +1,30 @@
 import { Uri } from "vscode";
 import { IProject, IMethod, IHandler } from "./duModel";
-import { MethodErrorReason, HandlerErrorReason, SlotErrorReason } from "../utils/enums";
+import { MethodErrorReason, HandlerErrorReason, SlotErrorReason, ProjectErrorReason } from "../utils/enums";
 
 export class duProject {
     public rootUri: Uri;
     public name: string;
 
     public project: IProject;
+
+    public projectErrors: ProjectError;
+
 }
 
-export class slotFileError {
+export class ProjectError {
+    constructor(projectError: ProjectErrorReason, methodsErrors: methodFileError[], slotErrors: slotError[]) {
+        this.methodsErrors = methodsErrors;
+        this.slotErrors = slotErrors;
+        this.projectError = projectError;
+    }
+
+    public projectError: ProjectErrorReason;
+    public methodsErrors: methodFileError[];
+    public slotErrors: slotError[];
+}
+
+export class slotError {
     public index: number;
 
     public methodsErrors: methodFileError[];
@@ -18,6 +33,7 @@ export class slotFileError {
     public slotErrors: SlotErrorReason[];
 
     constructor(index: number) {
+        this.index = index;
         this.methodsErrors = [];
         this.handlerErrors = [];
         this.slotErrors = [];

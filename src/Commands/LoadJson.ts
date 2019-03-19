@@ -1,9 +1,8 @@
 'use strict';
 
-import { commands, window, InputBoxOptions, SaveDialogOptions, Uri } from "vscode";
+import { window, InputBoxOptions, SaveDialogOptions, Uri } from "vscode";
 import duProjectManager from "../models/duProjectManager";
 import ViewLoader from "../projectView/ViewLoader";
-import Configuration from "../utils/configuration";
 
 export default class LoadJson {
 
@@ -33,7 +32,7 @@ export default class LoadJson {
                         //     await commands.executeCommand("vscode.openFolder", project.rootUri, true);
                         // }
                         // else {
-                            ViewLoader.ShowOverview(project);
+                        ViewLoader.ShowOverview(project);
                         // }
 
                     }

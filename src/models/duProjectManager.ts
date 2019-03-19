@@ -2,10 +2,10 @@
 
 import * as vscode from 'vscode';
 
-import { duProject, methodFileError, slotFileError, handlerFileError } from './duProject';
+import { duProject, methodFileError, slotError, handlerFileError, ProjectError } from './duProject';
 import Files from '../utils/files';
 import { IProject, ISlot, IMethod, IHandler } from './duModel';
-import { MethodErrorReason, Slots, SlotErrorReason, HandlerErrorReason } from '../utils/enums';
+import { MethodErrorReason, Slots, SlotErrorReason, HandlerErrorReason, ProjectErrorReason } from '../utils/enums';
 import { isNullOrUndefined } from 'util';
 
 export default class duProjectManager {
@@ -28,14 +28,13 @@ export default class duProjectManager {
                 }
             }
 
-            if (duProjectManager.Consolidate(project)) {
-                return project;
-            }
+            project = duProjectManager.Consolidate(project);
+            return project;
         }
         return undefined;
     }
 
-    private static  loadProjectJson(projectName: string, rootUri: vscode.Uri): IProject {
+    private static loadProjectJson(projectName: string, rootUri: vscode.Uri): IProject {
         let projectJsonFileName: string = `${projectName}.json`;
         let projectJsonUri = vscode.Uri.file(rootUri.fsPath + '\\' + projectJsonFileName);
 
@@ -49,33 +48,41 @@ export default class duProjectManager {
         return undefined;
     }
 
-    private static async Consolidate(duProject: duProject): Promise<boolean> {
+    private static Consolidate(duProject: duProject): duProject {
         if (!duProject.project) {
-            return false;
+            duProject.projectErrors = new ProjectError(ProjectErrorReason.ProjectUndefined, undefined, undefined);
+            return duProject;
         }
         // compare json to files on disk to create missing files and update content
         // must be careful with priority json or lua files
         let methodsErrors: methodFileError[];
-        let slotsErrors: slotFileError[];
+        let slotsErrors: slotError[];
 
         if (duProject.project) {
             if (duProject.project.methods && duProject.project.methods.length > 0) {
                 // load methods directory
                 let methodsDirUri = vscode.Uri.file(duProject.rootUri.fsPath + '\\Methods');
-                methodsErrors = await duProjectManager.consolidateMethods(duProject.project.methods, methodsDirUri);
-                console.log(methodsErrors);
+                methodsErrors = duProjectManager.consolidateMethods(duProject.project.methods, methodsDirUri);
             }
 
             if (duProject.project.slots) {
-                slotsErrors = await duProjectManager.consolidateSlots(duProject.project.slots, duProject.rootUri, duProject.project.handlers);
-                console.log(slotsErrors);
+                slotsErrors = duProjectManager.consolidateSlots(duProject.project.slots, duProject.rootUri, duProject.project.handlers);
             }
         }
+
+
 
         let isValid = duProjectManager.AreValidMethods(methodsErrors)
             && duProjectManager.AreValidSlots(slotsErrors);
 
-        return isValid;
+        if (isValid) {
+            duProject.projectErrors = new ProjectError(undefined, methodsErrors, slotsErrors);
+        }
+        else {
+            duProject.projectErrors = undefined;
+        }
+
+        return duProject;
     }
 
     private static AreValidMethods(errors: methodFileError[]): boolean {
@@ -86,7 +93,7 @@ export default class duProjectManager {
         return !(errors && errors.length > 0);
     }
 
-    private static AreValidSlots(errors: slotFileError[]): boolean {
+    private static AreValidSlots(errors: slotError[]): boolean {
         let isValid = true;
 
         errors.forEach(slotErrors => {
@@ -98,7 +105,7 @@ export default class duProjectManager {
         return isValid;
     }
 
-    private static IsValidSlot(slotErrors: slotFileError) {
+    private static IsValidSlot(slotErrors: slotError) {
         if (slotErrors && slotErrors.slotErrors.length > 0) {
             return false;
         }
@@ -113,13 +120,13 @@ export default class duProjectManager {
 
 
 
-    private static async consolidateSlots(slots: ISlot[], rootUri: vscode.Uri, handlers: IHandler[]): Promise<slotFileError[]> {
-        let slotErrors = await Slots.indexes.map(async (index) => {
+    private static consolidateSlots(slots: ISlot[], rootUri: vscode.Uri, handlers: IHandler[]): slotError[] {
+        let slotErrors = Slots.indexes.map((index) => {
             let slotDirName: string = `slot_${index}`;
             let slotDirUri = vscode.Uri.file(rootUri.fsPath + '\\' + slotDirName);
 
             let slot: ISlot = slots[index];
-            let slotErrors = new slotFileError(index);
+            let slotErrors = new slotError(index);
 
             let existsSlotDirectory = Files.exists(slotDirUri);
             // check if slot is defined and file is defined
@@ -134,20 +141,20 @@ export default class duProjectManager {
 
             if (existsSlotJson && existsSlotDirectory) {
                 if (slot.type && slot.type.methods) {
-                    let methodsErrors = await duProjectManager.consolidateMethods(slot.type.methods, slotDirUri);
+                    let methodsErrors = duProjectManager.consolidateMethods(slot.type.methods, slotDirUri);
                     slotErrors.methodsErrors = methodsErrors;
                 }
 
                 let slotHandlers = duProjectManager.getHandlersBySlot(index, handlers);
                 if (slotHandlers && slotHandlers.length > 0) {
-                    let handlersErrors = await duProjectManager.consolidateHandlers(slotHandlers, slotDirUri, index);
+                    let handlersErrors = duProjectManager.consolidateHandlers(slotHandlers, slotDirUri, index);
                     slotErrors.handlerErrors = handlersErrors;
                 }
             }
             return slotErrors;
         });
 
-        return await Promise.all(slotErrors.filter((value) => { return value != null; }));
+        return slotErrors.filter((value) => { return value != null; });
     }
 
     private static getHandlersBySlot(slotIndex: number, handlers: IHandler[]): IHandler[] {
@@ -156,15 +163,15 @@ export default class duProjectManager {
         });
     }
 
-    private static async consolidateHandlers(handlers: IHandler[], handlersDirUri: vscode.Uri, slotKey: number): Promise<handlerFileError[]> {
+    private static consolidateHandlers(handlers: IHandler[], handlersDirUri: vscode.Uri, slotKey: number): handlerFileError[] {
         let handlersErrors: handlerFileError[] = [];
 
-        let handlersDirStats = await Files.readFileStats(handlersDirUri);
+        let handlersDirStats = Files.readFileStats(handlersDirUri);
         if (handlersDirStats.isDirectory()) {
             // check folder methods, check each method by index, filename : handler_<handlerKey>.lua
 
             // check that methods from Json exist as a file
-            await handlers.forEach(async (handler) => {
+            handlers.forEach((handler) => {
                 if (!handler.key) {
                     handlersErrors.push(new handlerFileError(null, null, handler.filter.slotKey, null, handler, HandlerErrorReason.KeyNotDefined));
                     return;
@@ -182,7 +189,7 @@ export default class duProjectManager {
                     handlersErrors.push(new handlerFileError(handlerUri, handler.key, handler.filter.slotKey, null, handler, HandlerErrorReason.NotExistFile));
                 }
                 else {
-                    let handlerDirStats = await Files.readFileStats(handlerUri);
+                    let handlerDirStats = Files.readFileStats(handlerUri);
                     if (handlerDirStats.isFile()) {
                         let fileContent = Files.readFile(handlerUri);
                         let handlerFileContent = duProjectManager.GetContent(fileContent);
@@ -215,12 +222,12 @@ export default class duProjectManager {
                 }
             });
 
-            let handlersDir = await Files.readDirectory(handlersDirUri);
+            let handlersDir = Files.readDirectory(handlersDirUri);
             // check that handlers from files exist in Json
-            await handlersDir.forEach(async (handlerFile) => {
+            handlersDir.forEach(async (handlerFile) => {
                 // handler_<key>.lua
                 let handlerUri = vscode.Uri.file(handlersDirUri.fsPath + '\\' + handlerFile);
-                let handlerDirStats = await Files.readFileStats(handlerUri);
+                let handlerDirStats = Files.readFileStats(handlerUri);
                 // ensure that file is handler 
                 if (handlerDirStats.isFile() && handlerFile.indexOf('handler_') > -1) {
                     let key: string = handlerFile.replace("handler_", "").replace(".lua", "");
@@ -239,15 +246,15 @@ export default class duProjectManager {
         return handlersErrors;
     }
 
-    private static async consolidateMethods(methods: IMethod[], methodsDirUri: vscode.Uri): Promise<methodFileError[]> {
+    private static consolidateMethods(methods: IMethod[], methodsDirUri: vscode.Uri): methodFileError[] {
         let methodsErrors: methodFileError[] = [];
 
-        let methodsDirStats = await Files.readFileStats(methodsDirUri);
+        let methodsDirStats = Files.readFileStats(methodsDirUri);
         if (methodsDirStats.isDirectory()) {
             // check folder methods, check each method by index, filename : method_<methodIndex>.lua
 
             // check that methods from Json exist as a file
-            await methods.forEach(async (method, index) => {
+            methods.forEach((method, index) => {
                 let methodFileName: string = `method_${index}.lua`;
                 let methodUri = vscode.Uri.file(methodsDirUri.fsPath + '\\' + methodFileName);
 
@@ -255,7 +262,7 @@ export default class duProjectManager {
                     methodsErrors.push(new methodFileError(methodUri, index, null, method, MethodErrorReason.NotExistFile));
                 }
                 else {
-                    let methodDirStats = await Files.readFileStats(methodUri);
+                    let methodDirStats = Files.readFileStats(methodUri);
                     if (methodDirStats.isFile()) {
                         let fileContent = Files.readFile(methodUri);
                         let methodFileContent = duProjectManager.GetContent(fileContent);
@@ -279,12 +286,12 @@ export default class duProjectManager {
                 }
             });
 
-            let methodsDir = await Files.readDirectory(methodsDirUri);
+            let methodsDir = Files.readDirectory(methodsDirUri);
             // check that methods from files exist in Json
-            await methodsDir.forEach(async (methodFile) => {
+            methodsDir.forEach(async (methodFile) => {
                 // method_<methodIndex>.lua
                 let methodUri = vscode.Uri.file(methodsDirUri.fsPath + '\\' + methodFile);
-                let methodDirStats = await Files.readFileStats(methodUri);
+                let methodDirStats = Files.readFileStats(methodUri);
                 if (methodDirStats.isFile() && methodFile.indexOf('method_') > -1) {
                     let index: number = Number.parseInt(methodFile.replace("method_", "").replace(".lua", ""));
                     let methodFromJson = methods[index];
@@ -368,6 +375,8 @@ export default class duProjectManager {
     public static async GenerateProjectFromJson(projectname: string, jsonProject: string, target: vscode.Uri): Promise<duProject> {
         Files.makeDir(target);
         Files.makeJson(projectname, target, jsonProject);
+
+        let loadedProject = await duProjectManager.LoadProject(target);
 
         let projectAsJson: IProject = JSON.parse(jsonProject);
 

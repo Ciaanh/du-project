@@ -33,20 +33,14 @@ export default class Files {
 
 
     public static makeDir(dir: vscode.Uri) {
-        if (fs.existsSync(dir.fsPath)) return;
-
+        if (fs.existsSync(dir.fsPath)) {
+            return;
+        }
         fs.mkdirSync(dir.fsPath);
     }
 
-    public static readFileStats(file: vscode.Uri): Promise<fs.Stats> {
-        return new Promise((resolve, reject) => {
-            fs.stat(file.fsPath, (err, stats) => {
-                if (err) {
-                    return reject(err);
-                }
-                resolve(stats);
-            });
-        });
+    public static readFileStats(file: vscode.Uri): fs.Stats {
+        return fs.statSync(file.fsPath);
     }
 
     public static readDirectory(directory: vscode.Uri): string[] {

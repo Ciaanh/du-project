@@ -18,6 +18,10 @@ export class Slots {
     ];
 }
 
+export enum ProjectErrorReason {
+    ProjectUndefined
+}
+
 export enum SlotErrorReason {
     NotExistDirectory,
     NotExistJson

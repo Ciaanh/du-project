@@ -1,10 +1,8 @@
 'use strict';
 
-import { window, commands, OpenDialogOptions, Uri } from "vscode";
+import { window, OpenDialogOptions, Uri } from "vscode";
 import ViewLoader from "../projectView/ViewLoader";
 import duProjectManager from "../models/duProjectManager";
-import Files from "../utils/files";
-import Configuration from "../utils/configuration";
 
 
 export default class LoadProject {
@@ -50,7 +48,7 @@ export default class LoadProject {
                 //     commands.executeCommand("vscode.openFolder", uri[0], false)
                 // }
                 // else {
-                    LoadProject.openProject(uri[0]);
+                LoadProject.openProject(uri[0]);
                 // }
             }
             else {
