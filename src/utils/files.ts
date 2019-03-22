@@ -6,28 +6,23 @@ import * as path from 'path';
 
 export default class Files {
 
-    public static async  makeLua(fileName: string, directory: vscode.Uri, content: string) {
+    public static makeLua(fileName: string, directory: vscode.Uri, content: string) {
         let fileNameWithExtension: string = `${fileName}.lua`;
         let fileUri = vscode.Uri.file(directory.fsPath + '\\' + fileNameWithExtension);
 
-        return await Files.makeFile(fileUri, content);
+        return Files.makeFile(fileUri, content);
     }
 
-    public static async  makeJson(fileName: string, directory: vscode.Uri, content: string) {
+    public static makeJson(fileName: string, directory: vscode.Uri, content: string) {
         let fileNameWithExtension: string = `${fileName}.json`;
         let fileUri = vscode.Uri.file(directory.fsPath + '\\' + fileNameWithExtension);
 
-        return await Files.makeFile(fileUri, content);
+        return Files.makeFile(fileUri, content);
     }
 
     private static makeFile(fileUri: vscode.Uri, content: string) {
         if (!Files.exists(fileUri)) {
-            let writeStream = fs.createWriteStream(fileUri.fsPath);
-            writeStream.write(content, () => {
-                writeStream.end(() => {
-                    writeStream.close();
-                });
-            });
+            fs.writeFileSync(fileUri.fsPath, content);
         }
     }
 

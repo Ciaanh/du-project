@@ -376,8 +376,6 @@ export default class duProjectManager {
         Files.makeDir(target);
         Files.makeJson(projectname, target, jsonProject);
 
-        let loadedProject = await duProjectManager.LoadProject(target);
-
         let projectAsJson: IProject = JSON.parse(jsonProject);
 
         let duproject = new duProject();
