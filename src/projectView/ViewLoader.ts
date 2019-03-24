@@ -86,7 +86,7 @@ export default class ViewLoader {
         let handlerKey = message.handlerKey;
         let slotKey = message.slotKey;
 
-        let filePath = duProjectManager.getHandlerUri(handlerKey, slotKey, this._projectRoot);
+        let filePath = duProjectManager.getSpecificHandlerUri(handlerKey, slotKey, this._projectRoot);
 
         vscode.window.showErrorMessage(`handler: ${handlerKey}, slot ${slotKey}`);
 

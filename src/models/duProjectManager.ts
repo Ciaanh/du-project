@@ -61,7 +61,7 @@ export default class duProjectManager {
         if (duProject.project) {
             if (duProject.project.methods && duProject.project.methods.length > 0) {
                 // load methods directory
-                let methodsDirUri = vscode.Uri.file(duProject.rootUri.fsPath + '\\Methods');
+                let methodsDirUri = duProjectManager.GetMethodsDirectoryUri(duProject.rootUri);
                 methodsErrors = duProjectManager.consolidateMethods(duProject.project.methods, methodsDirUri);
             }
 
@@ -122,8 +122,7 @@ export default class duProjectManager {
 
     private static consolidateSlots(slots: ISlot[], rootUri: vscode.Uri, handlers: IHandler[]): slotError[] {
         let slotErrors = Slots.indexes.map((index) => {
-            let slotDirName: string = `slot_${index}`;
-            let slotDirUri = vscode.Uri.file(rootUri.fsPath + '\\' + slotDirName);
+            let slotDirUri = duProjectManager.GetSlotDirectoryUri(rootUri, index);
 
             let slot: ISlot = slots[index];
             let slotErrors = new slotError(index);
@@ -182,8 +181,7 @@ export default class duProjectManager {
                     return;
                 }
 
-                let handlerFilename: string = `handler_${handler.key}.lua`;
-                let handlerUri = vscode.Uri.file(handlersDirUri.fsPath + '\\' + handlerFilename);
+                let handlerUri = duProjectManager.GetHandlerFileUri(handlersDirUri, handler.key)
 
                 if (!Files.exists(handlerUri)) {
                     handlersErrors.push(new handlerFileError(handlerUri, handler.key, handler.filter.slotKey, null, handler, HandlerErrorReason.NotExistFile));
@@ -339,23 +337,7 @@ export default class duProjectManager {
     }
 
 
-    private static CreateFile(uri: vscode.Uri, content: string) {
 
-    }
-
-    private static CreateDirectory(uri: vscode.Uri) {
-
-    }
-
-    public static getHandlerUri(handlerKey: string, slotKey: number, rootUri: vscode.Uri): vscode.Uri {
-        let slotDirName: string = `slot_${slotKey}`;
-        let slotDirUri = vscode.Uri.file(rootUri.fsPath + '\\' + slotDirName);
-
-        let handlerFileName: string = `handler_${handlerKey}.lua`;
-        let handlerUri = vscode.Uri.file(slotDirUri.fsPath + '\\' + handlerFileName);
-
-        return handlerUri;
-    }
 
 
 
@@ -372,11 +354,60 @@ export default class duProjectManager {
         return undefined;
     }
 
-    public static async GenerateProjectFromJson(projectname: string, jsonProject: string, target: vscode.Uri): Promise<duProject> {
+
+    private static GetMethodsDirectoryUri(root: vscode.Uri): vscode.Uri {
+        return vscode.Uri.file(root.fsPath + '\\Methods');
+    }
+
+    private static GetSlotDirectoryUri(root: vscode.Uri, index: number): vscode.Uri {
+        let slotDirName: string = `slot_${index}`;
+        return vscode.Uri.file(root.fsPath + '\\' + slotDirName);
+    }
+
+    public static getSpecificHandlerUri(handlerKey: string, slotKey: number, rootUri: vscode.Uri): vscode.Uri {
+        let slotDirUri =duProjectManager.GetSlotDirectoryUri(rootUri,slotKey); 
+
+        let handlerUri = duProjectManager.GetHandlerFileUri(slotDirUri, handlerKey);
+
+        return handlerUri;
+    }
+
+    private static GetHandlerFileUri(root: vscode.Uri, key: string): vscode.Uri {
+        let handlerFilename: string = `${duProjectManager.GetHandlerFilename(key)}.lua`;
+
+        return vscode.Uri.file(root.fsPath + '\\' + handlerFilename);
+    }
+
+    private static GetHandlerFilename(key: string): string {
+        return `handler_${key}`;
+    }
+
+    private static GetMethodFileUri(root: vscode.Uri, key: string): vscode.Uri {
+        let handlerFilename: string = `${duProjectManager.GetHandlerFilename(key)}.lua`;
+
+        return vscode.Uri.file(root.fsPath + '\\' + handlerFilename);
+    }
+
+    private static GetMethodFilename(key: string): string {
+        return `method_${key}`;
+    }
+
+    public static GenerateProjectFromJson(projectname: string, jsonProject: string, target: vscode.Uri): Promise<duProject> {
         Files.makeDir(target);
         Files.makeJson(projectname, target, jsonProject);
 
         let projectAsJson: IProject = JSON.parse(jsonProject);
+
+        if (projectAsJson && projectAsJson.methods && projectAsJson.methods.length > 0) {
+            let methodDir = duProjectManager.GetMethodsDirectoryUri(target);
+            projectAsJson.methods.forEach(method => {
+
+            });
+        }
+
+        let slotErrors = Slots.indexes.map((index) => {
+            let slotDir = duProjectManager.GetSlotDirectoryUri(target, index)
+        });
 
         let duproject = new duProject();
         duproject.name = projectname;
