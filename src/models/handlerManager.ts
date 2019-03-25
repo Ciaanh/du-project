@@ -1,11 +1,12 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import { IHandler } from './duModel';
+import { IHandler, IArg, IFilter } from './duModel';
 import { handlerFileError } from './duProject';
 import Files from '../utils/files';
 import duProjectManager from './duProjectManager';
 import slotManager from './slotManager';
+import { HandlerErrorReason } from '../utils/enums';
 
 export default class handlerManager {
 
@@ -65,15 +66,37 @@ export default class handlerManager {
                             }
                         }
 
-                        tmp
-                        // need to check filter and filter signature + args 
-                        // if (handlerFileContent.hasOwnProperty('signature')) {
-                        //     if (handler.signature !== handlerFileContent.signature) {
-                        //         // error, reference json and file content is different
-                        //         console.log(`Different signature between json and file for ${handlerUri}`)
-                        //         handlersErrors.push(new methodFileError(handlerUri, index, handlerFileContent, handler, MethodErrorReason.Signature))
-                        //     }
-                        // }
+                        // let filter: IFilter = {
+                        //     "slotKey": -1,
+                        //     "signature": undefined,
+                        //     "args": []
+                        // };
+
+                        if (handlerFileContent.hasOwnProperty('slotKey')) {
+                            if (handler.filter.slotKey !== handlerFileContent.slotKey) {
+                                // error, reference json and file content is different
+                                console.log(`Different filter.slotKey between json and file for ${handlerUri}`)
+                                handlersErrors.push(new handlerFileError(handlerUri, handler.key, handler.filter.slotKey, handlerFileContent, handler, HandlerErrorReason.FilterSlotKey))
+                            }
+                        }
+
+                        if (handlerFileContent.hasOwnProperty('signature')) {
+                            if (handler.filter.signature !== handlerFileContent.signature) {
+                                // error, reference json and file content is different
+                                console.log(`Different filter.signature between json and file for ${handlerUri}`)
+                                handlersErrors.push(new handlerFileError(handlerUri, handler.key, handler.filter.slotKey, handlerFileContent, handler, HandlerErrorReason.FilterSignature))
+                            }
+                        }
+
+                        if (handlerFileContent.hasOwnProperty('args')) {
+                            if (handlerManager.toValueList(handler.filter.args, '-') !== handlerManager.toValueList(handlerFileContent.signature, '-')) {
+                                // error, reference json and file content is different
+                                console.log(`Different filter.args between json and file for ${handlerUri}`)
+                                handlersErrors.push(new handlerFileError(handlerUri, handler.key, handler.filter.slotKey, handlerFileContent, handler, HandlerErrorReason.FilterArgs))
+                            }
+                        }
+
+                        //handler.filter = filter;
                     }
                 }
             });
@@ -120,14 +143,19 @@ export default class handlerManager {
         return `handler_${key}`;
     }
 
-    public static GetHandlerFileContent(method: IMethod): string {
-        return `method_${index}`;
+    private static toValueList(args: IArg[], separator: string): string {
+        let argValueList = args.map(arg => {
+            return arg.value;
+        });
+        return argValueList.join(separator);
     }
 
-    // public static toFileContent(filter: Filter): string {
-    //     return `` +
-    //         `--@slotKey:${filter.slotKey}\n` +
-    //         `--@signature:${filter.signature}\n` +
-    //         ArgContainerManager.toFileContent(filter.args);
-    // }
+    public static HandlerToFileContent(handler: IHandler): string {
+        return `` +
+            `--@slotKey:${handler.filter.slotKey}\n` +
+            `--@signature:${handler.filter.signature}\n` +
+            `--@args:${handlerManager.toValueList(handler.filter.args, "-")}\n` +
+            handler.code;
+
+    }
 }

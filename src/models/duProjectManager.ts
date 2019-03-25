@@ -9,6 +9,7 @@ import { MethodErrorReason, Slots, SlotErrorReason, HandlerErrorReason, ProjectE
 import { isNullOrUndefined } from 'util';
 import methodManager from './methodManager';
 import slotManager from './slotManager';
+import handlerManager from './handlerManager';
 
 export default class duProjectManager {
 
@@ -87,13 +88,6 @@ export default class duProjectManager {
         return duProject;
     }
 
-    // public static toFileContent(filter: Filter): string {
-    //     return `` +
-    //         `--@slotKey:${filter.slotKey}\n` +
-    //         `--@signature:${filter.signature}\n` +
-    //         ArgContainerManager.toFileContent(filter.args);
-    // }
-
     public static GetContent(fileContent: string): any {
         let code = fileContent.replace(/\r/g, '\n');
         let content = {};
@@ -136,13 +130,34 @@ export default class duProjectManager {
         if (projectAsJson && projectAsJson.methods && projectAsJson.methods.length > 0) {
             let methodDir = methodManager.GetMethodsDirectoryUri(target);
             projectAsJson.methods.forEach((method, index) => {
-                let methodContent = methodManager.GetMethodFileContent(method);
+                let methodContent = methodManager.MethodToFileContent(method);
                 Files.makeLua(methodManager.GetMethodFilename(index), methodDir, methodContent);
             });
         }
 
-        let slotErrors = Slots.indexes.map((index) => {
-            let slotDir = slotManager.GetSlotDirectoryUri(target, index)
+        Slots.indexes.forEach((slotIndex) => {
+            if (projectAsJson.slots[slotIndex]) {
+                let slotDir = slotManager.GetSlotDirectoryUri(target, slotIndex);
+                Files.makeDir(slotDir);
+
+                let handlers = handlerManager.getHandlersBySlot(slotIndex, projectAsJson.handlers);
+                if (handlers && handlers.length > 0) {
+                    handlers.forEach((handler, index) => {
+                        let handlerContent = handlerManager.HandlerToFileContent(handler);
+                        Files.makeLua(handlerManager.GetHandlerFilename(handler.key), slotDir, handlerContent);
+                    });
+                }
+
+                if (projectAsJson.slots[slotIndex].type && projectAsJson.slots[slotIndex].type.methods) {
+                    projectAsJson.slots[slotIndex].type.methods.forEach((method, index) => {
+                        let methodContent = methodManager.MethodToFileContent(method);
+                        Files.makeLua(methodManager.GetMethodFilename(index), slotDir, methodContent);
+                    });
+                }
+            }
+
+
+
         });
 
         let duproject = new duProject();

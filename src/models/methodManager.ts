@@ -90,15 +90,11 @@ export default class methodManager {
         return `method_${index}`;
     }
 
-    public static GetMethodFileContent(method: IMethod): string {
-        return `method_${index}`;
+    public static MethodToFileContent(method: IMethod): string {
+        return `` +
+            `--@signature:${method.signature}\n` +
+            method.code;
     }
 
-    // public static toFileContent(filter: Filter): string {
-    //     return `` +
-    //         `--@slotKey:${filter.slotKey}\n` +
-    //         `--@signature:${filter.signature}\n` +
-    //         ArgContainerManager.toFileContent(filter.args);
-    // }
 
 }
