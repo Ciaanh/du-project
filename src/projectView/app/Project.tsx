@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { IProject, ISlot, IHandler } from './interfaces/model';
+import { IProject, IHandler } from './interfaces/model';
 
 // @ts-ignore
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -78,36 +78,6 @@ export default class Project extends React.Component<IProjectProps, IProjectStat
         });
     }
 
-    private renderFilterList(slotIndex: number) {
-
-        let handlers: IHandler[] = this.getHandlersBySlot(slotIndex);
-
-        return (<div className="filterList">
-            {(handlers && handlers.length > 0)
-                ? handlers.map(
-                    (handler, handlerIndex) => {
-                        let argList = (handler.filter.args && handler.filter.args.length > 0)
-                            ? handler.filter.args.map((arg) => { return arg.value; }).join(",")
-                            : null;
-
-                        return (
-                            <li key={handler.key} onClick={() => this.onSelectHandler(handler)}>
-                                <span>
-                                    {handler.filter.signature} : {argList}
-                                </span>
-                            </li>);
-                    })
-                : null}
-        </div>)
-    }
-
-    private renderHandler(handler: IHandler) {
-        return (<main >
-            <a className="editHandler" onClick={() => this.editHandler(handler)}>Edit this code</a>
-            <SyntaxHighlighter language='lua'>{handler.code}</SyntaxHighlighter>
-        </main>)
-    }
-
     private editHandler(handler: IHandler) {
         this.props.vscode.postMessage({
             command: 'editHandler',
@@ -116,12 +86,59 @@ export default class Project extends React.Component<IProjectProps, IProjectStat
         });
     }
 
+
+
+
+
+
+
+
+
+
+    private renderFilterList(slotIndex: number) {
+
+        let handlers: IHandler[] = this.getHandlersBySlot(slotIndex);
+
+        return (
+            <div className="w3-white w3-text-grey w3-card-4 w3-quarter">
+                <ul className="w3-ul">
+                    {(handlers && handlers.length > 0)
+                        ? handlers.map(
+                            (handler, handlerIndex) => {
+                                let argList = (handler.filter.args && handler.filter.args.length > 0)
+                                    ? handler.filter.args.map((arg) => { return arg.value; }).join(",")
+                                    : null;
+
+                                return (
+                                    <li key={handler.key}
+                                        className=""
+                                        onClick={() => this.onSelectHandler(handler)}>
+                                        <span>
+                                            {handler.filter.signature} : {argList}
+                                        </span>
+                                    </li>);
+                            })
+                        : null}
+                </ul>
+            </div>)
+    }
+
+    private renderHandler(handler: IHandler) {
+        return (
+            <main className="w3-white w3-text-grey w3-card-4 w3-threequarter" >
+                <a className="editHandler" onClick={() => this.editHandler(handler)}>Edit this code</a>
+                <SyntaxHighlighter language='lua'>{handler.code}</SyntaxHighlighter>
+            </main>)
+    }
+
+
+
     render() {
 
         return (
             <React.Fragment>
-                <div className="slotList">
-                    <ul>
+                <div className="w3-sidebar w3-bar-block w3-white w3-text-grey sideContent">
+                    <ul className="w3-ul">
                         {
                             (this.state.project)
                                 ? this.slotIndexes.map(
@@ -129,30 +146,36 @@ export default class Project extends React.Component<IProjectProps, IProjectStat
                                         let slot = this.state.project.slots[slotIndex];
                                         if (slot) {
                                             return (
-                                                <li key={slotIndex} onClick={() => this.onSelectSlot(slotIndex)}>
+                                                <li key={slotIndex}
+                                                    className="w3-bar-item w3-button"
+                                                    onClick={() => this.onSelectSlot(slotIndex)}>
                                                     {slot.name}
                                                 </li>);
                                         }
-                                        return <li key={slotIndex}>
-                                            <span>Slot {slotIndex} is missing.</span>>
-                                    </li>;
+                                        return (
+                                            <li key={slotIndex}
+                                                className="w3-bar-item w3-button" >
+                                                <span>Slot {slotIndex} is missing.</span>>
+                                            </li>);
                                     })
                                 : null}
                     </ul>
                 </div>
 
-                {
-                    (this.state.currentSlot)
-                        ? this.renderFilterList(this.state.currentSlot)
-                        : null
-                }
+                <div className="w3-container w3-threequarter content">
+                    {
+                        (this.state.currentSlot)
+                            ? this.renderFilterList(this.state.currentSlot)
+                            : null
+                    }
 
-                {
-                    (this.state.currentHandler)
-                        ? this.renderHandler(this.state.currentHandler)
-                        : null
-                }
-            </React.Fragment>
+                    {
+                        (this.state.currentHandler)
+                            ? this.renderHandler(this.state.currentHandler)
+                            : null
+                    }
+                </div>
+            </React.Fragment >
         );
     }
 }

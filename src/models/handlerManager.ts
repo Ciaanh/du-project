@@ -73,7 +73,8 @@ export default class handlerManager {
                         // };
 
                         if (handlerFileContent.hasOwnProperty('slotKey')) {
-                            if (handler.filter.slotKey !== handlerFileContent.slotKey) {
+                            let slotKeyFromFile = Number.parseInt(handlerFileContent.slotKey);
+                            if (handler.filter.slotKey !== slotKeyFromFile) {
                                 // error, reference json and file content is different
                                 console.log(`Different filter.slotKey between json and file for ${handlerUri}`)
                                 handlersErrors.push(new handlerFileError(handlerUri, handler.key, handler.filter.slotKey, handlerFileContent, handler, HandlerErrorReason.FilterSlotKey))
@@ -89,7 +90,8 @@ export default class handlerManager {
                         }
 
                         if (handlerFileContent.hasOwnProperty('args')) {
-                            if (handlerManager.toValueList(handler.filter.args, '-') !== handlerManager.toValueList(handlerFileContent.signature, '-')) {
+
+                            if (handlerManager.toValueList(handler.filter.args, '-') !== handlerFileContent.args) {
                                 // error, reference json and file content is different
                                 console.log(`Different filter.args between json and file for ${handlerUri}`)
                                 handlersErrors.push(new handlerFileError(handlerUri, handler.key, handler.filter.slotKey, handlerFileContent, handler, HandlerErrorReason.FilterArgs))
@@ -144,10 +146,13 @@ export default class handlerManager {
     }
 
     private static toValueList(args: IArg[], separator: string): string {
-        let argValueList = args.map(arg => {
-            return arg.value;
-        });
-        return argValueList.join(separator);
+        if (args && args.length > 0) {
+            let argValueList = args.map(arg => {
+                return arg.value;
+            });
+            return argValueList.join(separator);
+        }
+        return "";
     }
 
     public static HandlerToFileContent(handler: IHandler): string {

@@ -33,7 +33,7 @@ export default class ViewLoader {
         let extensionPath: string = Configuration.ExtensionPath;
 
         // Otherwise, create a new panel.
-        const panel = vscode.window.createWebviewPanel(ViewLoader.viewType, `Overview :${projectName}`, column || vscode.ViewColumn.One, {
+        const panel = vscode.window.createWebviewPanel(ViewLoader.viewType, `Overview : ${projectName}`, column || vscode.ViewColumn.One, {
             // Enable javascript in the webview
             enableScripts: true,
 
@@ -135,7 +135,9 @@ export default class ViewLoader {
         const reactAppPathOnDisk = vscode.Uri.file(path.join(this._extensionPath, 'projectView', 'overview.js'));
         const reactAppUri = reactAppPathOnDisk.with({ scheme: 'vscode-resource' });
 
-        // const projectJson = JSON.stringify(ProjectManager.toJsonObject(duProject));
+        const w3StylePathOnDisk = vscode.Uri.file(path.join(this._extensionPath, 'projectView', 'w3.css'));
+        const w3StyleUri = w3StylePathOnDisk.with({ scheme: 'vscode-resource' });
+
         const projectJson = JSON.stringify(duProject.project);
 
         let page =
@@ -148,15 +150,17 @@ export default class ViewLoader {
                     content="default-src 'none'; 
                              img-src https:; 
                              script-src 'unsafe-eval' 'unsafe-inline' vscode-resource:;
-                             style-src 'unsafe-inline';">
+                             style-src vscode-resource: 'unsafe-inline';">
+
+                <link rel="stylesheet" href="${w3StyleUri}">
 
                 <script>
                     window.acquireVsCodeApi = acquireVsCodeApi;
                     window.initialData = ${projectJson};
                 </script>
             </head>
-            <body>
-                <div id="root"></div>
+            <body class="w3-light-grey">
+                <div id="root" class="w3-margin-top"></div>
 
                 <script src="${reactAppUri}"></script>
             </body>
