@@ -138,18 +138,30 @@ export default class duProjectManager {
         Slots.indexes.forEach((slotIndex) => {
             if (projectAsJson.slots[slotIndex]) {
                 let slotDir = slotManager.GetSlotDirectoryUri(target, slotIndex);
-                Files.makeDir(slotDir);
 
                 let handlers = handlerManager.getHandlersBySlot(slotIndex, projectAsJson.handlers);
-                if (handlers && handlers.length > 0) {
+                let slot = projectAsJson.slots[slotIndex];
+
+                let hasHandlers = (handlers && handlers.length > 0);
+                let hasMethods =
+                    (slot
+                        && slot.type
+                        && slot.type.methods
+                        && slot.type.methods.length > 0);
+
+                if (hasHandlers || hasMethods) {
+                    Files.makeDir(slotDir);
+                }
+
+                if (hasHandlers) {
                     handlers.forEach((handler, index) => {
                         let handlerContent = handlerManager.HandlerToFileContent(handler);
                         Files.makeLua(handlerManager.GetHandlerFilename(handler.key), slotDir, handlerContent);
                     });
                 }
 
-                if (projectAsJson.slots[slotIndex].type && projectAsJson.slots[slotIndex].type.methods) {
-                    projectAsJson.slots[slotIndex].type.methods.forEach((method, index) => {
+                if (hasMethods) {
+                    slot.type.methods.forEach((method, index) => {
                         let methodContent = methodManager.MethodToFileContent(method);
                         Files.makeLua(methodManager.GetMethodFilename(index), slotDir, methodContent);
                     });

@@ -4,7 +4,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import Configuration from '../utils/configuration';
 import { duProject } from '../models/duProject';
-import duProjectManager from '../models/duProjectManager';
+import handlerManager from '../models/handlerManager';
 
 export default class ViewLoader {
 
@@ -86,7 +86,7 @@ export default class ViewLoader {
         let handlerKey = message.handlerKey;
         let slotKey = message.slotKey;
 
-        let filePath = duProjectManager.getSpecificHandlerUri(handlerKey, slotKey, this._projectRoot);
+        let filePath = handlerManager.getSpecificHandlerUri(handlerKey, slotKey, this._projectRoot);
 
         vscode.window.showErrorMessage(`handler: ${handlerKey}, slot ${slotKey}`);
 
