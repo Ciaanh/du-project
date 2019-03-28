@@ -183,7 +183,7 @@ export default class Project extends React.Component<IProjectProps, IProjectStat
 
                 <div className="container-fluid">
                     <div className="row">
-                        <nav className="col-md-2 bg-light sidebar">
+                        <nav className="col-2 sidebar">
                             <div className="sidebar-sticky">
                                 {
                                     this.renderSlotList()
@@ -191,7 +191,7 @@ export default class Project extends React.Component<IProjectProps, IProjectStat
                             </div>
                         </nav>
 
-                        <nav className="col-md-2 bg-light sidebar bis">
+                        <nav className="col-2 sidebar bis">
                             <div className="sidebar-sticky">
                                 {
                                     (this.state.currentSlot)
@@ -201,7 +201,7 @@ export default class Project extends React.Component<IProjectProps, IProjectStat
                             </div>
                         </nav>
 
-                        <main className="col-md-9 ml-sm-auto col-lg-10 px-4 code">
+                        <main className="col-8 code">
                             {
                                 (this.state.currentHandler)
                                     ? this.renderHandler(this.state.currentHandler)
