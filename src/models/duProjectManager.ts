@@ -129,6 +129,9 @@ export default class duProjectManager {
 
         if (projectAsJson && projectAsJson.methods && projectAsJson.methods.length > 0) {
             let methodDir = methodManager.GetMethodsDirectoryUri(target);
+            if (!Files.exists(methodDir)) {
+                Files.makeDir(methodDir);
+            }
             projectAsJson.methods.forEach((method, index) => {
                 let methodContent = methodManager.MethodToFileContent(method);
                 Files.makeLua(methodManager.GetMethodFilename(index), methodDir, methodContent);
@@ -149,7 +152,7 @@ export default class duProjectManager {
                         && slot.type.methods
                         && slot.type.methods.length > 0);
 
-                if (hasHandlers || hasMethods) {
+                if ((hasHandlers || hasMethods) && !Files.exists(slotDir)) {
                     Files.makeDir(slotDir);
                 }
 

@@ -100,35 +100,68 @@ export default class Project extends React.Component<IProjectProps, IProjectStat
         let handlers: IHandler[] = this.getHandlersBySlot(slotIndex);
 
         return (
-            <div className="w3-card-4 w3-third w3-white w3-text-grey">
-                <ul className="w3-ul">
-                    {(handlers && handlers.length > 0)
-                        ? handlers.map(
-                            (handler, handlerIndex) => {
-                                let argList = (handler.filter.args && handler.filter.args.length > 0)
-                                    ? handler.filter.args.map((arg) => { return arg.value; }).join(",")
-                                    : null;
+            <ul className="">
+                {(handlers && handlers.length > 0)
+                    ? handlers.map(
+                        (handler, handlerIndex) => {
+                            let argList = (handler.filter.args && handler.filter.args.length > 0)
+                                ? handler.filter.args.map((arg) => { return arg.value; }).join(",")
+                                : null;
 
-                                return (
-                                    <li key={handler.key}
-                                        className=""
-                                        onClick={() => this.onSelectHandler(handler)}>
-                                        <span>
-                                            {handler.filter.signature} : {argList}
-                                        </span>
-                                    </li>);
-                            })
-                        : null}
-                </ul>
-            </div>)
+                            return (
+                                <li key={handler.key}
+                                    className="nav-item"
+                                    onClick={() => this.onSelectHandler(handler)}>
+
+                                    <a className={"nav-link" + ((this.state.currentHandler && this.state.currentHandler.key === handler.key) ? " active" : "")} href="#">
+                                        {handler.filter.signature} : {argList}
+                                    </a>
+
+                                </li>);
+                        })
+                    : null}
+            </ul>);
     }
 
     private renderHandler(handler: IHandler) {
         return (
-            <main className="w3-card-4 w3-twothird w3-white w3-text-grey" >
+            <div className="" >
                 <a className="editHandler" onClick={() => this.editHandler(handler)}>Edit this code</a>
                 <SyntaxHighlighter language='lua'>{handler.code}</SyntaxHighlighter>
-            </main>)
+            </div>);
+    }
+
+
+    private renderSlotList() {
+        return (
+
+            <ul className="nav flex-column">
+                {
+                    (this.state.project)
+                        ? this.slotIndexes.map(
+                            (slotIndex) => {
+                                let slot = this.state.project.slots[slotIndex];
+                                if (slot) {
+                                    return (
+                                        <li key={slotIndex}
+                                            className="nav-item"
+                                            onClick={() => this.onSelectSlot(slotIndex)}>
+
+                                            <a className={"nav-link" + ((this.state.currentSlot && this.state.currentSlot === slotIndex) ? " active" : "")}
+                                                href="#">{slot.name}
+                                            </a>
+
+                                        </li>);
+                                }
+                                return (
+                                    <li key={slotIndex}
+                                        className="nav-item" >
+                                        <span>Slot {slotIndex} is missing.</span>>
+                                            </li>);
+                            })
+                        : null}
+            </ul>
+        );
     }
 
 
@@ -137,53 +170,56 @@ export default class Project extends React.Component<IProjectProps, IProjectStat
 
         return (
             <React.Fragment>
-                <div className="w3-sidebar w3-bar-block w3-white w3-text-grey sideContent">
-                    <ul className="w3-ul">
-                        {
-                            (this.state.project)
-                                ? this.slotIndexes.map(
-                                    (slotIndex) => {
-                                        let slot = this.state.project.slots[slotIndex];
-                                        if (slot) {
-                                            return (
-                                                <li key={slotIndex}
-                                                    className="w3-bar-item w3-button"
-                                                    onClick={() => this.onSelectSlot(slotIndex)}>
-                                                    {slot.name}
-                                                </li>);
-                                        }
-                                        return (
-                                            <li key={slotIndex}
-                                                className="w3-bar-item w3-button" >
-                                                <span>Slot {slotIndex} is missing.</span>>
-                                            </li>);
-                                    })
-                                : null}
+
+                <nav className="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+                    <a className="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Company name</a>
+                    <input className="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search" />
+                    <ul className="navbar-nav px-3">
+                        <li className="nav-item text-nowrap">
+                            <a className="nav-link" href="#">Sign out</a>
+                        </li>
                     </ul>
-                </div>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+                </nav>
 
-                <div className="w3-row-padding w3-threequarter content">
-                    {
-                        (this.state.currentSlot)
-                            ? this.renderFilterList(this.state.currentSlot)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
-                            : null
-                    }
+                <div className="container-fluid">
+                    <div className="row">
+                        <nav className="col-md-2 bg-light sidebar">
+                            <div className="sidebar-sticky">
+                                {
+                                    this.renderSlotList()
+                                }
+                            </div>
+                        </nav>
 
-                    {
-                        (this.state.currentHandler)
-                            ? this.renderHandler(this.state.currentHandler)
-                            : null
-                    }
+                        <nav className="col-md-2 bg-light sidebar bis">
+                            <div className="sidebar-sticky">
+                                {
+                                    (this.state.currentSlot)
+                                        ? this.renderFilterList(this.state.currentSlot)
+                                        : null
+                                }
+                            </div>
+                        </nav>
+
+                        <main className="col-md-9 ml-sm-auto col-lg-10 px-4 code">
+                            {
+                                (this.state.currentHandler)
+                                    ? this.renderHandler(this.state.currentHandler)
+                                    : null
+                            }
+
+                        </main>
+                    </div>
                 </div>
-            </React.Fragment >
+            </React.Fragment>
         );
     }
 }
 
-// let currentCount = (oldState && oldState.count) || 0;
+                // let currentCount = (oldState && oldState.count) || 0;
 
-    // // Update state
-    // vscode.setState({ count: currentCount });
+                    // // Update state
+    // vscode.setState({count: currentCount });
 
     // this.props.vscode.postMessage({
     //     command: 'alert',

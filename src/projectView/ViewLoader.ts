@@ -135,8 +135,8 @@ export default class ViewLoader {
         const reactAppPathOnDisk = vscode.Uri.file(path.join(this._extensionPath, 'projectView', 'overview.js'));
         const reactAppUri = reactAppPathOnDisk.with({ scheme: 'vscode-resource' });
 
-        const w3StylePathOnDisk = vscode.Uri.file(path.join(this._extensionPath, 'projectView', 'w3.css'));
-        const w3StyleUri = w3StylePathOnDisk.with({ scheme: 'vscode-resource' });
+        const bootstrapPathOnDisk = vscode.Uri.file(path.join(this._extensionPath, 'projectView', 'bootstrap.css'));
+        const bootstrapUri = bootstrapPathOnDisk.with({ scheme: 'vscode-resource' });
 
         const projectJson = JSON.stringify(duProject.project);
 
@@ -152,7 +152,7 @@ export default class ViewLoader {
                              script-src 'unsafe-eval' 'unsafe-inline' vscode-resource:;
                              style-src vscode-resource: 'unsafe-inline';">
 
-                <link rel="stylesheet" href="${w3StyleUri}">
+                <link rel="stylesheet" href="${bootstrapUri}">
 
                 <script>
                     window.acquireVsCodeApi = acquireVsCodeApi;
