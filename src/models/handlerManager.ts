@@ -1,12 +1,12 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import { IHandler, IArg, IFilter } from './duModel';
 import { handlerFileError } from './duProject';
 import Files from '../utils/files';
 import duProjectManager from './duProjectManager';
 import slotManager from './slotManager';
 import { HandlerErrorReason } from '../utils/enums';
+import { IHandler, IArg } from '../projectView/app/interfaces/model';
 
 export default class handlerManager {
 

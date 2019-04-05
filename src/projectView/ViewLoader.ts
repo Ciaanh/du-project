@@ -34,18 +34,14 @@ export default class ViewLoader {
 
         // Otherwise, create a new panel.
         const panel = vscode.window.createWebviewPanel(ViewLoader.viewType, `Overview : ${projectName}`, column || vscode.ViewColumn.One, {
-            // Enable javascript in the webview
             enableScripts: true,
 
-            // And restrict the webview to only loading content from our extension's `media` directory.
             localResourceRoots: [
                 vscode.Uri.file(path.join(extensionPath, 'projectView'))
             ]
         });
 
         ViewLoader.currentPanels[projectName] = new ViewLoader(project, panel, extensionPath);
-
-        //ViewLoader.currentPanels[projectName].initialize(Project)
     }
 
     private constructor(duProject: duProject, panel: vscode.WebviewPanel, extensionPath: string) {
@@ -54,8 +50,6 @@ export default class ViewLoader {
         this._panel = panel;
         this._extensionPath = extensionPath;
 
-        // Set the webview's initial html content 
-        // this._panel.webview.html = this._getHtmlForWebview(duProject);
         this._panel.webview.html = this.Generate(duProject);
 
 
@@ -110,12 +104,7 @@ export default class ViewLoader {
 
     }
 
-    // public initialize(duProject: Project) {
-    //     this._panel.webview.postMessage({ command: 'initialize', data: duProject });
-    // }
-
     public dispose() {
-
         ViewLoader.currentPanels[this._panelName] = undefined;
 
         // Clean up our resources

@@ -19,7 +19,8 @@ export class Slots {
 }
 
 export enum ProjectErrorReason {
-    ProjectUndefined
+    ProjectUndefined,
+    Content
 }
 
 export enum SlotErrorReason {

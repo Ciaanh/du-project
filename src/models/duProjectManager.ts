@@ -4,12 +4,11 @@ import * as vscode from 'vscode';
 
 import { duProject, methodFileError, slotError, handlerFileError, ProjectError } from './duProject';
 import Files from '../utils/files';
-import { IProject, ISlot, IMethod, IHandler } from './duModel';
-import { MethodErrorReason, Slots, SlotErrorReason, HandlerErrorReason, ProjectErrorReason } from '../utils/enums';
-import { isNullOrUndefined } from 'util';
+import {  Slots, ProjectErrorReason } from '../utils/enums';
 import methodManager from './methodManager';
 import slotManager from './slotManager';
 import handlerManager from './handlerManager';
+import { IProject } from '../projectView/app/interfaces/model';
 
 export default class duProjectManager {
 
@@ -78,8 +77,8 @@ export default class duProjectManager {
         let isValid = methodManager.AreValidMethods(methodsErrors)
             && slotManager.AreValidSlots(slotsErrors);
 
-        if (isValid) {
-            duProject.projectErrors = new ProjectError(undefined, methodsErrors, slotsErrors);
+        if (!isValid) {
+            duProject.projectErrors = new ProjectError(ProjectErrorReason.Content, methodsErrors, slotsErrors);
         }
         else {
             duProject.projectErrors = undefined;

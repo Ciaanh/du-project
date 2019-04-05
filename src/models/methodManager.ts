@@ -2,11 +2,11 @@
 
 import * as vscode from 'vscode';
 import { methodFileError } from './duProject';
-import { IMethod } from './duModel';
 import Files from '../utils/files';
 import { MethodErrorReason } from '../utils/enums';
 import duProjectManager from './duProjectManager';
 import { isNullOrUndefined } from 'util';
+import { IMethod } from '../projectView/app/interfaces/model';
 
 export default class methodManager {
     public static AreValidMethods(errors: methodFileError[]): boolean {

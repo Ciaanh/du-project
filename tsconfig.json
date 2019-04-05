@@ -15,6 +15,10 @@
     "exclude": [
         "node_modules",
         ".vscode-test",
-        "**/projectView/app"
+        "**/projectView/app/components",
+        "**/projectView/app/index.css",
+        "**/projectView/app/index.tsx",
+        "**/projectView/app/tsconfig.json",
+
     ]
 }

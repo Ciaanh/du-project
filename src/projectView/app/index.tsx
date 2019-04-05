@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import Project from './Project';
 
 import './index.css';
 import { IProject } from './interfaces/model';
+import Project from './components/Project';
 
 declare global {
     interface Window {

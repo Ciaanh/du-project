@@ -1,14 +1,15 @@
 import * as React from 'react';
 
-import { IProject, IHandler } from './interfaces/model';
 
 // @ts-ignore
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { IProject, IHandler } from '../interfaces/model';
 
 
 interface IProjectProps {
     vscode: any;
     initialData: IProject;
+    initialErrors:ProjectErrors
 }
 
 interface IProjectState {
@@ -172,13 +173,13 @@ export default class Project extends React.Component<IProjectProps, IProjectStat
             <React.Fragment>
 
                 <nav className="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-                    <a className="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Company name</a>
-                    <input className="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search" />
+                    <a className="navbar-brand col-sm-3 col-md-2 mr-0" href="#">DU Project - json to lua overview</a>
+                    {/* <input className="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search" />
                     <ul className="navbar-nav px-3">
                         <li className="nav-item text-nowrap">
                             <a className="nav-link" href="#">Sign out</a>
                         </li>
-                    </ul>
+                    </ul> */}
                 </nav>
 
                 <div className="container-fluid">
