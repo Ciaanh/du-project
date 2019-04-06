@@ -3,17 +3,19 @@ import * as React from 'react';
 
 // @ts-ignore
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { IProject, IHandler } from '../interfaces/model';
+import { IHandler } from '../interfaces/dumodel';
+import { duProject, ProjectError, methodFileError } from '../interfaces/vsmodel';
+import { IMessage } from '../interfaces/messages';
+
 
 
 interface IProjectProps {
     vscode: any;
-    initialData: IProject;
-    initialErrors:ProjectErrors
+    initialData: duProject;
 }
 
 interface IProjectState {
-    project: IProject;
+    duProject: duProject;
     currentSlot?: number;
     currentHandler?: IHandler;
 }
@@ -45,7 +47,7 @@ export default class Project extends React.Component<IProjectProps, IProjectStat
             this.state = oldState;
         }
         else {
-            this.state = { project: initialData };
+            this.state = { duProject: initialData };
         }
     }
 
@@ -74,7 +76,7 @@ export default class Project extends React.Component<IProjectProps, IProjectStat
     }
 
     private getHandlersBySlot(slotIndex: number): IHandler[] {
-        return this.state.project.handlers.filter(handler => {
+        return this.state.duProject.project.handlers.filter(handler => {
             return handler.filter.slotKey == slotIndex;
         });
     }
@@ -87,6 +89,15 @@ export default class Project extends React.Component<IProjectProps, IProjectStat
         });
     }
 
+
+
+
+    private fixMethodError(methodError: methodFileError) {
+        this.props.vscode.postMessage({
+            command: 'fixMethodError',
+            methodError: methodError
+        });
+    }
 
 
 
@@ -132,16 +143,36 @@ export default class Project extends React.Component<IProjectProps, IProjectStat
             </div>);
     }
 
+    private renderErrors(projectErrors: ProjectError) {
+        return (
+            (projectErrors.methodsErrors && projectErrors.methodsErrors.length > 0)
+                ? <div className="methodErrors" >
+                    {
+                        projectErrors.methodsErrors.map((methodError, index) => {
+
+                            return (
+                                <div>
+                                    <a className="fixError" onClick={() => this.fixMethodError(methodError)}>fix this error</a>
+                                    {/* <SyntaxHighlighter language='lua'>{handler.code}</SyntaxHighlighter> */}
+                                </div>
+                            );
+                        })
+                    }
+                </div>
+                : null
+        );
+    }
+
 
     private renderSlotList() {
         return (
 
             <ul className="nav flex-column">
                 {
-                    (this.state.project)
+                    (this.state.duProject)
                         ? this.slotIndexes.map(
                             (slotIndex) => {
-                                let slot = this.state.project.slots[slotIndex];
+                                let slot = this.state.duProject.project.slots[slotIndex];
                                 if (slot) {
                                     return (
                                         <li key={slotIndex}
@@ -203,6 +234,9 @@ export default class Project extends React.Component<IProjectProps, IProjectStat
                         </nav>
 
                         <main className="col-8 code">
+                            {
+                                this.renderErrors(this.state.duProject.projectErrors)
+                            }
                             {
                                 (this.state.currentHandler)
                                     ? this.renderHandler(this.state.currentHandler)

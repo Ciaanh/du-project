@@ -2,13 +2,13 @@
 
 import * as vscode from 'vscode';
 
-import { duProject, methodFileError, slotError, handlerFileError, ProjectError } from './duProject';
 import Files from '../utils/files';
 import {  Slots, ProjectErrorReason } from '../utils/enums';
 import methodManager from './methodManager';
 import slotManager from './slotManager';
 import handlerManager from './handlerManager';
-import { IProject } from '../projectView/app/interfaces/model';
+import { IProject } from '../projectView/app/interfaces/dumodel';
+import { duProject, ProjectError, methodFileError, slotError } from '../projectView/app/interfaces/vsmodel';
 
 export default class duProjectManager {
 

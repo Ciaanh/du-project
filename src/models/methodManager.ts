@@ -1,12 +1,12 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import { methodFileError } from './duProject';
 import Files from '../utils/files';
 import { MethodErrorReason } from '../utils/enums';
 import duProjectManager from './duProjectManager';
 import { isNullOrUndefined } from 'util';
-import { IMethod } from '../projectView/app/interfaces/model';
+import { IMethod } from '../projectView/app/interfaces/dumodel';
+import { methodFileError } from '../projectView/app/interfaces/vsmodel';
 
 export default class methodManager {
     public static AreValidMethods(errors: methodFileError[]): boolean {

@@ -3,8 +3,9 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import Configuration from '../utils/configuration';
-import { duProject } from '../models/duProject';
 import handlerManager from '../models/handlerManager';
+import { duProject } from './app/interfaces/vsmodel';
+import { IFixMethodErrorMessage } from './app/interfaces/messages';
 
 export default class ViewLoader {
 
@@ -72,9 +73,19 @@ export default class ViewLoader {
                 case 'editHandler':
                     this.onEditHandler(message);
                     return;
+                case 'fixMethodError':
+                    this.onFixMethodErrorHandler(message);
+                    return;
+
             }
         }, null, this._disposables);
     }
+
+    private async onFixMethodErrorHandler(message: IFixMethodErrorMessage) {
+
+        vscode.window.showErrorMessage(`reason: ${message.methodError.reason}, uri ${message.methodError.uri}`);
+    }
+
 
     private async onEditHandler(message: any) {
         let handlerKey = message.handlerKey;
@@ -127,7 +138,7 @@ export default class ViewLoader {
         const bootstrapPathOnDisk = vscode.Uri.file(path.join(this._extensionPath, 'projectView', 'bootstrap.css'));
         const bootstrapUri = bootstrapPathOnDisk.with({ scheme: 'vscode-resource' });
 
-        const projectJson = JSON.stringify(duProject.project);
+        const projectJson = JSON.stringify(duProject);
 
         let page =
             `<!DOCTYPE html>

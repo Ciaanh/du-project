@@ -1,13 +1,13 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import { slotError } from './duProject';
 import handlerManager from './handlerManager';
 import methodManager from './methodManager';
 import { Slots, SlotErrorReason } from '../utils/enums';
 import Files from '../utils/files';
 import { isNullOrUndefined } from 'util';
-import { ISlot, IHandler } from '../projectView/app/interfaces/model';
+import { ISlot, IHandler } from '../projectView/app/interfaces/dumodel';
+import { slotError } from '../projectView/app/interfaces/vsmodel';
 
 export default class slotManager {
     public static AreValidSlots(errors: slotError[]): boolean {

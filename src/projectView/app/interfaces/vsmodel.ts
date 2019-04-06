@@ -1,6 +1,6 @@
+import { HandlerErrorReason, MethodErrorReason, SlotErrorReason, ProjectErrorReason } from "../../../utils/enums";
 import { Uri } from "vscode";
-import { MethodErrorReason, HandlerErrorReason, SlotErrorReason, ProjectErrorReason } from "../utils/enums";
-import { IProject, IMethod, IHandler } from "../projectView/app/interfaces/model";
+import { IProject, IMethod, IHandler } from "./dumodel";
 
 export class duProject {
     public rootUri: Uri;
