@@ -43,7 +43,7 @@ export default class SaveJson {
 
                     let project: IProject = JSON.parse(jsonProject);
 
-                    let duproject = new duProject();
+                    let duproject = new duProject(false);
                     duproject.name = projectName;
                     duproject.uri = saveTarget;
                     duproject.project = project;

@@ -2,7 +2,7 @@
 
 import * as vscode from 'vscode';
 import Files from '../utils/files';
-import { MethodErrorReason } from '../utils/enums';
+import { MethodErrorReason } from '../projectView/app/interfaces/enums';
 import duProjectManager from './duProjectManager';
 import { isNullOrUndefined } from 'util';
 import { IMethod } from '../projectView/app/interfaces/dumodel';

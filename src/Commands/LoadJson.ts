@@ -11,7 +11,7 @@ export default class LoadJson {
 
 
     public static async LoadProject(uri: Uri): Promise<duProject> {
-        let project = new duProject();
+        let project = new duProject(false);
 
         let rootStats = await Files.readFileStats(uri);
         if (rootStats) {

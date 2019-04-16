@@ -1,80 +1,105 @@
-import { HandlerErrorReason, MethodErrorReason, SlotErrorReason, ProjectErrorReason } from "../../../utils/enums";
+import {
+  HandlerErrorReason,
+  MethodErrorReason,
+  SlotErrorReason,
+  ProjectErrorReason
+} from "./enums";
 import { Uri } from "vscode";
 import { IProject, IMethod, IHandler } from "./dumodel";
 
 export class duProject {
-    public uri: Uri;
-    public name: string;
+  constructor(readonly: boolean) {
+    this.readonly = readonly;
+  }
 
-    public project: IProject;
+  public uri: Uri;
+  public name: string;
 
-    public projectErrors: ProjectError;
+  public project: IProject;
 
+  public projectErrors: ProjectError;
+
+  public readonly: boolean;
 }
 
 export class ProjectError {
-    constructor(projectError: ProjectErrorReason, methodsErrors: methodFileError[], slotErrors: slotError[]) {
-        this.methodsErrors = methodsErrors;
-        this.slotErrors = slotErrors;
-        this.projectError = projectError;
-    }
+  constructor(
+    projectError: ProjectErrorReason,
+    methodsErrors: methodFileError[],
+    slotErrors: slotError[]
+  ) {
+    this.methodsErrors = methodsErrors;
+    this.slotErrors = slotErrors;
+    this.projectError = projectError;
+  }
 
-    public projectError: ProjectErrorReason;
-    public methodsErrors: methodFileError[];
-    public slotErrors: slotError[];
+  public projectError: ProjectErrorReason;
+  public methodsErrors: methodFileError[];
+  public slotErrors: slotError[];
 }
 
 export class slotError {
-    public index: number;
+  public index: number;
 
-    public methodsErrors: methodFileError[];
-    public handlerErrors: handlerFileError[];
+  public methodsErrors: methodFileError[];
+  public handlerErrors: handlerFileError[];
 
-    public slotErrors: SlotErrorReason[];
+  public slotErrors: SlotErrorReason[];
 
-    constructor(index: number) {
-        this.index = index;
-        this.methodsErrors = [];
-        this.handlerErrors = [];
-        this.slotErrors = [];
-    }
+  constructor(index: number) {
+    this.index = index;
+    this.methodsErrors = [];
+    this.handlerErrors = [];
+    this.slotErrors = [];
+  }
 }
 
 export class methodFileError {
-    public reason: MethodErrorReason;
+  public reason: MethodErrorReason;
 
-    public uri: Uri;
-    public index: number;
-    public fileContent: IMethod;
-    public jsonContent: IMethod;
+  public uri: Uri;
+  public index: number;
+  public fileContent: IMethod;
+  public jsonContent: IMethod;
 
-
-    constructor(uri: Uri, index: number, fileContent: IMethod, jsonContent: IMethod, error: MethodErrorReason) {
-        this.uri = uri;
-        this.index = index;
-        this.fileContent = fileContent;
-        this.jsonContent = jsonContent;
-        this.reason = error;
-    }
+  constructor(
+    uri: Uri,
+    index: number,
+    fileContent: IMethod,
+    jsonContent: IMethod,
+    error: MethodErrorReason
+  ) {
+    this.uri = uri;
+    this.index = index;
+    this.fileContent = fileContent;
+    this.jsonContent = jsonContent;
+    this.reason = error;
+  }
 }
 
 export class handlerFileError {
-    public reason: HandlerErrorReason;
+  public reason: HandlerErrorReason;
 
-    public uri: Uri;
-    public key: string;
-    public slot: number;
+  public uri: Uri;
+  public key: string;
+  public slot: number;
 
-    public fileContent: IHandler;
-    public jsonContent: IHandler;
+  public fileContent: IHandler;
+  public jsonContent: IHandler;
 
-
-    constructor(uri: Uri, key: string, slot: number, fileContent: IHandler, jsonContent: IHandler, error: HandlerErrorReason) {
-        this.uri = uri;
-        this.key = key;
-        this.slot = slot;
-        this.fileContent = fileContent;
-        this.jsonContent = jsonContent;
-        this.reason = error;
-    }
+  constructor(
+    uri: Uri,
+    key: string,
+    slot: number,
+    fileContent: IHandler,
+    jsonContent: IHandler,
+    error: HandlerErrorReason
+  ) {
+    this.uri = uri;
+    this.key = key;
+    this.slot = slot;
+    this.fileContent = fileContent;
+    this.jsonContent = jsonContent;
+    this.reason = error;
+  }
 }

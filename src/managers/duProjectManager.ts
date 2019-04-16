@@ -3,17 +3,18 @@
 import * as vscode from 'vscode';
 
 import Files from '../utils/files';
-import {  Slots, ProjectErrorReason } from '../utils/enums';
+import {  ProjectErrorReason } from '../projectView/app/interfaces/enums';
 import methodManager from './methodManager';
 import slotManager from './slotManager';
 import handlerManager from './handlerManager';
 import { IProject } from '../projectView/app/interfaces/dumodel';
 import { duProject, ProjectError, methodFileError, slotError } from '../projectView/app/interfaces/vsmodel';
+import { SlotIndexes } from '../projectView/app/interfaces/slotIndexes';
 
 export default class duProjectManager {
 
     public static async LoadProject(uri: vscode.Uri): Promise<duProject> {
-        let project = new duProject();
+        let project = new duProject(false);
 
         let rootStats = await Files.readFileStats(uri);
         if (rootStats) {
@@ -137,7 +138,7 @@ export default class duProjectManager {
             });
         }
 
-        Slots.indexes.forEach((slotIndex) => {
+        SlotIndexes.indexes.forEach((slotIndex) => {
             if (projectAsJson.slots[slotIndex]) {
                 let slotDir = slotManager.GetSlotDirectoryUri(target, slotIndex);
 
@@ -174,7 +175,7 @@ export default class duProjectManager {
 
         });
 
-        let duproject = new duProject();
+        let duproject = new duProject(false);
         duproject.name = projectname;
         duproject.uri = target;
         duproject.project = projectAsJson;
