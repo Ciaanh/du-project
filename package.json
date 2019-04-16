@@ -20,6 +20,7 @@
         "onLanguage:duproject",
         "onWebviewPanel:duProjectOverview",
         "onCommand:extension.loadJson",
+        "onCommand:extension.saveJson",
         "onCommand:extension.loadProject"
     ],
     "contributes": {
@@ -44,6 +45,11 @@
             {
                 "command": "extension.loadJson",
                 "title": "Open and display existing JSON DU project.",
+                "category": "DU project"
+            },
+            {
+                "command": "extension.loadProject",
+                "title": "Open and display existing DU project.",
                 "category": "DU project"
             }
         ],

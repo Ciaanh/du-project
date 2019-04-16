@@ -3,7 +3,7 @@ import { Uri } from "vscode";
 import { IProject, IMethod, IHandler } from "./dumodel";
 
 export class duProject {
-    public rootUri: Uri;
+    public uri: Uri;
     public name: string;
 
     public project: IProject;

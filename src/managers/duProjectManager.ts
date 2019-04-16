@@ -22,7 +22,7 @@ export default class duProjectManager {
                 let projectName = documentpath[documentpath.length - 1];
 
                 project.name = projectName;
-                project.rootUri = uri;
+                project.uri = uri;
 
                 let projectFromJson = await duProjectManager.loadProjectJson(projectName, uri);
                 if (projectFromJson) {
@@ -63,12 +63,12 @@ export default class duProjectManager {
         if (duProject.project) {
             if (duProject.project.methods && duProject.project.methods.length > 0) {
                 // load methods directory
-                let methodsDirUri = methodManager.GetMethodsDirectoryUri(duProject.rootUri);
+                let methodsDirUri = methodManager.GetMethodsDirectoryUri(duProject.uri);
                 methodsErrors = methodManager.consolidateMethods(duProject.project.methods, methodsDirUri);
             }
 
             if (duProject.project.slots) {
-                slotsErrors = slotManager.consolidateSlots(duProject.project.slots, duProject.rootUri, duProject.project.handlers);
+                slotsErrors = slotManager.consolidateSlots(duProject.project.slots, duProject.uri, duProject.project.handlers);
             }
         }
 
@@ -176,7 +176,7 @@ export default class duProjectManager {
 
         let duproject = new duProject();
         duproject.name = projectname;
-        duproject.rootUri = target;
+        duproject.uri = target;
         duproject.project = projectAsJson;
 
         return duproject;

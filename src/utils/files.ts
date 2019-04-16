@@ -20,7 +20,7 @@ export default class Files {
         return Files.makeFile(fileUri, content);
     }
 
-    private static makeFile(fileUri: vscode.Uri, content: string) {
+    public static makeFile(fileUri: vscode.Uri, content: string) {
         if (!Files.exists(fileUri)) {
             fs.writeFileSync(fileUri.fsPath, content);
         }

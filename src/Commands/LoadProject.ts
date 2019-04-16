@@ -2,7 +2,7 @@
 
 import { window, OpenDialogOptions, Uri } from "vscode";
 import ViewLoader from "../projectView/ViewLoader";
-import duProjectManager from "../models/duProjectManager";
+import duProjectManager from "../managers/duProjectManager";
 
 
 export default class LoadProject {
