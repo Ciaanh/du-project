@@ -37,13 +37,13 @@
         ],
         "commands": [
             {
-                "command": "extension.loadJson",
-                "title": "Create project from in game JSON.",
+                "command": "extension.saveJson",
+                "title": "Save and display project from in game JSON.",
                 "category": "DU project"
             },
             {
-                "command": "extension.loadProject",
-                "title": "Open and display DU project.",
+                "command": "extension.loadJson",
+                "title": "Open and display existing JSON DU project.",
                 "category": "DU project"
             }
         ],

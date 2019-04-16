@@ -3,27 +3,26 @@
 import { commands, ExtensionContext, workspace, Uri } from 'vscode';
 import Configuration from './utils/configuration';
 
-import LoadProject from './Commands/LoadProject';
 import LoadJson from './commands/LoadJson';
-import Files from './utils/files';
+import SaveJson from './commands/SaveJson';
 
 export function activate(context: ExtensionContext) {
 
     Configuration.ExtensionPath = context.extensionPath;
 
+    // "onCommand:extension.saveJson"
+    let disposableSaveAndPreviewJson = commands.registerCommand('extension.saveJson', () => {
+        SaveJson.executeCommand();
+    });
+
     // "onCommand:extension.loadJson"
-    let disposablePreviewFile = commands.registerCommand('extension.loadJson', () => {
+    let disposablePreviewJson = commands.registerCommand('extension.loadJson', () => {
         LoadJson.executeCommand();
     });
 
-    // "onCommand:extension.previewDUProject"
-    let disposablePreviewProject = commands.registerCommand('extension.loadProject', () => {
-        LoadProject.executeCommand();
-    });
+    context.subscriptions.push(disposableSaveAndPreviewJson, disposablePreviewJson);
 
-    context.subscriptions.push(disposablePreviewFile, disposablePreviewProject);
 
-    
     // if (Configuration.launchAtStart()) {
     //     if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
     //         let workspaceRoot = workspace.workspaceFolders[0];

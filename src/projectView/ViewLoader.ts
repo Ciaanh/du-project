@@ -3,9 +3,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import Configuration from '../utils/configuration';
-import handlerManager from '../models/handlerManager';
 import { duProject } from './app/interfaces/vsmodel';
-import { IFixMethodErrorMessage } from './app/interfaces/messages';
 
 export default class ViewLoader {
 
@@ -46,7 +44,7 @@ export default class ViewLoader {
     }
 
     private constructor(duProject: duProject, panel: vscode.WebviewPanel, extensionPath: string) {
-        this._projectRoot = duProject.rootUri;
+        this._projectRoot = duProject.uri;
         this._panelName = duProject.name;
         this._panel = panel;
         this._extensionPath = extensionPath;
@@ -69,51 +67,51 @@ export default class ViewLoader {
 
         // Handle messages from the webview
         this._panel.webview.onDidReceiveMessage(message => {
-            switch (message.command) {
-                case 'editHandler':
-                    this.onEditHandler(message);
-                    return;
-                case 'fixMethodError':
-                    this.onFixMethodErrorHandler(message);
-                    return;
+            // switch (message.command) {
+            //     // case 'editHandler':
+            //     //     this.onEditHandler(message);
+            //     //     return;
+            //     case 'fixMethodError':
+            //         this.onFixMethodErrorHandler(message);
+            //         return;
 
-            }
+            // }
         }, null, this._disposables);
     }
 
-    private async onFixMethodErrorHandler(message: IFixMethodErrorMessage) {
+    // private async onFixMethodErrorHandler(message: IFixMethodErrorMessage) {
 
-        vscode.window.showErrorMessage(`reason: ${message.methodError.reason}, uri ${message.methodError.uri}`);
-    }
-
-
-    private async onEditHandler(message: any) {
-        let handlerKey = message.handlerKey;
-        let slotKey = message.slotKey;
-
-        let filePath = handlerManager.getSpecificHandlerUri(handlerKey, slotKey, this._projectRoot);
-
-        vscode.window.showErrorMessage(`handler: ${handlerKey}, slot ${slotKey}`);
+    //     vscode.window.showErrorMessage(`reason: ${message.methodError.reason}, uri ${message.methodError.uri}`);
+    // }
 
 
-        // open or modify handler lua file ????
-        // investigate execute command on save
+    // private async onEditHandler(message: any) {
+    //     let handlerKey = message.handlerKey;
+    //     let slotKey = message.slotKey;
+
+    //     let filePath = handlerManager.getSpecificHandlerUri(handlerKey, slotKey, this._projectRoot);
+
+    //     vscode.window.showErrorMessage(`handler: ${handlerKey}, slot ${slotKey}`);
+
+
+    //     // open or modify handler lua file ????
+    //     // investigate execute command on save
 
 
 
-        //             let uri = vscode.Uri.file(filePath);
-        //             vscode.workspace.openTextDocument(uri)
-        //             // let success = await vscode.commands.executeCommand('vscode.open', uri);
-        //             vscode.window.showTextDocument(uri).then(editor => {
-        //                 // editor.
-        //             })
+    //     //             let uri = vscode.Uri.file(filePath);
+    //     //             vscode.workspace.openTextDocument(uri)
+    //     //             // let success = await vscode.commands.executeCommand('vscode.open', uri);
+    //     //             vscode.window.showTextDocument(uri).then(editor => {
+    //     //                 // editor.
+    //     //             })
 
-        // vscode.workspace.onDidSaveTextDocument((doc)=>{
-        // doc.fileName
-        // });
+    //     // vscode.workspace.onDidSaveTextDocument((doc)=>{
+    //     // doc.fileName
+    //     // });
 
 
-    }
+    // }
 
     public dispose() {
         ViewLoader.currentPanels[this._panelName] = undefined;

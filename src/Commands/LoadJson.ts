@@ -1,48 +1,79 @@
 'use strict';
 
-import { window, InputBoxOptions, SaveDialogOptions, Uri } from "vscode";
-import duProjectManager from "../models/duProjectManager";
+import { window, OpenDialogOptions, Uri } from "vscode";
 import ViewLoader from "../projectView/ViewLoader";
+import { duProject } from "../projectView/app/interfaces/vsmodel";
+import Files from "../utils/files";
+import { IProject } from "../projectView/app/interfaces/dumodel";
+
 
 export default class LoadJson {
 
-    public static executeCommand() {
-        // change behavior, should open window to paste json from the game 
-        // then create folder with .json file and generate code files 
-        // for handlers and methods
 
-        let inputBoxOptions: InputBoxOptions = {
-            ignoreFocusOut: true,
-            validateInput: duProjectManager.validateJson,
-            prompt: "Paste json exported from the game.",
+    public static async LoadProject(uri: Uri): Promise<duProject> {
+        let project = new duProject();
+
+        let rootStats = await Files.readFileStats(uri);
+        if (rootStats) {
+            if (rootStats.isFile()) {
+                let documentpath = uri.path.split("/");
+                let projectName = documentpath[documentpath.length - 1];
+
+                if (projectName.endsWith(".json")) {
+                    projectName = projectName.replace(".json", "");
+                }
+
+                project.name = projectName;
+                project.uri = uri;
+
+                let projectFromJson = await LoadJson.loadProjectJson(uri);
+                if (projectFromJson) {
+                    project.project = projectFromJson;
+                }
+            }
+            return project;
         }
-        window.showInputBox(inputBoxOptions).then(async value => {
-            if (value) {
-                // define where to save and create folder
-                let saveDialogOption: SaveDialogOptions = {
-                    saveLabel: "Save new project"
-                };
-                await window.showSaveDialog(saveDialogOption).then(async (saveTarget: Uri) => {
-                    let documentpath = saveTarget.path.split("/");
-                    let projectName = documentpath[documentpath.length - 1];
+        return undefined;
+    }
 
-                    let project = await duProjectManager.GenerateProjectFromJson(projectName, value, saveTarget);
-                    if (project) {
-                        // if (Configuration.openProjectWorkspace()) {
-                        //     await commands.executeCommand("vscode.openFolder", project.rootUri, true);
-                        // }
-                        // else {
-                        ViewLoader.ShowOverview(project);
-                        // }
+    private static loadProjectJson(projectJsonUri: Uri): IProject {
+        if (Files.exists(projectJsonUri)) {
+            let content = Files.readFile(projectJsonUri);
+            let projectAsJson: IProject = JSON.parse(content);
 
-                    }
-                    else {
-                        // invalid project 
-                    }
+            return projectAsJson;
+        }
+        return undefined;
+    }
 
-                });
+    private static async openProject(uri: Uri) {
+        let project = await LoadJson.LoadProject(uri);
+        if (project) {
+            ViewLoader.ShowOverview(project);
+        }
+        else {
+            // Project loading error
+        }
+    }
 
+    public static executeCommand() {
+        let openDialogOptions: OpenDialogOptions = {
+            canSelectFiles: true,
+            canSelectFolders: false,
+            canSelectMany: false,
+            filters: {
+                "Json": ["json"]
+            }
+        };
+
+        window.showOpenDialog(openDialogOptions).then(async (uri) => {
+            if (uri && uri.length > 0) {
+                LoadJson.openProject(uri[0]);
+            }
+            else {
+                return; // should raise error or warning, no directory provided
             }
         });
+        return;
     }
 }
