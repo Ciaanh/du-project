@@ -2,14 +2,15 @@ import {
   HandlerErrorReason,
   MethodErrorReason,
   SlotErrorReason,
-  ProjectErrorReason
+  ProjectErrorReason,
+  OverviewMode
 } from "./enums";
 import { Uri } from "vscode";
 import { IProject, IMethod, IHandler } from "./dumodel";
 
 export class duProject {
-  constructor(readonly: boolean) {
-    this.readonly = readonly;
+  constructor(overviewMode: OverviewMode) {
+    this.overviewMode = overviewMode;
   }
 
   public uri: Uri;
@@ -19,7 +20,7 @@ export class duProject {
 
   public projectErrors: ProjectError;
 
-  public readonly: boolean;
+  public overviewMode: OverviewMode;
 }
 
 export class ProjectError {

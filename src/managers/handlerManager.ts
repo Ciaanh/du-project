@@ -2,7 +2,6 @@
 
 import * as vscode from 'vscode';
 import Files from '../utils/files';
-import duProjectManager from './duProjectManager';
 import slotManager from './slotManager';
 import { HandlerErrorReason } from '../projectView/app/interfaces/enums';
 import { IHandler, IArg } from '../projectView/app/interfaces/dumodel';
@@ -47,8 +46,7 @@ export default class handlerManager {
                 else {
                     let handlerDirStats = Files.readFileStats(handlerUri);
                     if (handlerDirStats.isFile()) {
-                        let fileContent = Files.readFile(handlerUri);
-                        let handlerFileContent = duProjectManager.GetContent(fileContent);
+                        let handlerFileContent = Files.GetContent(handlerUri);
 
                         if (handlerFileContent.hasOwnProperty('code')) {
                             if (handler.code !== handlerFileContent.code) {
@@ -115,8 +113,7 @@ export default class handlerManager {
                     let handlerFromJson = handlers.filter(handler => { return handler.key === key });
 
                     if (!handlerFromJson || handlerFromJson.length > 0) {
-                        let fileContent = Files.readFile(handlerUri);
-                        let handlerFileContent = duProjectManager.GetContent(fileContent);
+                        let handlerFileContent = Files.GetContent(handlerUri);
 
                         handlersErrors.push(new handlerFileError(handlerUri, key, slotKey, handlerFileContent, null, HandlerErrorReason.NotExistJson));
                     }

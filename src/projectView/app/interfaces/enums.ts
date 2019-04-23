@@ -1,5 +1,11 @@
 "use strict";
 
+export enum OverviewMode {
+  InGameJson,
+  JsonFile,
+  Project
+}
+
 export enum ProjectErrorReason {
   ProjectUndefined,
   Content

@@ -5,6 +5,7 @@ import ViewLoader from "../projectView/ViewLoader";
 import { IProject } from "../projectView/app/interfaces/dumodel";
 import Files from "../utils/files";
 import { duProject } from "../projectView/app/interfaces/vsmodel";
+import { OverviewMode } from "../projectView/app/interfaces/enums";
 
 export default class SaveJson {
 
@@ -43,7 +44,7 @@ export default class SaveJson {
 
                     let project: IProject = JSON.parse(jsonProject);
 
-                    let duproject = new duProject(false);
+                    let duproject = new duProject(OverviewMode.JsonFile);
                     duproject.name = projectName;
                     duproject.uri = saveTarget;
                     duproject.project = project;
