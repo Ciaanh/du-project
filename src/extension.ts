@@ -6,6 +6,7 @@ import Configuration from "./utils/configuration";
 import LoadJson from "./commands/LoadJson";
 import SaveJson from "./commands/SaveJson";
 import LoadProject from "./Commands/LoadProject";
+import SaveProject from "./commands/SaveProject";
 
 export function activate(context: ExtensionContext) {
   Configuration.ExtensionPath = context.extensionPath;
@@ -34,10 +35,19 @@ export function activate(context: ExtensionContext) {
     }
   );
 
+  // "onCommand:extension.saveProject"
+  let disposableCreateProject = commands.registerCommand(
+    "extension.saveProject",
+    () => {
+      SaveProject.executeCommand();
+    }
+  );
+
   context.subscriptions.push(
     disposableSaveAndPreviewJson,
     disposablePreviewJson,
-    disposablePreviewProject
+    disposablePreviewProject,
+    disposableCreateProject
   );
 
   // if (Configuration.launchAtStart()) {

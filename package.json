@@ -21,7 +21,8 @@
         "onWebviewPanel:duProjectOverview",
         "onCommand:extension.loadJson",
         "onCommand:extension.saveJson",
-        "onCommand:extension.loadProject"
+        "onCommand:extension.loadProject",
+        "onCommand:extension.saveProject"
     ],
     "contributes": {
         "languages": [
@@ -54,7 +55,7 @@
             },
             {
                 "command": "extension.saveProject",
-                "title": "Open and display existing DU project.",
+                "title": "Save and display DU project from in gameJson.",
                 "category": "DU project"
             }
         ],
