@@ -35,6 +35,7 @@ export function activate(context: ExtensionContext) {
 
             // display open pop in to get the name of the folder to preview        
             if (!editor) {
+                console.log("pickFile call");
                 projectPicker.pickFile((pickedResultUri) => {
                     commands.executeCommand('extension.previewDUFile', pickedResultUri);
                 });
@@ -46,6 +47,7 @@ export function activate(context: ExtensionContext) {
                 if (doc && doc.languageId === "duproject") {
                     fileUriToPreview = doc.uri;
                 } else {
+                    console.log("editor pickFile call");
                     projectPicker.pickFile((pickedResultUri) => {
                         commands.executeCommand('extension.previewDUFile', pickedResultUri);
                     });
@@ -73,6 +75,7 @@ export function activate(context: ExtensionContext) {
         if (directoryUri && directoryUri.path != "") {
             directoryUriToPreview = directoryUri;
         } else {
+            console.log("pickFolder call");
             projectPicker.pickFolder((pickedResultUri) => {
                 commands.executeCommand('extension.previewDUProject', pickedResultUri);
             });
